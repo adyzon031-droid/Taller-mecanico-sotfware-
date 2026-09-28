@@ -1,0 +1,18 @@
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+
+# Dependencias y compilaciones
+node_modules/
+dist/
+build/
+
+# Logs y archivos temporales
+npm-debug.log*
+yarn-debug.log*
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
