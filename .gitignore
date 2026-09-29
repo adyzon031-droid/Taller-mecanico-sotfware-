@@ -5,8 +5,13 @@
 
 # Dependencias y compilaciones
 node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
 dist/
 build/
+storage/clientes/
 
 # Logs y archivos temporales
 npm-debug.log*
