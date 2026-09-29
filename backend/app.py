@@ -1,6 +1,7 @@
 """API REST JSON para Fase 02. La sesión debe ser establecida por el login."""
 import os
 import uuid
+import json
 from datetime import date, datetime
 from functools import wraps
 from pathlib import Path
@@ -9,6 +10,8 @@ from flask import Flask, g, jsonify, request, session
 from dotenv import load_dotenv
 from pymysql.err import IntegrityError
 
+from auth_facade import AuthFacade
+from auth_repository import AuthRepository
 from cliente_facade import ClienteError, ClienteFacade
 from cliente_repository import ClienteRepository
 
@@ -19,7 +22,9 @@ app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
+app.config["PERMANENT_SESSION_LIFETIME"] = 28800
 facade = ClienteFacade(ClienteRepository())
+auth_facade = AuthFacade(AuthRepository())
 ROLES = {"admin", "administrador", "secretaria", "recepcionista"}
 PHOTO_DIR = Path(__file__).resolve().parent.parent / "storage" / "clientes"
 ALLOWED = {"jpg", "jpeg", "png", "webp"}
@@ -45,6 +50,7 @@ def cors(response):
 
 @app.route("/api/clientes", methods=["OPTIONS"])
 @app.route("/api/clientes/<path:_path>", methods=["OPTIONS"])
+@app.route("/api/auth/<path:_path>", methods=["OPTIONS"])
 def preflight(_path=""):
     return "", 204
 
@@ -85,12 +91,82 @@ def foto_grande(_error):
     return jsonify(error="La fotografía supera el máximo de 15 MB"), 422
 
 
+def _validar_foto(foto):
+    if not foto or not foto.filename or "." not in foto.filename:
+        raise ClienteError("Selecciona una fotografía")
+    ext = foto.filename.rsplit(".", 1)[1].lower()
+    if ext not in ALLOWED:
+        raise ClienteError("Formato no permitido; usa JPG, JPEG, PNG o WEBP")
+    header = foto.stream.read(12)
+    foto.stream.seek(0)
+    signatures = {
+        "jpg": header.startswith(b"\xff\xd8\xff"),
+        "jpeg": header.startswith(b"\xff\xd8\xff"),
+        "png": header.startswith(b"\x89PNG\r\n\x1a\n"),
+        "webp": header.startswith(b"RIFF") and header[8:12] == b"WEBP",
+    }
+    if not signatures.get(ext, False):
+        raise ClienteError("El contenido no coincide con el formato de la fotografía")
+    return ext
+
+
+@app.post("/api/auth/login")
+def login():
+    body = request.get_json(silent=True) or {}
+    usuario = auth_facade.autenticar(body.get("email"), body.get("password"))
+    if not usuario:
+        return jsonify(error="Correo o contraseña incorrectos"), 401
+    session.clear()
+    session["usuario"] = usuario
+    session.permanent = True
+    return jsonify(usuario=usuario), 200
+
+
+@app.post("/api/auth/sesion")
+def consultar_sesion():
+    usuario = session.get("usuario")
+    if not usuario:
+        return jsonify(error="Sesión no iniciada"), 401
+    return jsonify(usuario=usuario), 200
+
+
+@app.post("/api/auth/logout")
+def cerrar_sesion():
+    session.clear()
+    return jsonify(mensaje="Sesión cerrada")
+
+
 @app.post("/api/clientes")
 @requiere_rol
 def crear_cliente():
-    if not request.is_json:
-        return jsonify(error="Se requiere JSON"), 422
-    cliente_id = facade.crear(request.get_json(), g.usuario)
+    foto = None
+    if request.is_json:
+        datos = request.get_json(silent=True)
+    elif request.mimetype == "multipart/form-data":
+        try:
+            datos = json.loads(request.form.get("cliente", ""))
+        except json.JSONDecodeError:
+            return jsonify(error="El campo cliente debe contener JSON válido"), 422
+        foto = request.files.get("foto")
+    else:
+        return jsonify(error="Se requiere JSON o multipart/form-data"), 422
+    if not isinstance(datos, dict):
+        return jsonify(error="Se requiere un objeto JSON cliente"), 422
+    contexto = None
+    foto_ruta = None
+    try:
+        if foto and foto.filename:
+            ext = _validar_foto(foto)
+            PHOTO_DIR.mkdir(parents=True, exist_ok=True)
+            nombre = f"{uuid.uuid4().hex}.{ext}"
+            temporal, destino = PHOTO_DIR / f".{nombre}.upload", PHOTO_DIR / nombre
+            foto.save(temporal)
+            contexto, foto_ruta = (temporal, destino), f"storage/clientes/{nombre}"
+        cliente_id = facade.crear(datos, g.usuario, contexto, foto_ruta)
+    except Exception:
+        if contexto:
+            contexto[0].unlink(missing_ok=True)
+        raise
     return jsonify(id=cliente_id, mensaje="Cliente registrado correctamente"), 201
 
 
@@ -135,21 +211,7 @@ def actualizar_cliente(cliente_id):
 @requiere_rol
 def subir_foto(cliente_id):
     foto = request.files.get("foto")
-    if not foto or not foto.filename or "." not in foto.filename:
-        return jsonify(error="Selecciona una fotografía"), 422
-    ext = foto.filename.rsplit(".", 1)[1].lower()
-    if ext not in ALLOWED:
-        return jsonify(error="Formato no permitido; usa JPG, JPEG, PNG o WEBP"), 422
-    header = foto.stream.read(12)
-    foto.stream.seek(0)
-    signatures = {
-        "jpg": header.startswith(b"\xff\xd8\xff"),
-        "jpeg": header.startswith(b"\xff\xd8\xff"),
-        "png": header.startswith(b"\x89PNG\r\n\x1a\n"),
-        "webp": header.startswith(b"RIFF") and header[8:12] == b"WEBP",
-    }
-    if not signatures.get(ext, False):
-        return jsonify(error="El contenido no coincide con el formato de la fotografía"), 422
+    ext = _validar_foto(foto)
     # Comprueba que el cliente pertenezca al taller activo antes de escribir.
     if not facade.obtener(g.usuario, cliente_id):
         return jsonify(error="Cliente no encontrado"), 404

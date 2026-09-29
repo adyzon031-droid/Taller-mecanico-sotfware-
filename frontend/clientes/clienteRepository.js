@@ -19,7 +19,15 @@ export class ClienteRepository {
 
   listar(filtros = {}) { return this.request(`?${new URLSearchParams(filtros)}`); }
   consultar(id) { return this.request(`/${encodeURIComponent(id)}`); }
-  crear(cliente) { return this.request('', { method: 'POST', body: JSON.stringify(cliente) }); }
+  crear(cliente, foto = null) {
+    if (foto) {
+      const form = new FormData();
+      form.append('cliente', JSON.stringify(cliente));
+      form.append('foto', foto);
+      return this.request('', { method: 'POST', body: form });
+    }
+    return this.request('', { method: 'POST', body: JSON.stringify(cliente) });
+  }
   actualizar(id, cliente) { return this.request(`/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(cliente) }); }
   verificarDuplicado(params) { return this.request(`/verificar-duplicado?${new URLSearchParams(params)}`); }
   subirFoto(id, archivo) {

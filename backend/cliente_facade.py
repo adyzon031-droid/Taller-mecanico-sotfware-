@@ -43,12 +43,12 @@ class ClienteFacade:
     def __init__(self, repository):
         self.repository = repository
 
-    def crear(self, datos, sesion):
+    def crear(self, datos, sesion, foto_contexto=None, foto_ruta=None):
         datos = validar(datos)
-        datos.update(taller_id=sesion["taller_id"], creado_por=sesion["usuario_id"], foto_ruta=None)
+        datos.update(taller_id=sesion["taller_id"], creado_por=sesion["usuario_id"], foto_ruta=foto_ruta)
         if self.repository.duplicado(sesion["taller_id"], datos):
             raise ClienteError("Ya existe un cliente con esos datos", 409)
-        return self.repository.crear(datos)
+        return self.repository.crear(datos, foto_contexto)
 
     def listar(self, sesion, filtros):
         return self.repository.listar(sesion["taller_id"], filtros)

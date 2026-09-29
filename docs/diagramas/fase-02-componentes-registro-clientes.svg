@@ -1,25 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
- <title id="title">Fase 02 · Componentes de registro de clientes</title><desc id="desc">Flujo del formulario Vue hacia facades, repositories, API Flask, MySQL y almacenamiento de fotografías; autorización de rol y taller por sesión.</desc>
- <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#4263a6"/></marker><style>.box{fill:#fff;stroke:#7c9bd5;stroke-width:2;rx:12}.title{font:700 17px Arial;fill:#17345e}.sub{font:14px Arial;fill:#516581}.link{stroke:#4263a6;stroke-width:2.3;fill:none;marker-end:url(#arrow)}.label{font:13px Arial;fill:#334d73}.zone{fill:#f1f5fc;stroke:#c9d5e6;stroke-width:1.5;rx:18}</style></defs>
- <rect width="1400" height="760" fill="#f8faff"/><text x="40" y="48" class="title" style="font-size:25px">Fase 02 · Registro de clientes</text><text x="40" y="76" class="sub">Arquitectura implementada y contrato pendiente con el login existente</text>
- <rect class="zone" x="30" y="112" width="285" height="570"/><text x="50" y="145" class="title">Frontend Vue</text>
- <rect class="box" x="60" y="195" width="225" height="82"/><text class="title" x="82" y="229">Vista de clientes</text><text class="sub" x="82" y="253">index.html · formulario/validación</text>
- <rect class="box" x="60" y="330" width="225" height="82"/><text class="title" x="91" y="364">ClienteFacade</text><text class="sub" x="80" y="388">reglas y notificaciones</text>
- <rect class="box" x="60" y="465" width="225" height="82"/><text class="title" x="77" y="499">ClienteRepository</text><text class="sub" x="73" y="523">fetch REST + cookie sesión</text>
- <path class="link" d="M172 278v45"/><path class="link" d="M172 413v45"/>
- <rect class="zone" x="350" y="112" width="370" height="570"/><text x="370" y="145" class="title">Backend REST · Flask</text>
- <rect class="box" x="390" y="195" width="290" height="82"/><text class="title" x="416" y="229">/api/clientes</text><text class="sub" x="413" y="253">POST · GET · PUT · foto · duplicado</text>
- <rect class="box" x="390" y="330" width="290" height="82"/><text class="title" x="416" y="364">Guard de sesión y rol</text><text class="sub" x="411" y="388">admin / secretaria / recepción</text>
- <rect class="box" x="390" y="465" width="290" height="82"/><text class="title" x="425" y="499">ClienteFacade (backend)</text><text class="sub" x="417" y="523">validación · negocio · aislamiento taller</text>
- <rect class="box" x="390" y="575" width="290" height="74"/><text class="title" x="425" y="607">ClienteRepository (backend)</text><text class="sub" x="424" y="630">SQL parametrizado / transacciones</text>
- <path class="link" d="M535 278v45"/><path class="link" d="M535 413v45"/><path class="link" d="M535 548v20"/>
- <path class="link" d="M286 506 C330 506 342 235 382 235"/><text class="label" x="305" y="365">HTTP JSON / multipart</text>
- <rect class="zone" x="760" y="112" width="290" height="570"/><text x="780" y="145" class="title">Sesión y datos</text>
- <rect class="box" x="790" y="195" width="230" height="95"/><text class="title" x="817" y="229">Login actual</text><text class="sub" x="810" y="253">solo vista de demostración</text><text class="sub" x="810" y="273">PENDIENTE: sesión firmada</text>
- <rect class="box" x="790" y="370" width="230" height="95"/><text class="title" x="827" y="404">MySQL local</text><text class="sub" x="811" y="428">empresas · talleres · clientes</text><text class="sub" x="811" y="448">taller_id desde sesión</text>
- <path class="link" d="M680 236h101"/><text class="label" x="688" y="220">sesión</text><path class="link" d="M680 611h101"/>
- <rect class="zone" x="1090" y="112" width="280" height="570"/><text x="1110" y="145" class="title">Archivos</text>
- <rect class="box" x="1120" y="370" width="220" height="95"/><text class="title" x="1150" y="404">Fotografías</text><text class="sub" x="1140" y="428">storage/clientes/</text><text class="sub" x="1140" y="448">BD conserva foto_ruta</text>
- <path class="link" d="M680 510 C860 510 945 415 1110 415"/><text class="label" x="850" y="476">multipart validado</text>
- <text class="sub" x="40" y="720">Límite real: el login de fase 1 no establece usuario/rol/taller; el guard API rechaza sin sesión.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1640 930" role="img" aria-labelledby="title desc">
+<title id="title">Fase 02 | Componentes del registro de clientes</title><desc id="desc">Flujo Vue, facade, repository frontend, API Flask, repository MySQL, tablas y almacenamiento local de fotografías; se muestran los controles de sesión, rol, taller y duplicados.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0v6l9-3z" fill="#475569"/></marker><style>
+text{font-family:Inter,Arial,sans-serif}.title{font-size:28px;font-weight:750;fill:#142c4c}.subtitle{font-size:15px;fill:#61748d}.coltitle{font-size:16px;font-weight:700;fill:#17324e}.name{font-size:14px;font-weight:700;fill:#183453}.small{font-size:12px;fill:#546982}.tiny{font-size:11px;fill:#5f7289}.edge{stroke:#475569;stroke-width:2.2;fill:none;marker-end:url(#arrow)}.edge-label{font-size:11px;font-weight:600;fill:#465b75}.trans-title{font-size:13px;font-weight:700;fill:#243e5d}.trans-text{font-size:12px;fill:#526780}</style></defs>
+<rect width="1640" height="930" fill="#f7f9fc"/><text x="48" y="52" class="title">Fase 02 · Registro de clientes</text><text x="48" y="82" class="subtitle">Vista Vue → Facade → Repository → REST Flask → persistencia MySQL y fotografía local</text>
+<!-- columns -->
+<g><rect x="38" y="120" width="220" height="470" rx="18" fill="#e9f2ff" stroke="#c1d6f6"/><rect x="38" y="120" width="220" height="54" rx="18" fill="#bfdbfe"/><text x="60" y="153" class="coltitle">1 · Vista Vue</text>
+<rect x="278" y="120" width="230" height="470" rx="18" fill="#edf8f3" stroke="#c6ead8"/><rect x="278" y="120" width="230" height="54" rx="18" fill="#bbf7d0"/><text x="300" y="153" class="coltitle">2 · Facade</text>
+<rect x="528" y="120" width="240" height="470" rx="18" fill="#fff7e8" stroke="#f2dfb8"/><rect x="528" y="120" width="240" height="54" rx="18" fill="#fde68a"/><text x="550" y="153" class="coltitle">3 · Repository Vue</text>
+<rect x="788" y="120" width="280" height="470" rx="18" fill="#f4efff" stroke="#ded2f5"/><rect x="788" y="120" width="280" height="54" rx="18" fill="#ddd6fe"/><text x="810" y="153" class="coltitle">4 · API REST Flask</text>
+<rect x="1088" y="120" width="270" height="470" rx="18" fill="#e8f8fb" stroke="#c3e8ee"/><rect x="1088" y="120" width="270" height="54" rx="18" fill="#a5f3fc"/><text x="1110" y="153" class="coltitle">5 · Datos MySQL</text>
+<rect x="1378" y="120" width="224" height="470" rx="18" fill="#fff0f1" stroke="#f1cbd0"/><rect x="1378" y="120" width="224" height="54" rx="18" fill="#fecdd3"/><text x="1400" y="153" class="coltitle">6 · Fotos</text></g>
+<!-- component cards -->
+<g><rect x="55" y="215" width="186" height="112" rx="12" fill="#fff" stroke="#93b8eb"/><text x="70" y="247" class="name">Formulario Clientes</text><text x="70" y="272" class="small">index.html</text><text x="70" y="296" class="small">UI · errores · preview</text>
+<rect x="295" y="215" width="196" height="112" rx="12" fill="#fff" stroke="#8ccca7"/><text x="309" y="247" class="name">ClienteFacade</text><text x="309" y="272" class="small">frontend/clientes/</text><text x="309" y="296" class="small">clienteFacade.js</text>
+<rect x="545" y="215" width="206" height="112" rx="12" fill="#fff" stroke="#e4c26e"/><text x="559" y="247" class="name">ClienteRepository</text><text x="559" y="272" class="small">frontend/clientes/</text><text x="559" y="296" class="small">clienteRepository.js</text>
+<rect x="805" y="207" width="246" height="140" rx="12" fill="#fff" stroke="#baa5e2"/><text x="820" y="237" class="name">Rutas + autenticación</text><text x="820" y="261" class="small">backend/app.py</text><text x="820" y="285" class="small">POST /api/auth/login</text><text x="820" y="307" class="small">POST /api/clientes</text><text x="820" y="329" class="small">GET · PUT · foto · duplicado</text>
+<rect x="805" y="390" width="246" height="112" rx="12" fill="#fff" stroke="#baa5e2"/><text x="820" y="422" class="name">Reglas + rol/taller</text><text x="820" y="447" class="small">backend/cliente_facade.py</text><text x="820" y="472" class="small">backend/auth_facade.py</text>
+<rect x="1105" y="215" width="236" height="112" rx="12" fill="#fff" stroke="#7fc7d3"/><text x="1120" y="247" class="name">ClienteRepository</text><text x="1120" y="272" class="small">backend/cliente_repository.py</text><text x="1120" y="296" class="small">SQL parametrizado</text>
+<rect x="1105" y="390" width="236" height="112" rx="12" fill="#fff" stroke="#7fc7d3"/><text x="1120" y="422" class="name">MySQL local</text><text x="1120" y="447" class="small">empresas · talleres</text><text x="1120" y="472" class="small">clientes · usuarios (002)</text>
+<rect x="1395" y="215" width="190" height="112" rx="12" fill="#fff" stroke="#e5a6ae"/><text x="1410" y="247" class="name">Fotografías</text><text x="1410" y="272" class="small">storage/clientes/</text><text x="1410" y="296" class="small">ruta en foto_ruta</text>
+<rect x="1105" y="510" width="236" height="82" rx="12" fill="#fff" stroke="#7fc7d3"/><text x="1120" y="539" class="name">AuthRepository</text><text x="1120" y="562" class="small">backend/auth_repository.py</text><text x="1120" y="581" class="small">lectura de cuentas</text></g>
+<!-- edges -->
+<path class="edge" d="M241 270h50"/><text x="244" y="198" class="edge-label">valida y orquesta</text>
+<path class="edge" d="M491 270h50"/><text x="496" y="198" class="edge-label">solicita datos</text>
+<path class="edge" d="M751 270h49"/><text x="753" y="198" class="edge-label">POST JSON/multipart</text>
+<path class="edge" d="M1051 270h49"/><text x="1014" y="198" class="edge-label">reglas y permisos</text>
+<path class="edge" d="M1223 348v34"/><text x="1235" y="370" class="edge-label">INSERT/SELECT</text>
+<path class="edge" d="M1052 307 C1170 340 1290 320 1388 270"/><text x="1170" y="325" class="edge-label">valida y guarda foto</text>
+<path class="edge" d="M1051 485 C1074 509 1075 548 1100 548"/>
+<!-- cross-cutting controls -->
+<rect x="48" y="635" width="1544" height="205" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/><text x="72" y="672" class="trans-title" style="font-size:17px">Controles transversales</text>
+<rect x="72" y="697" width="450" height="112" rx="12" fill="#fff7ed" stroke="#fdba74"/><text x="92" y="726" class="trans-title">Autenticación y autorización</text><text x="92" y="751" class="trans-text">AuthFacade/AuthRepository · contraseña bcrypt</text><text x="92" y="775" class="trans-text">Solo administrador o recepcionista; guard backend exige sesión.</text>
+<rect x="557" y="697" width="450" height="112" rx="12" fill="#eff6ff" stroke="#93c5fd"/><text x="577" y="726" class="trans-title">Multi-taller</text><text x="577" y="751" class="trans-text">taller_id se obtiene de sesión firmada, no del formulario.</text><text x="577" y="775" class="trans-text">Listas, lecturas, cambios y duplicados quedan acotados al taller.</text>
+<rect x="1042" y="697" width="526" height="112" rx="12" fill="#f0fdf4" stroke="#86efac"/><text x="1062" y="726" class="trans-title">Duplicados y atomicidad</text><text x="1062" y="751" class="trans-text">Facade consulta email/teléfono/nombre+fecha; UNIQUE protege concurrencia.</text><text x="1062" y="775" class="trans-text">La foto se mueve dentro de la transacción SQL; falla => rollback y limpieza.</text>
+<text x="48" y="879" class="subtitle">Flujo: sesión autenticada → validación frontend/backend → detección duplicado → INSERT y foto atómicos → notificación 201.</text>
+<circle cx="1134" cy="880" r="7" fill="#bfdbfe"/><text x="1147" y="885" class="tiny">Interfaz</text><circle cx="1218" cy="880" r="7" fill="#bbf7d0"/><text x="1231" y="885" class="tiny">Reglas</text><circle cx="1290" cy="880" r="7" fill="#fde68a"/><text x="1303" y="885" class="tiny">Repository</text><circle cx="1384" cy="880" r="7" fill="#ddd6fe"/><text x="1397" y="885" class="tiny">API</text><circle cx="1441" cy="880" r="7" fill="#a5f3fc"/><text x="1454" y="885" class="tiny">Datos</text><circle cx="1500" cy="880" r="7" fill="#fecdd3"/><text x="1513" y="885" class="tiny">Archivos</text>
 </svg>

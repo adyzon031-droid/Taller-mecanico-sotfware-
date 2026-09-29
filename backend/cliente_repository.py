@@ -1,9 +1,11 @@
 """Persistencia MySQL y acceso a los servicios REST de clientes."""
 from db import connect
+from pathlib import Path
+import os
 
 
 class ClienteRepository:
-    def crear(self, valores):
+    def crear(self, valores, foto_contexto=None):
         sql = """INSERT INTO clientes
           (taller_id,nombre_completo,contacto_alterno,edad,fecha_nacimiento,
            telefono_personal,telefono_trabajo,email,email_trabajo,foto_ruta,
@@ -17,12 +19,19 @@ class ClienteRepository:
             with connection.cursor() as cursor:
                 cursor.execute(sql, valores)
                 cliente_id = cursor.lastrowid
+            if foto_contexto:
+                temporal, destino = foto_contexto
+                os.replace(temporal, destino)
             connection.commit()
             return cliente_id
         except Exception:
             connection.rollback()
+            if foto_contexto:
+                Path(foto_contexto[1]).unlink(missing_ok=True)
             raise
         finally:
+            if foto_contexto:
+                Path(foto_contexto[0]).unlink(missing_ok=True)
             connection.close()
 
     def listar(self, taller_id, filtros):

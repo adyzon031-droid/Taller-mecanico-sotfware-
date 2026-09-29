@@ -7,20 +7,36 @@ export class ClienteFacade {
     this.notificar = notificar;
   }
 
-  validar(cliente) {
+  errores(cliente) {
     const requeridos = ['nombre_completo','edad','fecha_nacimiento','telefono_personal','telefono_trabajo','email','calle','colonia','municipio','estado','codigo_postal'];
-    if (requeridos.some(key => !String(cliente[key] ?? '').trim())) throw new Error('Completa todos los campos requeridos.');
+    const errores = {};
+    for (const key of requeridos) if (!String(cliente[key] ?? '').trim()) errores[key] = 'Este campo es obligatorio.';
     const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const telefono = /^\+?[0-9 ()-]{7,20}$/;
-    if (!email.test(cliente.email) || (cliente.email_trabajo && !email.test(cliente.email_trabajo))) throw new Error('Revisa el formato del correo.');
-    if (![cliente.telefono_personal, cliente.telefono_trabajo].every(value => telefono.test(value))) throw new Error('Revisa el formato de los teléfonos.');
-    if (!/^\d{5}$/.test(cliente.codigo_postal)) throw new Error('El código postal debe tener cinco dígitos.');
-    const fecha = new Date(`${cliente.fecha_nacimiento}T00:00:00`);
-    const hoy = new Date();
-    let edad = hoy.getFullYear() - fecha.getFullYear();
-    if (hoy.getMonth() < fecha.getMonth() || (hoy.getMonth() === fecha.getMonth() && hoy.getDate() < fecha.getDate())) edad--;
-    if (Number.isNaN(fecha.getTime()) || fecha > hoy || edad !== Number(cliente.edad)) throw new Error('La edad debe coincidir con la fecha de nacimiento.');
-    if (cliente.foto && (!['image/jpeg','image/png','image/webp'].includes(cliente.foto.type) || cliente.foto.size > 15 * 1024 * 1024)) throw new Error('La foto debe ser JPG, PNG o WEBP y no superar 15 MB.');
+    if (cliente.email && !email.test(cliente.email)) errores.email = 'Escribe un correo válido.';
+    if (cliente.email_trabajo && !email.test(cliente.email_trabajo)) errores.email_trabajo = 'Escribe un correo válido.';
+    if (cliente.telefono_personal && !telefono.test(cliente.telefono_personal)) errores.telefono_personal = 'Formato de teléfono inválido.';
+    if (cliente.telefono_trabajo && !telefono.test(cliente.telefono_trabajo)) errores.telefono_trabajo = 'Formato de teléfono inválido.';
+    if (cliente.codigo_postal && !/^\d{5}$/.test(cliente.codigo_postal)) errores.codigo_postal = 'Usa cinco dígitos.';
+    if (cliente.fecha_nacimiento && cliente.edad !== '' && cliente.edad != null) {
+      const fecha = new Date(`${cliente.fecha_nacimiento}T00:00:00`);
+      const hoy = new Date();
+      let edad = hoy.getFullYear() - fecha.getFullYear();
+      if (hoy.getMonth() < fecha.getMonth() || (hoy.getMonth() === fecha.getMonth() && hoy.getDate() < fecha.getDate())) edad--;
+      if (Number.isNaN(fecha.getTime()) || fecha > hoy || edad !== Number(cliente.edad)) errores.edad = 'No coincide con la fecha de nacimiento.';
+    }
+    if (cliente.foto) {
+      const extensionValida = /\.(jpg|jpeg|png|webp)$/i.test(cliente.foto.name);
+      const tipoValido = ['image/jpeg','image/png','image/webp'].includes(cliente.foto.type);
+      if (!extensionValida || !tipoValido) errores.foto = 'Formato inválido. Usa JPG, JPEG, PNG o WEBP.';
+      else if (cliente.foto.size > 15 * 1024 * 1024) errores.foto = 'El máximo permitido es 15 MB.';
+    }
+    return errores;
+  }
+
+  validar(cliente) {
+    const errores = this.errores(cliente);
+    if (Object.keys(errores).length) throw Object.assign(new Error(Object.values(errores)[0]), { fieldErrors: errores });
   }
 
   async registrar(cliente) {
@@ -32,8 +48,7 @@ export class ClienteFacade {
       });
       if (duplicate.duplicado) throw Object.assign(new Error('Ya existe un cliente con esos datos.'), { status: 409 });
       const { foto, ...payload } = cliente;
-      const result = await this.repository.crear(payload);
-      if (foto) await this.repository.subirFoto(result.id, foto);
+      const result = await this.repository.crear(payload, foto);
       this.notificar('Cliente registrado correctamente.', 'success');
       return result;
     } catch (error) {
