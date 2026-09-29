@@ -25,7 +25,7 @@ app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "f
 app.config["PERMANENT_SESSION_LIFETIME"] = 28800
 facade = ClienteFacade(ClienteRepository())
 auth_facade = AuthFacade(AuthRepository())
-ROLES = {"admin", "administrador", "secretaria", "recepcionista"}
+ROLES = {"administrador", "recepcionista"}
 PHOTO_DIR = Path(__file__).resolve().parent.parent / "storage" / "clientes"
 ALLOWED = {"jpg", "jpeg", "png", "webp"}
 
