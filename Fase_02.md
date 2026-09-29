@@ -28,8 +28,8 @@ Flujo del registro: **Vista Vue → ClienteFacade frontend → ClienteRepository
 | Dependencias Python en `.venv` | Verificada | El entorno existente importa Flask, PyMySQL, python-dotenv y bcrypt; se levantó una instancia temporal de API en puerto 5001. |
 | Alta real, duplicados, formato y foto con sesión | Pendiente | No se enviaron clientes ni se alteraron datos; requieren una credencial autorizada. El guard denegó el rol `gerente` con 403 en prueba aislada. |
 | Instalación/uso de Archify | Pendiente | `node`/`npx` están disponibles, pero la clonación del repositorio falló por conexión HTTPS a GitHub. Se dejó diagrama manual HTML autónomo más SVG. |
-| Commit | Verificada | Commit local `Completa registro de clientes fase 2` creado. |
-| Push no forzado | Pendiente | `git push -u origin master` quedó sin respuesta durante 30 segundos y se interrumpió; el remoto no confirmó publicación. No se usó force. |
+| Commit | Verificada | Commit local `Completa registro de clientes fase 2` y commit de conexión local creados. |
+| Push no forzado | Pendiente | Tras autorización del remoto, `git push -u origin master` quedó esperando sin respuesta durante 40 segundos y se interrumpió; GitHub no confirmó publicación. No se usó force. |
 
 **Usuarios y contraseñas:** MySQL ya contiene 2 cuentas; no se muestran sus datos ni se conocen sus contraseñas. El login está enlazado a la tabla y validó el rechazo de credenciales ficticias. No reutilices la contraseña de MySQL como clave de aplicación. Para altas autorizadas, `python backend/manage_users.py` solicita contraseña con prompt oculto, aplica bcrypt (coste 12) y crea solo roles administrador/recepcionista.
 
