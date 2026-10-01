@@ -6,7 +6,7 @@ from datetime import date, datetime
 from functools import wraps
 from pathlib import Path
 
-from flask import Flask, g, jsonify, request, session
+from flask import Flask, g, jsonify, request, send_file, session
 from dotenv import load_dotenv
 from pymysql.err import IntegrityError
 
@@ -18,7 +18,8 @@ from cliente_repository import ClienteRepository
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 app = Flask(__name__)
 app.secret_key = os.environ.get("APP_SECRET_KEY", "")
-app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
+# Reserva margen para el multipart; _validar_foto limita el archivo en 15 MiB.
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
@@ -43,7 +44,7 @@ def cors(response):
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-        response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
         response.headers["Vary"] = "Origin"
     return response
 
@@ -55,18 +56,21 @@ def preflight(_path=""):
     return "", 204
 
 
-def requiere_rol(view):
-    @wraps(view)
-    def wrapped(*args, **kwargs):
-        user = g.usuario
-        if not user:
-            return jsonify(error="Sesión requerida"), 401
-        if str(user.get("rol", "")).lower() not in ROLES:
-            return jsonify(error="Permiso insuficiente"), 403
-        if not user.get("usuario_id") or not user.get("taller_id"):
-            return jsonify(error="La sesión no contiene usuario y taller activos"), 403
-        return view(*args, **kwargs)
-    return wrapped
+def requiere_rol(view=None, roles=None):
+    allowed = set(roles or ROLES)
+    def decorate(fn):
+        @wraps(fn)
+        def wrapped(*args, **kwargs):
+            user = g.usuario
+            if not user:
+                return jsonify(error="Sesión requerida"), 401
+            if str(user.get("rol", "")).lower() not in allowed:
+                return jsonify(error="Permiso insuficiente"), 403
+            if not user.get("usuario_id") or not user.get("taller_id"):
+                return jsonify(error="La sesión no contiene usuario y taller activos"), 403
+            return fn(*args, **kwargs)
+        return wrapped
+    return decorate(view) if view else decorate
 
 
 def payload_cliente(row):
@@ -78,7 +82,10 @@ def payload_cliente(row):
 
 @app.errorhandler(ClienteError)
 def error_cliente(error):
-    return jsonify(error=str(error)), error.status
+    body = {"error": str(error)}
+    if error.errors:
+        body["errors"] = error.errors
+    return jsonify(body), error.status
 
 
 @app.errorhandler(IntegrityError)
@@ -88,26 +95,63 @@ def error_integridad(_error):
 
 @app.errorhandler(413)
 def foto_grande(_error):
-    return jsonify(error="La fotografía supera el máximo de 15 MB"), 422
+    return jsonify(error="Revisa el archivo seleccionado.", errors={"foto": "La fotografía supera el máximo de 15 MB."}), 422
 
 
 def _validar_foto(foto):
     if not foto or not foto.filename or "." not in foto.filename:
-        raise ClienteError("Selecciona una fotografía")
+        raise ClienteError("Selecciona una fotografía.", errors={"foto": "Selecciona una fotografía."})
     ext = foto.filename.rsplit(".", 1)[1].lower()
     if ext not in ALLOWED:
-        raise ClienteError("Formato no permitido; usa JPG, JPEG, PNG o WEBP")
+        raise ClienteError("Formato de fotografía inválido.", errors={"foto": "Usa JPG, JPEG, PNG o WEBP."})
+    position = foto.stream.tell()
+    foto.stream.seek(0, os.SEEK_END)
+    size = foto.stream.tell()
+    foto.stream.seek(position)
+    if size > 15 * 1024 * 1024:
+        raise ClienteError("La fotografía supera el máximo de 15 MB.", errors={"foto": "La fotografía supera el máximo de 15 MB."})
     header = foto.stream.read(12)
     foto.stream.seek(0)
+    expected_mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png", "webp": "image/webp"}
     signatures = {
         "jpg": header.startswith(b"\xff\xd8\xff"),
         "jpeg": header.startswith(b"\xff\xd8\xff"),
         "png": header.startswith(b"\x89PNG\r\n\x1a\n"),
         "webp": header.startswith(b"RIFF") and header[8:12] == b"WEBP",
     }
-    if not signatures.get(ext, False):
-        raise ClienteError("El contenido no coincide con el formato de la fotografía")
+    if not signatures.get(ext, False) or foto.mimetype != expected_mime[ext]:
+        raise ClienteError("El contenido no coincide con el formato de la fotografía.", errors={"foto": "El archivo debe tener MIME y firma válidos para su extensión."})
     return ext
+
+
+def _guardar_temporal(foto):
+    ext = _validar_foto(foto)
+    PHOTO_DIR.mkdir(parents=True, exist_ok=True)
+    nombre = f"{uuid.uuid4().hex}.{ext}"
+    temporal, destino = PHOTO_DIR / f".{nombre}.upload", PHOTO_DIR / nombre
+    try:
+        foto.save(temporal)
+    except Exception:
+        temporal.unlink(missing_ok=True)
+        raise
+    return (temporal, destino), f"storage/clientes/{nombre}"
+
+
+def _datos_y_foto():
+    foto = None
+    if request.is_json:
+        datos = request.get_json(silent=True)
+    elif request.mimetype == "multipart/form-data":
+        try:
+            datos = json.loads(request.form.get("cliente", ""))
+        except json.JSONDecodeError:
+            raise ClienteError("El campo cliente debe contener JSON válido.", errors={"_global": "El cuerpo no es válido."})
+        foto = request.files.get("foto")
+    else:
+        raise ClienteError("Se requiere JSON o multipart/form-data.", errors={"_global": "Formato de envío no válido."})
+    if not isinstance(datos, dict):
+        raise ClienteError("Se requiere un objeto JSON cliente.", errors={"_global": "Se requiere un objeto JSON."})
+    return datos, foto
 
 
 @app.post("/api/auth/login")
@@ -139,33 +183,16 @@ def cerrar_sesion():
 @app.post("/api/clientes")
 @requiere_rol
 def crear_cliente():
-    foto = None
-    if request.is_json:
-        datos = request.get_json(silent=True)
-    elif request.mimetype == "multipart/form-data":
-        try:
-            datos = json.loads(request.form.get("cliente", ""))
-        except json.JSONDecodeError:
-            return jsonify(error="El campo cliente debe contener JSON válido"), 422
-        foto = request.files.get("foto")
-    else:
-        return jsonify(error="Se requiere JSON o multipart/form-data"), 422
-    if not isinstance(datos, dict):
-        return jsonify(error="Se requiere un objeto JSON cliente"), 422
+    datos, foto = _datos_y_foto()
     contexto = None
     foto_ruta = None
+    if foto and foto.filename:
+        contexto, foto_ruta = _guardar_temporal(foto)
     try:
-        if foto and foto.filename:
-            ext = _validar_foto(foto)
-            PHOTO_DIR.mkdir(parents=True, exist_ok=True)
-            nombre = f"{uuid.uuid4().hex}.{ext}"
-            temporal, destino = PHOTO_DIR / f".{nombre}.upload", PHOTO_DIR / nombre
-            foto.save(temporal)
-            contexto, foto_ruta = (temporal, destino), f"storage/clientes/{nombre}"
         cliente_id = facade.crear(datos, g.usuario, contexto, foto_ruta)
     except Exception:
         if contexto:
-            contexto[0].unlink(missing_ok=True)
+            Path(contexto[0]).unlink(missing_ok=True)
         raise
     return jsonify(id=cliente_id, mensaje="Cliente registrado correctamente"), 201
 
@@ -173,20 +200,22 @@ def crear_cliente():
 @app.get("/api/clientes")
 @requiere_rol
 def listar_clientes():
-    filtros = {key: request.args.get(key, "") for key in ("nombre_completo", "email", "telefono_personal")}
-    return jsonify(clientes=[payload_cliente(row) for row in facade.listar(g.usuario, filtros)])
+    try:
+        page = max(1, int(request.args.get("page", 1)))
+        per_page = min(10, max(1, int(request.args.get("per_page", 10))))
+    except ValueError:
+        raise ClienteError("La página debe ser un número entero.", errors={"page": "Usa un número entero."})
+    result = facade.listar(g.usuario, {"q": request.args.get("q", "")}, page, per_page)
+    result["clientes"] = [payload_cliente(row) for row in result["clientes"]]
+    return jsonify(result)
 
 
 @app.get("/api/clientes/verificar-duplicado")
 @requiere_rol
 def verificar_duplicado():
-    datos = request.args.to_dict()
-    datos.setdefault("fecha_nacimiento", "1900-01-01")
-    datos.setdefault("nombre_completo", "")
-    datos.setdefault("telefono_personal", "")
-    datos.setdefault("email", "")
-    from cliente_repository import ClienteRepository
-    duplicado = ClienteRepository().duplicado(g.usuario["taller_id"], datos)
+    datos = {key: request.args.get(key, "") for key in ("email", "telefono_personal", "nombre_completo", "fecha_nacimiento")}
+    excluir_id = request.args.get("excluir_id", type=int)
+    duplicado = ClienteRepository().duplicado(g.usuario["taller_id"], datos, excluir_id)
     return jsonify(duplicado=duplicado)
 
 
@@ -200,11 +229,47 @@ def consultar_cliente(cliente_id):
 @app.put("/api/clientes/<int:cliente_id>")
 @requiere_rol
 def actualizar_cliente(cliente_id):
-    if not request.is_json:
-        return jsonify(error="Se requiere JSON"), 422
-    if not facade.actualizar(g.usuario, cliente_id, request.get_json()):
+    datos, foto = _datos_y_foto()
+    contexto = foto_ruta = None
+    if foto and foto.filename:
+        contexto, foto_ruta = _guardar_temporal(foto)
+    try:
+        actualizado = facade.actualizar(g.usuario, cliente_id, datos, contexto, foto_ruta)
+    except Exception:
+        if contexto:
+            Path(contexto[0]).unlink(missing_ok=True)
+        raise
+    if not actualizado:
         return jsonify(error="Cliente no encontrado"), 404
-    return jsonify(mensaje="Cliente actualizado correctamente")
+    return jsonify(mensaje="Cliente actualizado correctamente"), 200
+
+
+@app.delete("/api/clientes/<int:cliente_id>")
+@requiere_rol(roles={"administrador"})
+def eliminar_cliente(cliente_id):
+    if not facade.eliminar(g.usuario, cliente_id):
+        return jsonify(error="Cliente no encontrado"), 404
+    return jsonify(mensaje="Cliente eliminado correctamente"), 200
+
+
+@app.get("/api/clientes/<int:cliente_id>/foto")
+@requiere_rol
+def foto_cliente(cliente_id):
+    cliente = facade.obtener(g.usuario, cliente_id)
+    if not cliente or not cliente.get("foto_ruta"):
+        return jsonify(error="Fotografía no encontrada"), 404
+    filename = Path(cliente["foto_ruta"]).name
+    if not filename or not filename.split(".", 1)[0].isalnum():
+        return jsonify(error="Fotografía no encontrada"), 404
+    ruta = (PHOTO_DIR / filename).resolve()
+    if ruta.parent != PHOTO_DIR.resolve() or not ruta.is_file():
+        return jsonify(error="Fotografía no encontrada"), 404
+    mimetype = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png", "webp": "image/webp"}.get(ruta.suffix.lower().lstrip("."))
+    if not mimetype:
+        return jsonify(error="Fotografía no encontrada"), 404
+    response = send_file(ruta, mimetype=mimetype, conditional=True)
+    response.headers["Cache-Control"] = "private, no-store"
+    return response
 
 
 @app.post("/api/clientes/<int:cliente_id>/foto")

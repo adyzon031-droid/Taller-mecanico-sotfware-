@@ -24,7 +24,7 @@ Flujo del registro: **Vista Vue → ClienteFacade frontend → ClienteRepository
 | Facade y Repository frontend | Realizada | La Vista llama a `ClienteFacade`; su Repository transporta JSON/multipart y cookie de sesión. |
 | API de clientes y duplicados | Realizada | POST 201, duplicados 409, inválidos 422, listado/consulta/PUT/foto/verificar duplicado. Restricciones UNIQUE cubren carreras concurrentes. |
 | Transacción conjunta de cliente y foto | Realizada | `ClienteRepository.crear()` inserta, mueve archivo temporal y confirma; rollback elimina la foto final o temporal. Falta prueba integrada. |
-| Esquema MySQL local | Verificada | Existen `empresas`, `talleres`, `usuarios`, `clientes`; las FK empresa→taller, taller→usuario y taller→cliente se confirmaron. Conteos: 1 empresa, 1 taller, 2 usuarios, 0 clientes. No se ejecutaron migraciones ni se alteraron datos. |
+| Esquema MySQL local | Verificada | Existen `empresas`, `talleres`, `usuarios`, `clientes`; las FK empresa→taller, taller→usuario y taller→cliente se confirmaron. Conteos de la inspección previa: 1 empresa, 1 taller, 2 usuarios y 0 clientes. El 1 de octubre de 2026, GET /api/clientes con sesión de prueba devolvió 1 registro activo; no se leyeron datos personales. La migración 003 añadió solo las dos columnas de baja lógica. |
 | Dependencias Python en `.venv` | Verificada | El entorno existente importa Flask, PyMySQL, python-dotenv y bcrypt; se levantó una instancia temporal de API en puerto 5001. |
 | Alta real, duplicados, formato y foto con sesión | Pendiente | No se enviaron clientes ni se alteraron datos; requieren una credencial autorizada. El guard denegó el rol `gerente` con 403 en prueba aislada. |
 | Instalación/uso de Archify | Pendiente | `node`/`npx` están disponibles, pero la clonación del repositorio falló por conexión HTTPS a GitHub. Se dejó diagrama manual HTML autónomo más SVG. |
@@ -79,17 +79,17 @@ Flujo del registro: **Vista Vue → ClienteFacade frontend → ClienteRepository
 
 `001_clientes.sql` crea `empresas`, `talleres` (FK a empresas) y `clientes`. `clientes`: `id`, `taller_id`, `nombre_completo`, `contacto_alterno`, `edad`, `fecha_nacimiento`, `telefono_personal`, `telefono_trabajo`, `email`, `email_trabajo NULL`, `foto_ruta NULL`, `calle`, `colonia`, `municipio`, `estado`, `codigo_postal`, `creado_por`, `created_at`, `updated_at`. Incluye índices en taller/email/teléfono; UNIQUE por taller en email, teléfono y nombre+fecha; FK de taller a talleres.
 
-`002_usuarios_auth.sql` crea `usuarios` con `id`/`taller_id` BIGINT UNSIGNED, `nombre` VARCHAR(160), `email` VARCHAR(190) UNIQUE, `password_hash` VARCHAR(255), rol ENUM(`administrador`,`recepcionista`), activo y `created_at`; la FK usa el mismo tipo de `talleres.id`. Bcrypt produce el hash al crear cada cuenta. La tabla local ya existía y coincide con los campos que consulta AuthRepository; no se ejecutó la migración. `creado_por` no tiene FK a usuarios en 001 por el orden de migración/tipo previo; queda por añadir una FK revisada tras migrar 002.
+`002_usuarios_auth.sql` crea `usuarios` con `id`/`taller_id` BIGINT UNSIGNED, `nombre` VARCHAR(160), `email` VARCHAR(190) UNIQUE, `password_hash` VARCHAR(255), rol ENUM(`administrador`,`recepcionista`), activo y `created_at`; la FK usa el mismo tipo de `talleres.id`. Bcrypt produce el hash al crear cada cuenta. La tabla local ya existía y coincide con los campos que consulta AuthRepository; no se ejecutó la migración 002 en la BD local. `creado_por` no tiene FK a usuarios en 001 por el orden de migración/tipo previo; queda por añadir una FK revisada tras migrar 002.
 
 ### Conexión y arranque local
 
-La BD local ya responde `SELECT 1`. `.env` está presente, no está versionado y sus permisos locales se restringieron a 600. `.env.example` enumera las variables sin valores secretos. No se corrieron migraciones: el esquema ya existe y se respetó.
+La BD local ya responde `SELECT 1`. `.env` está presente, no está versionado y sus permisos locales se restringieron a 600. `.env.example` enumera las variables sin valores secretos. La migración aditiva `003_clientes_baja_logica.sql` se aplicó y repitió de forma idempotente; no se recrearon tablas ni se alteraron filas existentes.
 
 1. Usa Python 3.10+, MySQL y el entorno existente `.venv`. Si falta, crea `.venv` e instala `pip install -r backend/requirements.txt`.
 2. Completa `.env` local con `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_CONNECT_TIMEOUT`, `APP_SECRET_KEY`, `APP_HOST`, `APP_PORT`, `CORS_ORIGIN` y `SESSION_COOKIE_SECURE`. Genera el secreto con `python -c "import secrets; print(secrets.token_urlsafe(48))"`; guarda el resultado solo en `.env`. No copies claves reales a `.env.example`.
 3. En producción, crea una cuenta MySQL dedicada con permisos mínimos sobre la base del taller; no uses root. En local usa el usuario MySQL ya configurado.
-4. En esta BD ya existen 1 empresa y 1 taller. Hay 2 usuarios, pero sus contraseñas no se consultan ni se recuperan. Para crear una cuenta nueva, ejecuta `.venv/bin/python backend/manage_users.py` y asigna contraseña nueva en el prompt oculto.
-5. Para una BD vacía, aplica solo las migraciones pendientes en el orden documentado: `001_clientes.sql`, luego `002_usuarios_auth.sql`; revisa primero que tablas/columnas no existan. En la BD actual no ejecutar estas migraciones porque las tablas están creadas.
+4. En esta BD ya existen 1 empresa y 1 taller. Hay cuentas existentes, pero sus identificadores y contraseñas no se consultan ni se recuperan. Para crear una cuenta nueva, ejecuta `.venv/bin/python backend/manage_users.py` y asigna contraseña nueva en el prompt oculto.
+5. Para una BD vacía, aplica solo las migraciones pendientes en el orden documentado: `001_clientes.sql`, `002_usuarios_auth.sql` y `003_clientes_baja_logica.sql`; revisa qué objetos faltan antes de aplicar. La 003 usa `ADD COLUMN IF NOT EXISTS` y ya está aplicada en la BD local.
 6. Inicia API con `.venv/bin/python backend/app.py`. El frontend debe servirse por HTTP en el origen indicado por `CORS_ORIGIN`; `file://` tiene origen `null` y no sirve para una sesión con CORS/cookies. La API y el repositorio verifican cookie `HttpOnly`, `SameSite=Lax`; en HTTPS fija `SESSION_COOKIE_SECURE=true`.
 7. Para previsualizar, se usó un directorio temporal con enlaces solo a `index.html` y `frontend/`, servidor en `127.0.0.1:4173`; `/.env`, `/backend/` y `/.git/` devolvieron 404. El proceso temporal se detuvo al terminar y el puerto quedó libre. No sirvas la raíz del repositorio.
 
@@ -104,7 +104,7 @@ Archify se intentó con el comando solicitado. No se pudo clonar su repositorio:
 | Prueba | Estado | Resultado observado |
 |---|---|---|
 | `SELECT 1` desde `.venv` | Verificada | Devolvió 1; conexión cerrada correctamente. |
-| `SHOW TABLES`, `DESCRIBE`, relaciones y conteos | Verificada | Cuatro tablas: `empresas`, `talleres`, `usuarios`, `clientes`; FK empresa→taller, taller→usuario y taller→cliente; conteos 1/1/2/0. No se leyeron filas personales ni se ejecutaron migraciones. |
+| `SHOW TABLES`, `DESCRIBE`, relaciones y conteos | Verificada | Cuatro tablas: `empresas`, `talleres`, `usuarios`, `clientes`; FK empresa→taller, taller→usuario y taller→cliente; conteos vistos en la inspección inicial 1/1/2/0; el 1 de octubre de 2026, el listado real con sesión de prueba devolvió 1 cliente. No se inspeccionaron sus datos. No se leyeron filas personales ni se ejecutaron migraciones. |
 | Variables y seguridad local | Verificada | `.env` existe, Git lo ignora, no está versionado; permisos locales ajustados a 600. Variables presentes y secreto de sesión de longitud ≥32; valores nunca impresos. |
 | Instancia Flask temporal `127.0.0.1:5001` | Verificada | Arrancó con `.env` y se cerró tras la prueba. |
 | `POST /api/auth/login` con usuario ficticio | Verificada | HTTP 401 con respuesta genérica; no se modificaron cuentas. |
@@ -114,7 +114,7 @@ Archify se intentó con el comando solicitado. No se pudo clonar su repositorio:
 | Frontend temporal y CORS | Verificada | El formulario cargó desde `127.0.0.1:4173`; credenciales ficticias fueron rechazadas. CORS permite solo ese origen y cookies. `/.env`, `/backend/` y `/.git/` dieron 404. Servidor detenido y puerto 4173 libre. |
 | Sintaxis Python (`.venv/bin/python -m py_compile backend/*.py`) | Verificada | Compilación sin errores. |
 | Login exitoso de usuario real | Pendiente | No se proporcionó contraseña válida; no se adivinó, cambió ni restableció ninguna. |
-| Alta cliente, duplicado, formato, foto y rol | Pendiente | No se insertaron filas de prueba. Requiere sesión de usuario autorizada; `clientes` sigue con 0 filas. |
+| Alta cliente, duplicado, formato, foto y rol | Pendiente | No se insertaron filas de prueba. Requiere sesión de usuario autorizada; la prueba de solo lectura del 1 de octubre de 2026 encontró 1 fila activa; sus datos personales no se leyeron ni imprimieron. |
 | Instalación de Archify | Pendiente | Falló al conectar con `github.com:443`; diagrama manual conservado. |
 
 ## Seguridad de contraseñas
@@ -122,3 +122,43 @@ Archify se intentó con el comando solicitado. No se pudo clonar su repositorio:
 Las contraseñas de cuentas se reciben mediante prompt oculto y se almacenan como hash bcrypt; el login compara el hash y no devuelve este dato. La BD tiene dos cuentas existentes, pero no se consultaron sus datos de identificación ni se conocen sus contraseñas. `python backend/manage_users.py` permite a una persona autorizada crear un usuario administrador o recepcionista y elegir su contraseña interactivamente. El secreto de sesión local existe y su longitud supera 32 caracteres; su valor no se revela. Recomendado antes de producción: HTTPS y cookies `Secure`, límite de intentos de login, protección CSRF apropiada para cookies, recuperación con token aleatorio de un solo uso y expiración, y cambio de contraseñas provisionales. Nunca reutilizar credenciales de MySQL como credenciales de usuario.
 
 El HTML del diagrama es autocontenido y el SVG es independiente. Conexión a MySQL, esquema y manejo de sesión sin credenciales están verificados; el login exitoso y los flujos que escriben clientes quedan pendientes de una cuenta autorizada para prueba. No se agregan credenciales predeterminadas al código.
+
+
+## Estado de la ampliación CRUD de clientes y navegación
+
+**Implementación actual:** navegación por hash con una única sección activa (incluye atrás/adelante y `aria-current="page"`); las pantallas sin implementar muestran “Próximamente”. Clientes incluye consulta, búsqueda, páginas de hasta 10 filas, detalle en solo lectura, edición reutilizando el formulario, foto opcional conservada y eliminación lógica solo para administrador. Recepcionista puede consultar, crear y editar. Todas las operaciones usan `taller_id` de la sesión; un ID de otro taller se trata como no encontrado.
+
+### Campos y validación
+
+| Campo | Regla | Dónde se valida |
+|---|---|---|
+| Textos y nombres | Trim y colapsar espacios; nombre de dos o más palabras; letras Unicode/acento/ñ, espacios, apóstrofo y guion. | `frontend/clientes/clienteFacade.js`, `backend/cliente_facade.py` |
+| Contacto alternativo | Opcional; misma regla de nombre. | Facade frontend y backend |
+| Teléfonos | Exactamente 10 dígitos guardados; prefijo +52 solo visual. Admite pegar espacios/guiones, descarta símbolos/letras en la vista y el backend rechaza formatos inválidos. | Vista `index.html`, facades frontend/backend |
+| Correos | Formato válido, minúsculas, máximo 190; correo laboral opcional y distinto al personal. | Facades frontend/backend; UNIQUE y duplicado en repository |
+| Nacimiento/edad | Fecha ISO real, no futura ni mayor a 120 años; edad readonly frontend y recalculada/verificada por backend. | Facades frontend/backend |
+| Foto | JPG/JPEG/PNG/WEBP, máximo 15 MiB; extensión, MIME y firma binaria validados por backend; UUID en almacenamiento. | Vista y `backend/app.py` |
+| Dirección | CP de cinco dígitos y estado de catálogo fijo con 32 entidades; municipio y colonia manuales porque no hay catálogo local. | Facades frontend/backend y vista |
+| Duplicidad | Correo, teléfono y nombre+fecha dentro del taller; edición excluye su propio ID; conflictos UNIQUE se convierten a 409. | Facades/repositories y handler Flask |
+
+### API REST ajustada
+
+| Método y ruta | Respuesta y alcance |
+|---|---|
+| `GET /api/clientes?q=&page=&per_page=` | Lista/búsqueda dentro del taller de la sesión; `per_page` limitado a 10. |
+| `GET /api/clientes/{id}` | Detalle o 404 si no pertenece al taller/está eliminado. |
+| `PUT /api/clientes/{id}` | Actualiza datos; multipart para foto opcional o JSON sin cambiar la existente. Respuestas 200/404/409/422. |
+| `DELETE /api/clientes/{id}` | Solo administrador; marca `activo=0` y `deleted_at`, conserva fila/foto; 200/403/404. |
+| `GET /api/clientes/{id}/foto` | Devuelve foto solo para cliente activo del taller actual. |
+| `GET /api/clientes/verificar-duplicado` | Revisión previa por campo; el guard obtiene taller desde sesión. |
+| `POST /api/clientes` | Conserva el alta previa; 201/409/422 y foto opcional. |
+
+`backend/cliente_facade.py` normaliza/valida, aplica duplicados y llama al repository. `backend/cliente_repository.py` limita cada lectura/escritura con `taller_id`, une paginación y baja lógica y cierra conexiones en `finally`. `backend/app.py` establece las rutas, sesión/roles, manejo de error, validación de firma fotográfica y servicio protegido de foto. `frontend/clientes/clienteFacade.js` coordina validación, CRUD, errores/notificaciones; `clienteRepository.js` es el único transporte REST desde Vue.
+
+### Migración y pruebas
+
+Se agregó `backend/migrations/003_clientes_baja_logica.sql`, solo aditiva e idempotente (`activo DEFAULT 1`, `deleted_at NULL`). Se aplicó en MariaDB 11.8.6 local y se ejecutó una segunda vez: ambas columnas presentes tras ambas ejecuciones. No se borraron filas ni fotos.
+
+Suite `backend/tests/test_clientes.py`, ejecutada con `.venv/bin/python -m pytest -q backend/tests`: **28 passed**. Son pruebas unitarias y de Flask con dependencias simuladas para validar formato, 409, foto grande, permisos y 404 de otro taller; no sustituyen una prueba extremo a extremo CRUD con login y escritura en MySQL real. Edición sin cambiar foto se verificó con repository simulado; no se insertaron datos reales de clientes.
+
+**Pendiente:** catálogo SEPOMEX local/autocompletado por CP; pruebas E2E con cuenta de sesión autorizada; separar y configurar entorno de pruebas MySQL si se requiere validar consultas reales de escritura. El catálogo oficial se descarga desde [Correos de México / SEPOMEX](https://www.correosdemexico.gob.mx/sslservicios/consultacp/CodigoPostal_Exportar.aspx).
