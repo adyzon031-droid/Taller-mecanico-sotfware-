@@ -162,3 +162,84 @@ Se agregó `backend/migrations/003_clientes_baja_logica.sql`, solo aditiva e ide
 Suite `backend/tests/test_clientes.py`, ejecutada con `.venv/bin/python -m pytest -q backend/tests`: **28 passed**. Son pruebas unitarias y de Flask con dependencias simuladas para validar formato, 409, foto grande, permisos y 404 de otro taller; no sustituyen una prueba extremo a extremo CRUD con login y escritura en MySQL real. Edición sin cambiar foto se verificó con repository simulado; no se insertaron datos reales de clientes.
 
 **Pendiente:** catálogo SEPOMEX local/autocompletado por CP; pruebas E2E con cuenta de sesión autorizada; separar y configurar entorno de pruebas MySQL si se requiere validar consultas reales de escritura. El catálogo oficial se descarga desde [Correos de México / SEPOMEX](https://www.correosdemexico.gob.mx/sslservicios/consultacp/CodigoPostal_Exportar.aspx).
+
+## CU-B02: Gestión de clientes
+
+`planeacion_faseinicial.md` no contiene un caso CU-B02 identificable; se usa el título de respaldo indicado para esta documentación. La fase extendida mantiene las capacidades anteriores y agrega identidad mexicana, gestión por empresa/taller, filtros y suspensión reversible.
+
+| ID | Nombre | Actores | Precondiciones | Postcondiciones | Flujo principal | Flujos alternos | Reglas de negocio | Privilegios por rol |
+|---|---|---|---|---|---|---|---|---|
+| CU-B02 | Gestión de clientes | Administrador, recepcionista | Sesión autenticada; taller activo asociado. Catálogos de ubicación y país disponibles para validación. | Cliente creado/consultado/actualizado dentro del alcance autorizado, o estado actualizado por administrador. | 1. Abrir Clientes. 2. Buscar, filtrar, ordenar o paginar en servidor. 3. Mostrar ficha o abrir formulario. 4. Backend valida identidad, contacto, dirección y duplicados. 5. Repository aplica la operación con ámbito de empresa/taller. 6. Vista muestra resultado. | Datos inválidos: 422 por campo; duplicado: 409; sesión requerida: 401; rol no permitido: 403; objeto ajeno/no disponible: 404; catálogo no disponible: mensaje de error. El administrador elige taller al crear y puede consultar los talleres de su empresa. | Nombre completo derivado; normalización en backend; CURP y RFC validados localmente (sin consulta al SAT); contactos y direcciones validados; unicidad por taller; clasificación SQL de ordenamiento en lista blanca; página 10/25/50; motivo de suspensión opcional; baja lógica existente se conserva. | Administrador: ámbito empresa, asigna taller, puede suspender/reactivar y usar baja lógica. Recepcionista: solo su taller, puede consultar/crear/editar; no suspende, reactiva ni elimina. Cliente de otro ámbito no se revela (404). |
+
+## Trazabilidad de implementación de esta fase
+
+Estados: **Verificada** significa que la prueba indicada pasó; **Realizada** significa código/migración presente, pero no hay prueba funcional suficiente para declararla verificada; **Pendiente** significa que falta completar o comprobar el alcance descrito.
+
+| Actividad | Capa | Archivo | Método/función | Estado (Realizada/Pendiente/Verificada) | Evidencia/prueba |
+|---|---|---|---|---|---|
+| Extender talleres con contacto, dirección, RFC, foto y estado, sin quitar columnas existentes | Datos | `backend/migrations/006_gestion_talleres.sql` | migración SQL aditiva | Verificada | Aplicada a la BD local; la fila de taller existente se conservó; índices únicos de empresa/taller instalados. |
+| Ampliar identidad y estado de clientes, conservar datos legados y admitir contactos opcionales | Datos | `backend/migrations/007_clientes_identidad_y_estado.sql` | migración SQL aditiva | Verificada | Aplicada y repetida idempotentemente; celular/nombres legados copiados solo donde faltaban; teléfono laboral permite NULL. |
+| Normalizar textos e identidad fiscal mexicana | Dominio | `backend/identidad_mexico.py` | `normalizar_palabras`, `validar_curp`, `validar_rfc_persona_fisica` | Verificada | Suite pytest cubre normalización, CURP/RFC, fechas, coherencia y verificador. No consulta SAT. |
+| Validar, normalizar y coordinar altas, ediciones, estados y duplicados de cliente | Dominio/API | `backend/cliente_facade.py` | `validar`, `_target_workshop`, `crear`, `listar`, `obtener`, `actualizar`, `suspender`, `reactivar`, `eliminar` | Verificada | Pruebas de formato, duplicados, permisos y estado; suite completa: 58 pasadas. |
+| Consultas SQL de clientes aisladas por sesión/taller, filtros y paginación | Persistencia | `backend/cliente_repository.py` | `_run`, `_scope`, `crear`, `listar`, `obtener`, `actualizar`, `duplicado`, `estado`, `eliminar`, `talleres_empresa`, operaciones de foto | Verificada | Pruebas de acceso por taller, alcance de recepcionista, orden y paginación; conexión real MySQL disponible en la ejecución de suite. No se imprimieron filas personales. |
+| Validar y coordinar CRUD/estado de taller | Dominio | `backend/taller_facade.py` | `_validate`, `listar`, `obtener`, `crear`, `actualizar`, `set_estado` | Realizada | La validación de taller está implementada; no se hizo recorrido autenticado de navegador contra los endpoints. |
+| Consultas y persistencia de talleres con ámbito de empresa | Persistencia | `backend/taller_repository.py` | `_one`, `_many`, `empresa_de_taller`, `listar`, `obtener`, `crear`, `actualizar`, `actualizar_foto`, `estado` | Realizada | CRUD implementado con consultas parametrizadas; no se probó el ciclo completo de escritura en navegador. |
+| Catálogo de países y búsqueda/validación SEPOMEX | Dominio y persistencia | `backend/ubicacion_facade.py`, `backend/ubicacion_repository.py`, `backend/data/`, `data/` | `paises`, `cp`, `estados`, `municipios`, `colonias`, `buscar`, `direccion_valida`, consultas de catálogo | Verificada | Suite cubre ubicación/teléfonos; los endpoints de catálogo quedan disponibles para las facades. |
+| Rutas API, sesión/roles, respuestas y validación de fotos | API | `backend/app.py` | `login`, `consultar_sesion`, `cerrar_sesion`, rutas `/api/talleres`, `/api/clientes`, `/api/ubicacion`, `_validar_foto`, manejadores 409/422 | Realizada | Compilación Python sin error y pruebas de Flask en suite; respuesta 401 de API sin sesión consta en registros de fase previos. Flujo CRUD real autenticado pendiente. |
+| Autenticación y contexto de empresa/taller en sesión | API/persistencia | `backend/auth_facade.py`, `backend/auth_repository.py` | validación de login; consulta de usuario y taller activo | Realizada | La consulta de autenticación incorpora empresa y taller, filtrando taller activo. No se probó ingreso exitoso en el navegador. |
+| Facade y transporte REST para clientes y ubicación | Frontend | `frontend/clientes/clienteFacade.js`, `frontend/clientes/clienteRepository.js` | validación/normalización, CRUD, duplicidad, filtros; transporte REST y catálogo | Verificada | `node --check` sin errores. La validación visual de pantallas tras autenticación queda pendiente. |
+| Facade y transporte REST de talleres | Frontend | `frontend/talleres/tallerFacade.js`, `frontend/talleres/tallerRepository.js` | validación/normalización, CRUD/estado; transporte REST y foto | Verificada | `node --check` sin errores. Las operaciones protegidas requieren sesión válida y no se probaron en navegador. |
+| Formularios, fichas, navegación, validación local, filtros, sort/paging y permisos visibles | Vista | `index.html` | componentes Vue, formularios y manejadores de eventos | Realizada | La página de login cargó en el navegador. No se pudo probar ficha/CRUD, taller ni visibilidad por rol sin iniciar sesión autorizada. |
+| Exclusión de almacenamiento de fotos de taller | Configuración | `.gitignore` | regla `storage/talleres/` | Verificada | Regla presente junto a exclusiones preexistentes para secretos y fotos de cliente; no se ejecutaron comandos Git. |
+| Verificación automatizada | Pruebas | `backend/tests/test_clientes.py`, `backend/tests/test_fase02_extendida.py`, `backend/tests/test_phone_location.py` | pruebas pytest de dominio, API, permisos, duplicados, identidad, foto, ubicación, orden y paginación | Verificada | `.venv/bin/pytest -q`: 58 passed. `python -m py_compile backend/*.py` y `node --check` para módulos frontend: sin errores. |
+| Aislamiento de servidor temporal del proyecto | Navegador/servidor local | Solo archivos existentes `index.html` y `frontend/` | HTTP local en `127.0.0.1` | Verificada | `/index.html` y `/frontend/`: 200; `/.env`, `/backend/` y `/.git/`: 404. Servidor detenido y puerto comprobado libre. No se usó `.env` para servir archivos. |
+
+### Revisión de esquema y estado comprobado
+
+La inspección estructural de esta ampliación encontró 1 empresa, 1 taller, 4 usuarios y 4 clientes. Se consultaron cantidades y columnas, no valores identificables de clientes ni credenciales. Las migraciones `006` y `007` preservaron las filas existentes; las columnas nuevas están presentes y el campo `telefono_trabajo` acepta NULL. No se borraron ni recrearon tablas.
+
+**Pendiente:** probar con sesión válida en navegador el alta/edición/suspensión de taller y cliente, ficha de cliente, los filtros y la presentación de botones según rol. La ejecución actual solo mostró el login y verificó que el servidor temporal no publicara backend, `.env` ni `.git`.
+
+## Actualización de módulos de estatus y vehículos · 8 de octubre de 2026
+
+Esta sección actualiza el estado de la implementación ampliada; las notas históricas anteriores se conservan. La migración `012_estatus_clientes_vehiculos.sql` se aplicó y se repitió sin error en la BD local. Conteos agregados posteriores: 7 estatus activos, 22 marcas activas, 111 modelos activos, 4 clientes activos y 1 vehículo eliminado lógicamente (fila conservada). No se consultaron ni documentaron valores personales.
+
+| Módulo | Datos / entidades | Estado | Solución implementada y evidencia |
+|---|---|---|---|
+| Catálogo de estatus | `estatus(id, valor, descripcion, es_sistema, activo, created_at, updated_at)`; clientes, marcas y modelos conservan sus FK | Verificada | Migración aditiva/idempotente conserva IDs legados 1–3, agrega los 4 valores restantes y columnas del catálogo; siete opciones comprobadas en la BD. API CRUD sin DELETE; el uso bloquea desactivar; permisos por rol cubiertos por pytest. Pantalla de administración cargó con sesión válida. |
+| Estado y baja lógica de clientes | `clientes.estatus_id`, motivo/fecha/usuario de suspensión y baja lógica | Verificada | Estatus ID es la fuente consultada; suspensión/reactivación con bloqueo transaccional y comprobación del estado; acciones según rol. Se probó suspensión y reactivación desde navegador, con regreso a 4 clientes activos. |
+| Edición de cliente | Campos existentes de `clientes` y `cliente_contactos` | Verificada parcialmente | Formulario abre como diálogo accesible y se cierra con Escape; no se guardó una edición en esta pasada. Conflicto de concurrencia y actualización real quedan pendientes. |
+| Paginación común | Parámetros `page`, `page_size`, `sort`, `direction`; resultado `items/page/page_size/total/total_pages` | Verificada parcialmente | `backend/pagination.py` normaliza tamaños a 10/25/50 y valida listas permitidas; pytest comprueba orden, filtros y límite 50 en clientes. Estatus y vehículos tienen listado paginado. Talleres aún no están integrados al helper común. |
+| Gestión de vehículos | `vehiculos`, FK a taller/cliente/estatus/marca/modelo; placa y serie vigentes únicas; baja lógica | Verificada parcialmente | Migración crea la tabla. API crea/consulta/edita y elimina/restaura sin borrar filas; catálogo pendiente se enlaza en la transacción. En navegador se comprobó autocompletado de marca/modelo, placa normalizada y disponible, alta HTTP 201, “Registrar otro”, listado y baja lógica. No se verificaron en navegador edición, filtro completo, restauración ni advertencias bajo cada campo. |
+| Integración del catálogo de marcas/modelos | `marcas`, `modelos`, `estatus_id` | Verificada parcialmente | Adaptado el uso de `estatus.valor` y la forma de las opciones para el autocomplete. Conteos activos confirmados. Bloqueo de desactivación por vehículos asociados y enlace retroactivo de vehículos existentes requieren verificación funcional adicional. |
+| API y facades de estatus/vehículos | `/api/estatus*`, `/api/vehiculos*`, `/api/clientes/{id}/vehiculos` | Verificada parcialmente | Rutas protegidas con sesión/roles; repositories aíslan acceso SQL. Pruebas automatizadas completas y alta/baja de vehículo en navegador. No se recorrieron todas las rutas CRUD con usuario real. |
+
+### Código nuevo o adaptado
+
+| Archivo/capa | Funciones principales | Propósito |
+|---|---|---|
+| `backend/estatus_facade.py` | `validate(data)` | Normaliza y valida valor y descripción antes de persistir. |
+| `backend/estatus_repository.py` | `list`, `options`, `get`, `save`, `activate` | Consultas y cambios parametrizados; limita cambios de sistema y desactivación cuando hay referencias. |
+| `backend/vehiculo_facade.py` | `validate(data)`, `create(user,data)` | Valida, normaliza y coordina el registro; devuelve errores de campo y advertencias. |
+| `backend/vehiculo_repository.py` | `_status`, `_scope`, `list`, `get`, `verify_plate`, `create`, `update`, `change_deleted`, `by_client` | Aísla por taller, consulta paginada, comprueba unicidad y realiza altas/cambios/bajas lógicas transaccionales. |
+| `backend/pagination.py` | `parse_page`, `page_result` | Normaliza página/tamaño y limita orden a columnas permitidas; arma metadatos de paginación. |
+| `frontend/estatus/estatusFacade.js`, `estatusRepository.js` | métodos de consulta, opciones, alta, edición y estado | La vista delega en Facade; Repository envía las peticiones HTTP autenticadas. |
+| `frontend/vehiculos/vehiculoFacade.js`, `vehiculoRepository.js` | métodos de lista, ficha, placa, alta, edición y baja/restauración | Orquestan validación y API desde la pantalla de vehículos. |
+| `frontend/vehiculoAutocomplete.js` | búsqueda/selección de marca y modelo | Convierte las opciones API en sugerencias y permite proponer valores que el backend crea como pendientes. |
+| `backend/migrations/012_estatus_clientes_vehiculos.sql` | migración repetible | Actualiza estatus, agrega estado a clientes y crea tabla/índices de vehículos sin eliminar filas existentes. |
+
+### Rutas añadidas
+
+- `GET /api/estatus` lista con búsqueda/orden/página; `GET /api/estatus/opciones` lista opciones activas.
+- `GET/PUT /api/estatus/{id}`, `POST /api/estatus`, `PATCH /api/estatus/{id}/desactivar` y `/reactivar`; no existe borrado físico.
+- `GET/POST /api/vehiculos`, `GET/PUT /api/vehiculos/{id}`, `GET /api/vehiculos/verificar-placa`, `PATCH /api/vehiculos/{id}/eliminar` y `/restaurar`, `GET /api/clientes/{id}/vehiculos`.
+
+### Verificación final
+
+- `.venv/bin/python -m py_compile` para módulos tocados: sin errores.
+- `.venv/bin/python -m pytest -q backend/tests`: **137 passed** (suite completa, con acceso a MySQL local).
+- Navegador con sesión: estatus, suspender/reactivar, abrir/cerrar edición por Escape, autocompletar marca/modelo, placa normalizada/disponible, registrar vehículo, conservar cliente y enfocar placa al registrar otro, y eliminar vehículo: comprobados. Se usó una fila de prueba y se dejó eliminada lógicamente; no se borró físicamente.
+- Servidor estático limitado a `index.html` y `frontend/`: `/` y `/frontend/` dieron 200; `/.env`, `/backend/` y `/.git/` dieron 404. Servidor estático y API temporal detenidos; puertos 43257 y 5001 comprobados libres. `frontend/config.js` quedó restaurado a su destino local habitual (puerto 5000).
+- La API temporal se configuró para aceptar solo el origen efímero del servidor; CORS no se abrió a `*`. Para otro origen local persistente, la lista de orígenes del despliegue debe configurarse sin ampliar permisos indiscriminadamente.
+
+**Pendiente:** edición de cliente con persistencia/concurrencia probada, edición de vehículo, consulta de ficha y acciones completas, buscador por todos los campos, restauración/filtros de eliminados, avisos de validación junto a los campos, bloqueo por uso del catálogo, enlace retroactivo, paginación común de talleres y revisión integral de accesibilidad/roles en todas las pantallas. No se declaran terminadas esas capacidades hasta probar su ciclo funcional.

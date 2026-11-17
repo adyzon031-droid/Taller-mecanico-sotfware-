@@ -5,77 +5,1444 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#102a43" />
   <title>Torque · Taller mecánico</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com">
+</script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <script src="./frontend/config.js"></script>
+  <script src="https://unpkg.com/vue@3.5.45/dist/vue.global.prod.js" integrity="sha384-K2FjvpG1y48yCE+7CBPhnKc16ShPmT3dlNwvoA3dhjV18+L5ugI0P8PWPvdjm/Fa" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/pinia@3.0.4/dist/pinia.iife.prod.js" integrity="sha384-5msb2bV0kRT0p7iHtNGCgn/CMslvBwFa2g+aafLO1Gau3A5HkCXHQKPRLMO6sT0I" crossorigin="anonymous"></script>
+  <script src="./frontend/config.js">
+</script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
     :root{--navy:#102a43;--blue:#2457e6;--ink:#172b4d;--muted:#8190a5;--line:#e8edf4;--canvas:#f5f7fb}
     *{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:14px}button,input{font:inherit}button{cursor:pointer}.shell{min-height:100vh;display:flex}.sidebar{width:250px;background:#102a43;color:#d6e3f2;padding:25px 17px;display:flex;flex-direction:column;flex-shrink:0}.brand{display:flex;align-items:center;gap:11px;padding:0 10px 34px;color:#fff;font:800 21px Manrope,sans-serif;letter-spacing:-.7px}.brand-mark{width:36px;height:36px;border-radius:11px;background:#3c72ff;display:grid;place-items:center;box-shadow:0 5px 14px #07192d}.brand small{display:block;font:500 10px 'DM Sans';color:#98acc2;letter-spacing:1.5px;margin-top:1px}.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#8299b2;padding:0 12px 9px;margin-top:3px}.nav-item{height:42px;padding:0 12px;display:flex;align-items:center;gap:12px;border-radius:9px;color:#bdcce0;font-weight:500;margin-bottom:4px;text-decoration:none;transition:.15s}.nav-item.active{background:#264362;color:white;box-shadow:inset 3px 0 #5790ff}.nav-item:hover{background:#1c3856;color:white}.nav-item svg{width:17px;height:17px;opacity:.9}.nav-spacer{height:19px}.side-bottom{margin-top:auto}.user-card{border-top:1px solid #29435f;margin:15px 4px 0;padding:18px 6px 0;display:flex;align-items:center;gap:10px}.avatar{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:#dce8ff;color:#3156a4;font-size:12px;font-weight:700}.user-meta strong{font-size:12px;color:white;display:block}.user-meta small{color:#9aafc5;font-size:11px}.main{flex:1;min-width:0}.topbar{height:73px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 38px}.crumb{font-size:13px;color:var(--muted)}.crumb b{color:#243c5a;font-weight:600}.top-actions{display:flex;align-items:center;gap:20px}.icon-btn{border:0;background:transparent;color:#65758a;position:relative;padding:5px}.dot{position:absolute;width:7px;height:7px;background:#ef6b64;border:1px solid white;border-radius:50%;right:3px;top:4px}.top-user{display:flex;align-items:center;gap:9px}.top-user .avatar{width:32px;height:32px;background:#e9effa}.top-user strong{font-size:12px}.content{max-width:1450px;margin:0 auto;padding:31px 38px 45px}.heading{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}.eyebrow{color:#8290a2;font-size:11px;letter-spacing:.5px;margin-bottom:7px}.heading h1{font:700 25px Manrope,sans-serif;letter-spacing:-.8px;margin:0;color:#182e4b}.heading p{margin:6px 0 0;color:#8592a3;font-size:13px}.primary-btn{border:0;border-radius:8px;color:#fff;background:var(--blue);height:39px;padding:0 15px;font-weight:600;font-size:12px;box-shadow:0 4px 10px #2457e625;display:flex;align-items:center;gap:8px}.primary-btn:hover{background:#1748d0}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:20px}.metric{background:#fff;border:1px solid var(--line);border-radius:11px;padding:17px 18px 15px;min-height:112px}.metric-top{display:flex;justify-content:space-between;align-items:center;color:#8492a4;font-size:11px;font-weight:500}.metric-icon{width:30px;height:30px;border-radius:8px;display:grid;place-items:center}.metric strong{display:block;font:700 25px Manrope;color:#183354;margin-top:10px;line-height:1}.metric-foot{font-size:10px;color:#93a0af;margin-top:7px}.up{color:#28a47c;font-weight:600}.panels{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(250px,.9fr);gap:17px}.panel{background:white;border:1px solid var(--line);border-radius:11px;overflow:hidden}.panel-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 15px}.panel-head h2{font:700 14px Manrope;margin:0;color:#243d5b}.panel-head p{font-size:11px;color:#8e9bad;margin:4px 0 0}.text-link{border:0;background:transparent;color:#3567df;font-size:11px;font-weight:600}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse}th{text-align:left;color:#8c99a9;text-transform:uppercase;letter-spacing:.7px;font-size:9px;font-weight:600;padding:10px 13px;border-top:1px solid #f0f2f6;border-bottom:1px solid #f0f2f6;white-space:nowrap}td{padding:13px;border-bottom:1px solid #f1f3f7;color:#40536c;font-size:11px;white-space:nowrap}td:first-child,th:first-child{padding-left:20px}tr:last-child td{border-bottom:0}.order-id{font-weight:700;color:#2d5cc4}.vehicle{color:#253f5f;font-weight:600}.subline{display:block;font-weight:400;color:#98a4b2;font-size:10px;margin-top:2px}.badge-status{padding:5px 8px;border-radius:20px;font-size:9px;font-weight:600}.in-progress{background:#edf3ff;color:#3d68ce}.waiting{background:#fff5df;color:#ba8429}.ready{background:#e7f7ef;color:#27875d}.priority{background:#fff0ed;color:#ce6b57}.jobs{padding:0 19px 13px}.job{display:flex;align-items:center;gap:11px;padding:12px 0;border-top:1px solid #f0f2f6}.job:first-child{border-top:0}.job-icon{height:34px;width:34px;flex:none;border-radius:9px;display:grid;place-items:center;background:#edf3ff;color:#4270d9}.job-info{min-width:0;flex:1}.job-info strong{display:block;color:#30445f;font-size:11px;font-weight:600}.job-info small{color:#94a0af;font-size:10px;display:block;margin-top:3px}.job-time{font-size:10px;color:#9aa5b3;white-space:nowrap}.notice{margin:0 19px 18px;padding:12px;border-radius:8px;background:#f1f6ff;color:#607998;font-size:10px;line-height:1.5}.notice strong{color:#3f5b7d}.bottom-grid{margin-top:17px;display:grid;grid-template-columns:1fr 1fr;gap:17px}.mini-panel{min-height:114px}.quick-stats{display:flex;gap:22px;padding:0 20px 18px}.quick-stat span{display:block;color:#8e9bad;font-size:10px}.quick-stat strong{display:block;color:#294666;font:700 16px Manrope;margin-top:6px}.progress{height:5px;background:#edf1f6;border-radius:8px;margin-top:7px;width:130px}.progress i{display:block;height:100%;width:72%;background:#5b83e7;border-radius:8px}.login-wrap{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;background:#fff}.login-visual{background:radial-gradient(ellipse at 80% 17%,#1c4b78 0,#142f4e 34%,#10243b 76%);color:white;position:relative;padding:44px 8%;overflow:hidden}.login-visual:after{content:'';position:absolute;width:470px;height:470px;border:1px solid #ffffff15;border-radius:50%;right:-110px;bottom:-195px;box-shadow:0 0 0 55px #ffffff08,0 0 0 110px #ffffff05}.visual-brand{position:relative;z-index:2}.visual-copy{position:relative;z-index:1;margin-top:23vh;max-width:480px}.visual-copy .tag{color:#97b9f7;text-transform:uppercase;letter-spacing:2px;font-size:10px;font-weight:700}.visual-copy h1{font:700 37px/1.18 Manrope;letter-spacing:-1.5px;margin:17px 0 14px}.visual-copy p{max-width:400px;color:#b4c6d7;line-height:1.7;font-size:14px}.visual-feature{display:flex;align-items:center;gap:12px;margin-top:35px;color:#c9d7e6;font-size:12px}.check-icon{height:27px;width:27px;border:1px solid #ffffff35;color:#8eb4ff;border-radius:8px;display:grid;place-items:center}.login-form-side{display:grid;place-items:center;padding:35px}.login-form{width:min(390px,100%)}.form-top{display:none}.login-form h2{font:700 26px Manrope;color:#183452;letter-spacing:-.7px;margin:0 0 8px}.login-form>p{font-size:13px;color:#8997a8;margin:0 0 30px}.field-label{display:block;color:#354b66;font-size:11px;font-weight:600;margin:18px 0 7px}.field{width:100%;height:43px;border:1px solid #dfe5ee;border-radius:7px;padding:0 12px;outline:0;color:#243c59;font-size:12px;background:#fff}.field:focus{border-color:#6691ef;box-shadow:0 0 0 3px #4077ec13}.field::placeholder{color:#b1bbc8}.password-wrap{position:relative}.password-wrap .field{padding-right:40px}.eye{position:absolute;right:12px;top:13px;border:0;background:transparent;color:#8c9aac;padding:0}.form-row{display:flex;justify-content:space-between;align-items:center;margin:12px 0 22px;font-size:11px;color:#78889a}.form-row label{display:flex;align-items:center;gap:7px}.form-row input{accent-color:#315fe0}.reset-link{border:0;background:none;padding:0;color:#315fdb;font-size:11px;font-weight:600}.submit-btn{width:100%;height:44px;border:0;border-radius:7px;background:#285be2;color:#fff;font-weight:600;font-size:12px;box-shadow:0 6px 13px #285be22b}.submit-btn:hover{background:#1948c8}.secure-note{text-align:center;margin-top:19px;font-size:10px;color:#93a0af}.form-error{color:#c35050;background:#fff1f0;padding:9px;border-radius:6px;font-size:11px;margin:12px 0}.success-box{background:#effaf4;border:1px solid #d6f0e1;color:#337754;padding:12px;border-radius:7px;font-size:11px;line-height:1.5;margin:15px 0}.back-link{border:0;background:none;color:#54729a;padding:0;margin:15px 0 0;font-size:11px}
     @media(max-width:1050px){.sidebar{width:210px}.content{padding:25px 22px}.topbar{padding:0 22px}.metrics{grid-template-columns:repeat(2,1fr)}.panels{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr 1fr}}
     @media(max-width:720px){.sidebar{width:62px;padding:20px 9px}.brand{padding:0 4px 28px}.brand-copy,.nav-label,.nav-item span,.side-bottom .nav-item span,.user-meta{display:none}.nav-item{justify-content:center;padding:0}.user-card{justify-content:center;padding-left:0;padding-right:0}.main{min-width:0}.topbar{height:60px;padding:0 15px}.content{padding:23px 14px}.heading{align-items:flex-start;gap:15px}.heading h1{font-size:21px}.heading .primary-btn{white-space:nowrap;padding:0 10px}.metrics{gap:9px}.metric{padding:14px;min-height:102px}.panels,.bottom-grid{grid-template-columns:1fr}.top-user strong{display:none}.login-wrap{grid-template-columns:1fr}.login-visual{display:none}.login-form-side{min-height:100vh;padding:26px}.form-top{display:block;margin-bottom:58px}.login-form h2{font-size:24px}}
-  </style>
+  .colony-picker{position:relative}.colony-options{position:absolute;z-index:20;top:calc(100% + 4px);left:0;right:0;max-height:260px;overflow:auto;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 12px 28px #0f172a22;padding:6px}.colony-option,.colony-manual{display:block;width:100%;text-align:left;border:0;background:transparent;border-radius:8px;padding:9px 10px;color:#1e293b}.colony-option:hover,.colony-option:focus,.colony-manual:hover,.colony-manual:focus{background:#eff6ff;outline:2px solid #93c5fd}.colony-manual{border-top:1px solid #e2e8f0;color:#1d4ed8}.colony-empty{padding:8px;color:#64748b}.not-registered{color:#94a3b8}
+  /* La lista de colonias debe superponerse a la tarjeta del formulario. */
+  .panel:has(.direccion-fields),.cliente-form:has(.colony-picker){overflow:visible}.direccion-fields{position:relative;z-index:1;grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.direccion-fields>.form-section,.direccion-fields>.wide{grid-column:1/-1}.colony-picker{position:relative;z-index:1}.colony-picker:focus-within{z-index:100}.colony-options{z-index:1000}@media(max-width:720px){.direccion-fields{grid-template-columns:1fr}}
+    .icon-action{min-width:36px;min-height:36px;display:inline-grid;place-items:center;border-radius:9px}.icon-action svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.sidebar-nav{display:flex;flex-direction:column;gap:3px}.nav-group{margin:1px 0}.nav-group-toggle{width:100%;height:42px;padding:0 12px;display:flex;align-items:center;gap:12px;border:0;border-radius:9px;color:#bdcce0;background:transparent;font-weight:500;text-align:left}.nav-group-toggle:hover,.nav-group-toggle.active{background:#1c3856;color:#fff}.nav-group-toggle>svg:first-child,.nav-item svg{width:17px;height:17px;flex:none}.nav-chevron{width:14px;height:14px;margin-left:auto;transition:transform .18s}.nav-group-toggle[aria-expanded="true"] .nav-chevron{transform:rotate(180deg)}.nav-subitems{display:grid;gap:2px;padding:2px 0 5px 28px}.nav-subitem{min-height:36px;padding:8px 10px;border-radius:8px;color:#aebfd3;text-decoration:none;font-size:12px;line-height:20px}.nav-subitem:hover,.nav-subitem.active{background:#264362;color:#fff}.nav-item:focus-visible,.nav-group-toggle:focus-visible,.nav-subitem:focus-visible{outline:2px solid #8ab4ff;outline-offset:2px}.nav-group-toggle.active{box-shadow:inset 3px 0 #5790ff}
+
+.catalog-pending{background:#fff9e9}.catalog-approve-btn{min-height:36px;padding:0 10px;border:1px solid #d9e6ff;border-radius:8px;background:#f5f8ff;color:#2457e6;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600}.catalog-approve-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}.autocomplete-menu{position:relative;z-index:5;max-height:260px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:9px;box-shadow:0 12px 30px #14243b20;margin-top:4px}.autocomplete-option{display:flex;width:100%;min-height:44px;align-items:center;justify-content:space-between;text-align:left;padding:9px 12px;border:0;border-bottom:1px solid #f0f2f6;background:#fff;color:var(--ink)}.autocomplete-option:hover,.autocomplete-option[aria-selected="true"]{background:#edf3ff}.autocomplete-option small{color:#a87916}.autocomplete-message{padding:8px 12px;color:#8190a5;margin:0}.autocomplete-option mark{background:#ffedb3;color:inherit}.vehiculo-autocomplete{display:grid;gap:12px;position:relative}
+.client-edit-overlay{position:fixed;inset:0;z-index:1000;background:#10182888;display:grid;place-items:center;padding:16px;overflow:auto}.client-edit-dialog{width:min(1040px,96vw);max-height:94vh;overflow:auto;background:#f7f9fc;border-radius:18px;padding:18px;box-shadow:0 24px 80px #08142655}.vehicle-warnings{color:#8a5a00;background:#fff4cf;border-radius:8px;padding:12px 12px 12px 32px}.plate-preview{display:block;margin-top:6px;color:#244e8c;font-weight:700}.client-edit-dialog .panel{margin-bottom:12px}@media(prefers-reduced-motion:reduce){.client-edit-overlay{scroll-behavior:auto}}
+/* LOGIN-001: composición visual de acceso, sin dependencias ni activos externos. */
+.login-wrap{position:relative;isolation:isolate;min-height:100svh;display:grid;grid-template-columns:minmax(0,1.16fr) minmax(460px,.84fr);overflow:hidden;background:#031d42}.login-visual{display:flex;flex-direction:column;min-height:100%;padding:54px clamp(46px,7vw,116px);background:linear-gradient(90deg,#011a3ce8 0%,#032b63bd 48%,#063f8c61 100%),url("./frontend/assets/login-taller-azul.png") center/cover no-repeat;overflow:hidden}.login-visual:before{content:"";position:absolute;inset:-35% 12% auto auto;width:72vw;height:72vw;border:1px solid #70b9ff22;border-radius:50%;box-shadow:0 0 0 90px #1674d415,0 0 0 180px #1674d40b;pointer-events:none}.login-visual:after{width:360px;height:360px;right:-165px;bottom:-150px;border-color:#5da8ff2e;box-shadow:0 0 0 70px #5da8ff12,0 0 0 140px #5da8ff08}.visual-brand{gap:18px;padding:0;font-size:clamp(30px,3vw,49px);letter-spacing:-1.8px}.login-logo-mark{width:100px;height:100px;border-radius:26px;background:linear-gradient(145deg,#278cff,#0739dc);box-shadow:0 18px 35px #0015308c}.login-logo-mark svg{width:61px;height:61px;fill:none;stroke:#fff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}.visual-brand small{margin-top:3px;font-size:13px;letter-spacing:4px;color:#aacbff}.visual-copy{margin-top:clamp(75px,15vh,170px);max-width:600px}.visual-copy .tag{display:inline-block;border-top:3px solid #2497ff;padding-top:20px;color:#b9d6ff;font-size:13px;letter-spacing:4px}.visual-copy h1{max-width:700px;margin:32px 0 23px;font:800 clamp(39px,4.5vw,68px)/1.02 Manrope,sans-serif;letter-spacing:-2.8px}.visual-copy h1 em{font-style:normal;color:#249cff}.visual-copy p{max-width:520px;color:#c0d4f2;font-size:clamp(16px,1.6vw,23px);line-height:1.35}.visual-feature{gap:18px;margin-top:18px;color:#d4e5ff;font-size:17px}.check-icon{width:48px;height:48px;border:0;border-radius:50%;background:#1458be;color:#fff;font-size:23px;font-weight:700}.login-form-side{position:relative;z-index:2;padding:40px;display:grid;place-items:center;background:linear-gradient(135deg,#eaf3ff 0%,#fff 20%,#f4f8ff 100%)}.login-form-side:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 55%,#dcecff70 55% 61%,transparent 61%);pointer-events:none}.login-form{position:relative;width:min(100%,610px);padding:clamp(42px,5vw,70px);border:1px solid #ffffffc9;border-radius:36px;background:#ffffffed;box-shadow:0 28px 80px #00153b26;text-align:center}.login-form-icon{width:116px;height:116px;margin:0 auto 25px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#edf5ff,#c7ddff);color:#0864e9}.login-form-icon img{width:88px;height:82px;object-fit:contain}.login-form h2{margin:0 0 10px;font-size:clamp(27px,2.5vw,40px);letter-spacing:-1.5px}.login-form>p{margin-bottom:35px;color:#657b9e;font-size:18px}.login-form .field-label{text-align:left;display:flex;align-items:center;gap:12px;margin:22px 0 10px;color:#0d2e5b;font-size:16px}.login-form .field-label svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.login-form .field{height:62px;border-radius:17px;border-color:#cad8ed;padding:0 20px;font-size:16px;box-shadow:0 7px 18px #0a3b8610}.login-form .field:focus{border-color:#1674ee;box-shadow:0 0 0 4px #1976ed22}.login-form .password-wrap .field{padding-right:53px}.login-form .eye{right:17px;top:18px;color:#7086a8;font-size:19px}.login-form .form-row{margin:21px 0 28px;font-size:15px;color:#183c6c}.login-form .form-row input{width:25px;height:25px}.login-form .reset-link{font-size:15px;color:#075ee6}.login-form .submit-btn{height:67px;border-radius:17px;background:linear-gradient(100deg,#0f83f5,#0636d9);font-size:20px;box-shadow:0 14px 27px #0b5ee54d}.login-form .submit-btn:hover{background:linear-gradient(100deg,#0873df,#052cb8)}.login-form .secure-note{display:flex;align-items:center;gap:11px;margin-top:29px;color:#607b9e;font-size:14px;white-space:nowrap}.login-form .secure-note span{height:1px;flex:1;background:#d3def0}.login-form .form-error{text-align:left}.login-form .back-link{font-size:14px}.login-form .success-box{text-align:left}@media(max-width:1080px){.login-wrap{grid-template-columns:1fr minmax(400px,.9fr)}.login-visual{padding:43px}.login-logo-mark{width:76px;height:76px;border-radius:21px}.login-logo-mark svg{width:48px;height:48px}.visual-copy{margin-top:100px}.visual-copy h1{font-size:46px}.login-form{padding:42px}}@media(max-width:820px){.login-wrap{display:block;background:#f4f8ff}.login-visual{display:none}.login-form-side{min-height:100svh;padding:22px}.login-form{padding:38px 25px;border-radius:27px}.form-top.brand{display:flex;color:#0b2e5d;font-size:27px;text-align:left}.form-top .brand-mark{display:grid;width:47px;height:47px;border-radius:14px;background:#0e61e7}.form-top .brand-mark svg{display:none}.form-top small{color:#6a82a5!important;font-size:8px;letter-spacing:1.8px}.login-form-icon{width:86px;height:86px;margin-top:10px}.login-form-icon img{width:66px;height:62px}.login-form .secure-note{font-size:12px}}@media(prefers-reduced-motion:reduce){.login-form,.login-visual{transition:none}}
+.login-logo-image{width:108px;height:100px;object-fit:contain;filter:drop-shadow(0 15px 24px #0017358c)}.brand-logo-image{width:42px;height:42px;flex:none;object-fit:contain;filter:drop-shadow(0 4px 9px #00173566)}.form-top .brand-logo-image{width:51px;height:51px;filter:none}@media(max-width:1080px){.login-logo-image{width:80px;height:76px}}
+</style>
 </head>
 <body>
 <div id="app">
-  <section v-if="!authenticated" class="login-wrap">
+  <div v-if="!cargada" aria-busy="true"></div>
+  <section v-else-if="!authenticated" class="login-wrap">
     <aside class="login-visual">
-      <div class="brand visual-brand"><div class="brand-mark">⌁</div><div>TORQUE<small>TALLER AUTOMOTRIZ</small></div></div>
-      <div class="visual-copy"><span class="tag">CONTROL TOTAL · SERVICIO CONFIABLE</span><h1>Tu taller, en orden.<br>Tu trabajo, en marcha.</h1><p>Gestiona cada orden, cada cliente y cada vehículo desde un solo lugar.</p><div class="visual-feature"><span class="check-icon">✓</span>Una plataforma pensada para el ritmo del taller.</div></div>
+      <div class="brand visual-brand">
+<img class="login-logo-image" src="./frontend/assets/login-herramientas.png" alt="Torque">
+<div>TORQUE<small>TALLER AUTOMOTRIZ</small>
+</div>
+</div>
+      <div class="visual-copy">
+<span class="tag">CONTROL TOTAL · SERVICIO CONFIABLE</span>
+<h1>Tu taller, en orden.<br>Tu trabajo, <em>en marcha.</em></h1>
+<p>Gestiona cada orden, cada cliente y cada vehículo desde un solo lugar.</p>
+<div class="visual-feature">
+<span class="check-icon">⌁</span>Organiza tus servicios</div>
+<div class="visual-feature"><span class="check-icon">▣</span>Agenda tus citas</div>
+<div class="visual-feature"><span class="check-icon">▥</span>Haz crecer tu taller</div>
+</div>
     </aside>
-    <main class="login-form-side"><form class="login-form" @submit.prevent="login">
-      <div class="form-top brand"><div class="brand-mark">⌁</div><div>TORQUE<small style="color:#8997a8">TALLER AUTOMOTRIZ</small></div></div>
-      <template v-if="!recovering"><h2>Qué bueno verte</h2><p>Ingresa a tu espacio de trabajo.</p>
-        <label class="field-label" for="email">Correo electrónico</label><input id="email" class="field" type="email" v-model="email" placeholder="nombre@taller.com" autocomplete="username" required>
-        <label class="field-label" for="password">Contraseña</label><div class="password-wrap"><input id="password" class="field" :type="showPassword?'text':'password'" v-model="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required><button class="eye" type="button" @click="showPassword=!showPassword" aria-label="Mostrar u ocultar contraseña">◉</button></div>
-        <div class="form-row"><label><input type="checkbox" v-model="remember"> Recordarme</label><button class="reset-link" type="button" @click="recovering=true;error=''">¿Olvidaste tu contraseña?</button></div>
-        <div v-if="error" class="form-error">{{error}}</div><button class="submit-btn" type="submit">Iniciar sesión <span style="float:right">→</span></button>
-        <div class="secure-note">▣ &nbsp;Conexión segura · Acceso protegido</div>
+    <main class="login-form-side">
+<form class="login-form" @submit.prevent="login">
+      <div class="form-top brand">
+<img class="brand-logo-image" src="./frontend/assets/login-herramientas.png" alt="Torque">
+<div>TORQUE<small style="color:#8997a8">TALLER AUTOMOTRIZ</small>
+</div>
+</div>
+      <template v-if="!recovering">
+<div class="login-form-icon" aria-hidden="true"><img src="./frontend/assets/login-herramientas.png" alt=""></div>
+<h2>Qué bueno verte</h2>
+<p>Ingresa a tu espacio de trabajo.</p>
+        <label class="field-label" for="email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Correo electrónico</label>
+<input id="email" class="field" type="email" v-model="email" placeholder="nombre@taller.com" autocomplete="username" required>
+        <label class="field-label" for="password"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v2"/></svg>Contraseña</label>
+<div class="password-wrap">
+<input id="password" class="field" :type="showPassword?'text':'password'" v-model="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" required>
+<button class="eye" type="button" @click="showPassword=!showPassword" aria-label="Mostrar u ocultar contraseña">◉</button>
+</div>
+        <div class="form-row">
+<label>
+<input type="checkbox" v-model="remember"> Recordarme</label>
+<button class="reset-link" type="button" @click="recovering=true;error=''">¿Olvidaste tu contraseña?</button>
+</div>
+        <div v-if="error" class="form-error">{{error}}</div>
+<button class="submit-btn" type="submit">Iniciar sesión <span style="float:right">→</span>
+</button>
+        <div class="secure-note"><span></span>▣ &nbsp;Conexión segura · Acceso protegido<span></span></div>
       </template>
-      <template v-else><h2>Recupera tu acceso</h2><p>Te enviaremos instrucciones para restablecer tu contraseña.</p>
+      <template v-else>
+<h2>Recupera tu acceso</h2>
+<p>Te enviaremos instrucciones para restablecer tu contraseña.</p>
         <div v-if="sent" class="success-box">Si el correo está registrado, recibirás un enlace para restablecer tu contraseña. Revisa también tu carpeta de correo no deseado.</div>
-        <label class="field-label" for="recovery-email">Correo electrónico</label><input id="recovery-email" class="field" type="email" v-model="email" placeholder="nombre@taller.com" required>
-        <div v-if="error" class="form-error">{{error}}</div><button class="submit-btn" type="button" @click="sendRecovery">Enviar instrucciones</button><button class="back-link" type="button" @click="recovering=false;sent=false">← Volver al inicio de sesión</button>
+        <label class="field-label" for="recovery-email">Correo electrónico</label>
+<input id="recovery-email" class="field" type="email" v-model="email" placeholder="nombre@taller.com" required>
+        <div v-if="error" class="form-error">{{error}}</div>
+<button class="submit-btn" type="button" @click="sendRecovery">Enviar instrucciones</button>
+<button class="back-link" type="button" @click="recovering=false;sent=false">← Volver al inicio de sesión</button>
         <div class="secure-note">▣ &nbsp;El enlace de recuperación es de un solo uso.</div>
       </template>
-    </form></main>
+    </form>
+</main>
   </section>
-  <div v-else class="shell"><aside class="sidebar"><div class="brand"><div class="brand-mark">⌁</div><div class="brand-copy">TORQUE<small>TALLER AUTOMOTRIZ</small></div></div><div class="nav-label">Principal</div><a v-for="item in navigation" :key="item.id" class="nav-item" :class="{active:activeSection===item.id}" :href="'#'+item.id" :aria-current="activeSection===item.id?'page':null"><span>{{item.label}}</span></a><div class="side-bottom"><div class="user-card"><div class="avatar">{{initiales}}</div><div class="user-meta"><strong>{{currentUser?.nombre}}</strong><small>{{currentUser?.rol}}</small></div></div></div></aside>
-<main class="main"><header class="topbar"><div class="crumb">Taller &nbsp;›&nbsp; <b>{{sectionLabel}}</b></div><div class="top-user"><div class="avatar">{{initiales}}</div><strong>{{currentUser?.nombre}}</strong><button class="text-link" @click="logout">Salir</button></div></header><section class="content">
+<div v-else class="shell">
+<aside class="sidebar">
+<div class="brand">
+<img class="brand-logo-image" src="./frontend/assets/login-herramientas.png" alt="Torque">
+<div class="brand-copy">TORQUE<small>TALLER AUTOMOTRIZ</small>
+</div>
+</div>
+<nav class="sidebar-nav" aria-label="Navegación principal">
+<template v-for="item in standaloneNavigation" :key="item.id">
+<a v-if="item.id!=='gestion-vehiculos'" class="nav-item" :class="{active:activeSection===item.id}" :href="'#'+item.id" :aria-current="activeSection===item.id?'page':null">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+<path v-if="item.id==='resumen'" d="M3 12h8V4H3v8Zm10 8h8V11h-8v9ZM3 20h8v-6H3v6Zm10-11h8V4h-8v5Z"/>
+<path v-else-if="item.id==='ordenes'" d="M7 3h10v18H7zM9 7h6M9 11h6M9 15h4"/>
+<path v-else d="M4 19V5m0 14h17M8 16v-4m5 4V8m5 8V5"/>
+</svg>
+<span>{{item.label}}</span>
+</a>
+</template>
+<section v-for="group in visibleNavigationGroups" :key="group.id" class="nav-group">
+<button class="nav-group-toggle" type="button" :aria-expanded="openNavGroup===group.id?'true':'false'" :aria-controls="'nav-group-'+group.id" :class="{active:group.items.some(item=>item.id===activeSection)}" @click="toggleNavGroup(group.id)">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+<path v-if="group.id==='clientes'" d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9v-1a7 7 0 0 1 14 0v1m2-15a4 4 0 0 1 0 7m1 3a6 6 0 0 1 3 5"/>
+<path v-else-if="group.id==='empleados'" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 9v-1a8 8 0 0 1 16 0v1m-4-10 2 2 4-4"/>
+<path v-else-if="group.id==='talleres'" d="M4 21V8l8-5 8 5v13M8 21v-7h8v7M9 10h.01M15 10h.01"/>
+<path v-else d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.36-6.36-2.12 2.12M7.76 16.24l-2.12 2.12m12.72 0-2.12-2.12M7.76 7.76 5.64 5.64M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/>
+</svg>
+<span>{{group.label}}</span>
+<svg class="nav-chevron" viewBox="0 0 24 24" aria-hidden="true">
+<path d="m7 10 5 5 5-5"/>
+</svg>
+</button>
+<div v-show="openNavGroup===group.id" :id="'nav-group-'+group.id" class="nav-subitems">
+<a v-for="item in group.items" :key="item.id" class="nav-subitem" :href="'#'+item.id" :aria-current="activeSection===item.id?'page':null" :class="{active:activeSection===item.id}">{{item.label}}</a>
+</div>
+</section>
+<a v-if="rolPuedeAlta" class="nav-item" :class="{active:activeSection==='gestion-vehiculos'}" href="#gestion-vehiculos" :aria-current="activeSection==='gestion-vehiculos'?'page':null">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="m3 14 2-6h14l2 6v5h-3v-2H6v2H3v-5Zm3-6 2-4h8l2 4M6 13h.01M18 13h.01"/>
+</svg>
+<span>Gestión de vehículos</span>
+</a>
+</nav>
+<div class="side-bottom">
+<div class="user-card">
+<div class="avatar">{{initiales}}</div>
+<div class="user-meta">
+<strong>{{nombreSesion}}</strong>
+<small>{{rol}}</small>
+</div>
+</div>
+</div>
+</aside>
+<main class="main">
+<header class="topbar">
+<div class="crumb">Taller <template v-if="activeNavigationGroup">&nbsp;›&nbsp; {{activeNavigationGroup.label}}</template> &nbsp;›&nbsp; <b>{{sectionLabel}}</b>
+</div>
+<div class="top-user">
+<div class="avatar">{{initiales}}</div>
+<strong>{{nombreSesion}}</strong>
+<button class="text-link" @click="logout">Salir</button>
+</div>
+</header>
+<section class="content">
 <div v-if="toast" class="alert" :class="toast.type==='success'?'alert-success':'alert-danger'" role="status" aria-live="polite">{{toast.message}}</div>
-<template v-if="activeSection==='clientes'"><div class="heading"><div><div class="eyebrow">TALLER · CLIENTES</div><h1>Clientes</h1><p>Administración de clientes de este taller.</p></div><button v-if="rolPuedeAlta" class="primary-btn" @click="nuevoCliente">＋ Nuevo cliente</button></div>
-<section class="panel mb-3"><div class="panel-head"><div><h2>{{editingClientId?'Editar cliente':'Registro de clientes'}}</h2><p>{{editingClientId?'La foto actual se conserva si no eliges otra.':'Registra los datos del cliente.'}}</p></div></div><form v-if="rolPuedeAlta" ref="clienteForm" class="cliente-form" novalidate @submit.prevent="guardarCliente">
+<template v-if="activeSection==='clientes'">
+<div :class="editingClientId?'client-edit-overlay':''">
+<section ref="clientEditDialog" :class="editingClientId?'client-edit-dialog':''" :role="editingClientId?'dialog':null" :aria-modal="editingClientId?'true':null" :aria-labelledby="editingClientId?'client-edit-title':null" tabindex="-1" @keydown.esc.stop.prevent="volverGestion" @keydown.tab="atraparFocoGenerico">
+<div class="heading">
+<div>
+<div class="eyebrow">TALLER · CLIENTES</div>
+<h1 id="client-edit-title">{{editingClientId?'Editar cliente':'Registro de clientes'}}</h1>
+<p>Da de alta o edita un cliente.</p>
+</div>
+<button class="secondary-btn" type="button" @click="volverGestion">← Volver a gestión</button>
+</div>
+<section class="panel mb-3">
+<div class="panel-head">
+<div>
+<h2>{{editingClientId?'Editar cliente':'Registro de clientes'}}</h2>
+<p>{{editingClientId?'La foto actual se conserva si no eliges otra.':'Registra los datos del cliente.'}}</p>
+</div>
+</div>
+<form v-if="rolPuedeAlta" ref="clienteForm" class="cliente-form" novalidate @submit.prevent="guardarCliente">
 <h3 class="form-section wide">Datos personales</h3>
-<label>Nombre completo *<input id="nombre_completo" class="field" v-model="cliente.nombre_completo" maxlength="180" :aria-invalid="isInvalid('nombre_completo')" aria-describedby="err-nombre_completo" @blur="tocarCampo('nombre_completo');comprobarDuplicado('nombre_completo')" @input="revalidarCampo('nombre_completo')"><small id="err-nombre_completo" class="field-error">{{errores.nombre_completo}}</small></label>
-<label>Contacto alternativo<input id="contacto_alterno" class="field" v-model="cliente.contacto_alterno" maxlength="180" :aria-invalid="isInvalid('contacto_alterno')" aria-describedby="err-contacto_alterno" @blur="tocarCampo('contacto_alterno')"><small id="err-contacto_alterno" class="field-error">{{errores.contacto_alterno}}</small></label>
-<label>Fecha de nacimiento *<input id="fecha_nacimiento" class="field" type="date" v-model="cliente.fecha_nacimiento" :aria-invalid="isInvalid('fecha_nacimiento')" aria-describedby="err-fecha_nacimiento" @blur="tocarCampo('fecha_nacimiento');comprobarDuplicado('nombre_completo')" @change="calcularEdad"><small id="err-fecha_nacimiento" class="field-error">{{errores.fecha_nacimiento}}</small></label>
-<label>Edad *<input id="edad" class="field" readonly :value="cliente.edad" :aria-invalid="isInvalid('edad')" aria-describedby="err-edad"><small id="err-edad" class="field-error">{{errores.edad}}</small></label>
+<label>Taller *<select class="field" v-model.number="cliente.taller_id" :disabled="!esAdministrador">
+<option value="">Selecciona taller activo</option>
+<option v-for="t in workshops.filter(x=>x.activo||String(x.id)===String(cliente.taller_id))" :key="t.id" :value="t.id">{{t.nombre}}</option>
+</select>
+</label>
+<label>Nombres *<input id="nombres" class="field" v-model="cliente.nombres" @blur="normalizarClienteCampo('nombres');tocarCampo('nombres')">
+<small class="field-error">{{errores.nombres}}</small>
+</label>
+<label>Apellido paterno <span v-if="!editingLegacy">*</span>
+<input id="apellido_paterno" class="field" v-model="cliente.apellido_paterno" @blur="normalizarClienteCampo('apellido_paterno');tocarCampo('apellido_paterno')">
+<small class="field-error">{{errores.apellido_paterno}}</small>
+</label>
+<label>Apellido materno<input id="apellido_materno" class="field" v-model="cliente.apellido_materno" @blur="normalizarClienteCampo('apellido_materno');tocarCampo('apellido_materno')">
+<small class="field-error">{{errores.apellido_materno}}</small>
+</label>
+<label>CURP <span v-if="!editingLegacy">*</span>
+<input id="curp" class="field" v-model="cliente.curp" maxlength="18" @input="cliente.curp=cliente.curp.toUpperCase()" @blur="tocarCampo('curp');comprobarDuplicado('curp')">
+<small class="field-error">{{errores.curp}}</small>
+</label>
+<label>RFC (persona física)<input id="rfc" class="field" v-model="cliente.rfc" maxlength="13" @input="cliente.rfc=cliente.rfc.toUpperCase()" @blur="tocarCampo('rfc');comprobarDuplicado('rfc')">
+<small class="field-error">{{errores.rfc}}</small>
+</label>
+<label>Nombre completo (calculado)<input class="field" :value="nombreCompleto" readonly>
+</label>
+<label>Fecha de nacimiento *<input id="fecha_nacimiento" class="field" type="date" v-model="cliente.fecha_nacimiento" :aria-invalid="isInvalid('fecha_nacimiento')" aria-describedby="err-fecha_nacimiento" @blur="tocarCampo('fecha_nacimiento');comprobarDuplicado('nombre_completo')" @change="calcularEdad">
+<small id="err-fecha_nacimiento" class="field-error">{{errores.fecha_nacimiento}}</small>
+</label>
+<label>Edad *<input id="edad" class="field" readonly :value="cliente.edad" :aria-invalid="isInvalid('edad')" aria-describedby="err-edad">
+<small id="err-edad" class="field-error">{{errores.edad}}</small>
+</label>
 <h3 class="form-section wide">Contacto</h3>
-<label>Teléfono personal *<span class="phone-input"><span>+52</span><input id="telefono_personal" class="field" inputmode="numeric" maxlength="10" v-model="cliente.telefono_personal" :aria-invalid="isInvalid('telefono_personal')" aria-describedby="err-telefono_personal" @input="limpiarTelefono('telefono_personal',$event)" @blur="tocarCampo('telefono_personal');comprobarDuplicado('telefono_personal')"></span><small id="err-telefono_personal" class="field-error">{{errores.telefono_personal}}</small></label>
-<label>Teléfono de trabajo *<span class="phone-input"><span>+52</span><input id="telefono_trabajo" class="field" inputmode="numeric" maxlength="10" v-model="cliente.telefono_trabajo" :aria-invalid="isInvalid('telefono_trabajo')" aria-describedby="err-telefono_trabajo" @input="limpiarTelefono('telefono_trabajo',$event)" @blur="tocarCampo('telefono_trabajo')"></span><small id="err-telefono_trabajo" class="field-error">{{errores.telefono_trabajo}}</small></label>
-<label>Correo electrónico *<input id="email" class="field" type="email" maxlength="190" v-model="cliente.email" :aria-invalid="isInvalid('email')" aria-describedby="err-email" @input="cliente.email=cliente.email.toLowerCase();revalidarCampo('email')" @blur="tocarCampo('email');comprobarDuplicado('email')"><small id="err-email" class="field-error">{{errores.email}}</small></label>
-<label>Correo de trabajo<input id="email_trabajo" class="field" type="email" maxlength="190" v-model="cliente.email_trabajo" :aria-invalid="isInvalid('email_trabajo')" aria-describedby="err-email_trabajo" @input="cliente.email_trabajo=cliente.email_trabajo.toLowerCase();revalidarCampo('email_trabajo')" @blur="tocarCampo('email_trabajo')"><small id="err-email_trabajo" class="field-error">{{errores.email_trabajo}}</small></label>
-<h3 class="form-section wide">Fotografía</h3><label class="wide">Foto JPG, JPEG, PNG o WEBP (máx. 15 MB)<input id="foto" ref="fotoInput" class="field" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" :aria-invalid="isInvalid('foto')" aria-describedby="err-foto" @change="seleccionarFoto"><small id="err-foto" class="field-error">{{errores.foto}}</small></label><div v-if="fotoPreview||currentPhotoUrl" class="wide photo-preview"><img :src="fotoPreview||currentPhotoUrl" alt="Vista previa de foto"><span>{{cliente.foto?.name||'Foto actual'}}</span></div>
-<h3 class="form-section wide">Dirección</h3>
-<label>Calle *<input id="calle" class="field" v-model="cliente.calle" :aria-invalid="isInvalid('calle')" aria-describedby="err-calle" @blur="tocarCampo('calle')"><small id="err-calle" class="field-error">{{errores.calle}}</small></label>
-<label>Colonia *<input id="colonia" class="field" v-model="cliente.colonia" :aria-invalid="isInvalid('colonia')" aria-describedby="err-colonia" @blur="tocarCampo('colonia')"><small id="err-colonia" class="field-error">{{errores.colonia}}</small></label>
-<label>Municipio *<input id="municipio" class="field" v-model="cliente.municipio" :aria-invalid="isInvalid('municipio')" aria-describedby="err-municipio" @blur="tocarCampo('municipio')"><small id="err-municipio" class="field-error">{{errores.municipio}}</small></label>
-<label>Estado *<select id="estado" class="field" v-model="cliente.estado" :aria-invalid="isInvalid('estado')" aria-describedby="err-estado" @blur="tocarCampo('estado')"><option value="">Selecciona un estado</option><option v-for="estado in estados" :key="estado">{{estado}}</option></select><small id="err-estado" class="field-error">{{errores.estado}}</small></label>
-<label>Código postal *<input id="codigo_postal" class="field" inputmode="numeric" maxlength="5" v-model="cliente.codigo_postal" :aria-invalid="isInvalid('codigo_postal')" aria-describedby="err-codigo_postal" @input="cliente.codigo_postal=cliente.codigo_postal.replace(/\D/g,'').slice(0,5)" @blur="tocarCampo('codigo_postal')"><small id="err-codigo_postal" class="field-error">{{errores.codigo_postal}}</small></label><p class="wide muted">Municipio y colonia manuales; el catálogo SEPOMEX no está incluido.</p>
-<div class="wide form-actions"><button type="button" class="text-link" @click="cancelarEdicion">{{editingClientId?'Cancelar':'Limpiar'}}</button><button class="primary-btn" type="submit" :disabled="guardando">{{guardando?'Guardando…':editingClientId?'Guardar cambios':'Registrar cliente'}}</button></div></form></section>
-<section class="panel"><div class="panel-head"><div><h2>Clientes registrados</h2><p>{{totalClientes}} clientes · página {{page}} / {{totalPages||1}}</p></div><input class="field search" type="search" v-model="search" placeholder="Buscar nombre, correo o teléfono" @input="buscarClientes"></div><div v-if="loadingClients" class="empty-state">Cargando clientes…</div><div v-else-if="!clients.length" class="empty-state">{{search?'Sin resultados.':'Todavía no hay clientes registrados en este taller.'}}</div><div v-else class="table-wrap"><table><thead><tr><th>Foto</th><th>Nombre completo</th><th>Teléfono</th><th>Correo</th><th>Municipio/estado</th><th>Registro</th><th>Acciones</th></tr></thead><tbody><tr v-for="c in clients" :key="c.id"><td><img v-if="c.foto_ruta" class="thumb" :src="photoUrl(c.id)" crossorigin="use-credentials" alt="Foto del cliente"><span v-else>—</span></td><td>{{c.nombre_completo}}</td><td>+52 {{c.telefono_personal}}</td><td>{{c.email}}</td><td>{{c.municipio}}, {{c.estado}}</td><td>{{formatDate(c.created_at)}}</td><td class="actions"><button class="text-link" @click="consultarCliente(c.id)">Consultar</button><button v-if="rolPuedeAlta" class="text-link" @click="editarCliente(c.id)">Editar</button><button v-if="esAdministrador" class="text-link danger" @click="confirmDelete=c">Eliminar</button></td></tr></tbody></table></div><div v-if="totalPages>1" class="pagination"><button class="text-link" :disabled="page<=1" @click="cambiarPagina(page-1)">Anterior</button><span>{{page}} / {{totalPages}}</span><button class="text-link" :disabled="page>=totalPages" @click="cambiarPagina(page+1)">Siguiente</button></div></section></template>
-<template v-else-if="activeSection==='resumen'"><div class="heading"><div><div class="eyebrow">TALLER</div><h1>Resumen</h1><p>Información real disponible de tu taller.</p></div></div><section class="metrics"><article class="metric"><div class="metric-top">Clientes</div><strong>{{totalClientes}}</strong><div class="metric-foot">En este taller.</div></article><article class="metric"><div class="metric-top">Órdenes activas</div><strong>—</strong><div class="metric-foot">PENDIENTE: módulo de órdenes.</div></article></section></template><section v-else class="panel coming"><h1>{{sectionLabel}}</h1><p>Próximamente</p></section></section></main>
-<div v-if="detailClient" class="modal-backdrop" @click.self="detailClient=null"><section class="modal" role="dialog" aria-modal="true"><h2>Datos del cliente</h2><img v-if="detailClient.foto_ruta" class="detail-photo" :src="photoUrl(detailClient.id)" crossorigin="use-credentials" alt="Foto del cliente"><dl><template v-for="(value,key) in detailFields" :key="key"><dt>{{key}}</dt><dd>{{value||'—'}}</dd></template></dl><button class="primary-btn" @click="detailClient=null">Cerrar</button></section></div>
-<div v-if="confirmDelete" class="modal-backdrop" @click.self="confirmDelete=null"><section class="modal" role="dialog" aria-modal="true"><h2>Eliminar cliente</h2><p>¿Eliminar lógicamente a {{confirmDelete.nombre_completo}}? La fila y foto se conservarán.</p><div class="form-actions"><button class="text-link" @click="confirmDelete=null">Cancelar</button><button class="primary-btn danger-btn" :disabled="guardando" @click="eliminarCliente">Confirmar eliminación</button></div></section></div></div>
+<label>Teléfono personal {{editingEmployeeId?'':'*'}}<span class="phone-input">
+<select class="country-trigger country-select" v-model="cliente.celular_pais" @change="setPhoneCountry('celular')">
+<option v-for="item in countries" :key="item.iso2+'-celular'" :value="item.iso2">{{item.bandera}} +{{item.prefijo}}</option>
+</select>
+<input id="celular" class="field phone-number" inputmode="numeric" maxlength="15" v-model="cliente.celular" @keydown="restrictPhoneKeys($event)" @input="sanitizePhone('celular',$event)" @blur="tocarCampo('celular');validarTelefonoCampo('celular');comprobarDuplicado('celular')">
+</span>
+<small class="field-error">{{errores.celular}}</small>
+</label>
+<label>Correo electrónico *<input id="email" class="field" type="email" maxlength="190" v-model="cliente.email" :aria-invalid="isInvalid('email')" aria-describedby="err-email" @input="cliente.email=cliente.email.toLowerCase();revalidarCampo('email')" @blur="tocarCampo('email');comprobarDuplicado('email')">
+<small id="err-email" class="field-error">{{errores.email}}</small>
+</label>
+<label>Teléfono de trabajo<span class="phone-input">
+<select class="country-trigger country-select" v-model="cliente.telefono_trabajo_pais" @change="setPhoneCountry('telefono_trabajo')">
+<option v-for="item in countries" :key="item.iso2+'-trabajo'" :value="item.iso2">{{item.bandera}} +{{item.prefijo}}</option>
+</select>
+<input id="telefono_trabajo" class="field phone-number" inputmode="numeric" maxlength="15" v-model="cliente.telefono_trabajo" @keydown="restrictPhoneKeys($event)" @input="sanitizePhone('telefono_trabajo',$event)" @blur="tocarCampo('telefono_trabajo');validarTelefonoCampo('telefono_trabajo')">
+</span>
+<small class="field-error">{{errores.telefono_trabajo}}</small>
+</label>
+<label>Correo de trabajo<input id="email_trabajo" class="field" type="email" maxlength="190" v-model="cliente.email_trabajo" :aria-invalid="isInvalid('email_trabajo')" aria-describedby="err-email_trabajo" @input="cliente.email_trabajo=cliente.email_trabajo.toLowerCase();revalidarCampo('email_trabajo')" @blur="tocarCampo('email_trabajo')">
+<small id="err-email_trabajo" class="field-error">{{errores.email_trabajo}}</small>
+</label>
+<h3 class="form-section wide">Contacto alternativo</h3>
+<label>Nombre del contacto *<input id="contacto_nombre" class="field" v-model="cliente.contacto.nombre" :aria-invalid="isInvalid('contacto.nombre')" @blur="cliente.contacto.nombre=normalizarPalabrasVista(cliente.contacto.nombre);tocarCampo('contacto.nombre')">
+<small class="field-error">{{errores['contacto.nombre']}}</small>
+</label>
+<label>Teléfono personal del contacto *<span class="phone-input">
+<select class="country-trigger country-select" v-model="cliente.contacto.telefono_personal_pais" @change="setContactPhoneCountry('telefono_personal')">
+<option v-for="item in countries" :key="item.iso2+'-contact'" :value="item.iso2">{{item.bandera}} +{{item.prefijo}}</option>
+</select>
+<input id="contacto_telefono_personal" class="field phone-number" inputmode="numeric" maxlength="15" v-model="cliente.contacto.telefono_personal" @keydown="restrictPhoneKeys($event)" @input="sanitizeContactPhone('telefono_personal',$event)" @blur="tocarCampo('contacto.telefono_personal');validarContactoTelefono('telefono_personal')">
+</span>
+<small class="field-error">{{errores['contacto.telefono_personal']}}</small>
+</label>
+<label>Correo electrónico del contacto *<input id="contacto_email" class="field" type="email" maxlength="190" v-model="cliente.contacto.email" @input="cliente.contacto.email=cliente.contacto.email.toLowerCase()" @blur="tocarCampo('contacto.email')">
+<small class="field-error">{{errores['contacto.email']}}</small>
+</label>
+<label>Teléfono de trabajo del contacto<span class="phone-input">
+<select class="country-trigger country-select" v-model="cliente.contacto.telefono_trabajo_pais" @change="setContactPhoneCountry('telefono_trabajo')">
+<option v-for="item in countries" :key="item.iso2+'-contact-work'" :value="item.iso2">{{item.bandera}} +{{item.prefijo}}</option>
+</select>
+<input id="contacto_telefono_trabajo" class="field phone-number" inputmode="numeric" maxlength="15" v-model="cliente.contacto.telefono_trabajo" @keydown="restrictPhoneKeys($event)" @input="sanitizeContactPhone('telefono_trabajo',$event)" @blur="tocarCampo('contacto.telefono_trabajo');validarContactoTelefono('telefono_trabajo')">
+</span>
+<small class="field-error">{{errores['contacto.telefono_trabajo']}}</small>
+</label>
+<label>Correo de trabajo del contacto<input id="contacto_email_trabajo" class="field" type="email" maxlength="190" v-model="cliente.contacto.email_trabajo" @input="cliente.contacto.email_trabajo=cliente.contacto.email_trabajo.toLowerCase()" @blur="tocarCampo('contacto.email_trabajo')">
+<small class="field-error">{{errores['contacto.email_trabajo']}}</small>
+</label>
+<h3 class="form-section wide">Fotografía</h3>
+<label class="wide">Foto JPG, JPEG, PNG o WEBP (máx. 15 MB)<input id="foto" ref="fotoInput" class="field" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" :aria-invalid="isInvalid('foto')" aria-describedby="err-foto" @change="seleccionarFoto">
+<small id="err-foto" class="field-error">{{errores.foto}}</small>
+</label>
+<div v-if="fotoPreview||currentPhotoUrl" class="wide photo-preview">
+<img :src="fotoPreview||currentPhotoUrl" alt="Vista previa de foto">
+<span>{{cliente.foto?.name||'Foto actual'}}</span>
+</div>
+<div class="wide">
+<direccion-fields v-model="cliente" :direccion-facade="direccionFacade" :errors="errores" title="Dirección" :required="true">
+</direccion-fields>
+<div class="form-actions">
+<button type="button" class="text-link" @click="volverGestion">{{editingClientId?'Cancelar':'Limpiar'}}</button>
+<button class="primary-btn" type="submit" :disabled="guardando">{{guardando?'Guardando…':editingClientId?'Guardar cambios':'Registrar cliente'}}</button>
+</div>
+</div>
+</form>
+</section>
+</section>
+</div>
+</template>
+<template v-else-if="activeSection==='gestion-clientes'">
+<div class="heading">
+<div>
+<div class="eyebrow">TALLER · CLIENTES</div>
+<h1>Gestión de clientes</h1>
+<p>Consulta y administra los clientes del taller.</p>
+</div>
+<button v-if="rolPuedeAlta" class="primary-btn" type="button" @click="nuevoCliente">＋ Nuevo cliente</button>
+</div>
+<section class="panel">
+<div class="panel-head">
+<div>
+<h2>Clientes registrados</h2>
+<p>{{totalClientes}} clientes · página {{page}} / {{totalPages||1}}</p>
+</div>
+<div class="list-filters">
+<input class="field search" type="search" v-model="search" placeholder="Buscar nombre, CURP, correo o teléfono personal" @input="buscarClientes">
+<select class="field" v-if="esAdministrador" v-model="filterWorkshop" @change="cambiarPagina(1)">
+<option value="">Todos los talleres</option>
+<option v-for="t in workshops" :key="t.id" :value="t.id">{{t.nombre}}</option>
+</select>
+<select class="field" v-model="filterStatus" @change="cambiarPagina(1)">
+<option value="todos">Todos los estados</option>
+<option value="todos">Todos los estados</option>
+<option v-for="s in statusOptions" :key="s.id" :value="s.valor">{{s.valor}}</option>
+</select>
+<select class="field" v-model.number="pageSize" @change="cambiarPagina(1)">
+<option :value="10">10</option>
+<option :value="25">25</option>
+<option :value="50">50</option>
+</select>
+</div>
+</div>
+<div v-if="loadingClients" class="empty-state">Cargando clientes…</div>
+<div v-else-if="!clients.length" class="empty-state">{{search?'Sin resultados.':'Todavía no hay clientes registrados en este taller.'}}</div>
+<div v-else class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Foto</th>
+<th>
+<button class="sort-button" @click="ordenarPor('nombre')">Nombre {{sortIndicator('nombre')}}</button>
+</th>
+<th>CURP</th>
+<th>Teléfono personal</th>
+<th>Correo</th>
+<th>
+<button class="sort-button" @click="ordenarPor('taller')">Taller {{sortIndicator('taller')}}</button>
+</th>
+<th>
+<button class="sort-button" @click="ordenarPor('estado')">Estado {{sortIndicator('estado')}}</button>
+</th>
+<th>
+<button class="sort-button" @click="ordenarPor('fecha')">Registro {{sortIndicator('fecha')}}</button>
+</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="c in clients" :key="c.id">
+<td>
+<img v-if="c.foto_ruta" class="thumb" :src="photoUrl(c.id)" crossorigin="use-credentials" alt="Foto del cliente">
+<span v-else>—</span>
+</td>
+<td>{{c.nombre_completo}}</td>
+<td>{{c.curp||'—'}}</td>
+<td>{{c.celular_formateado||formatPhone(c.celular,c.celular_prefijo)}}</td>
+<td>{{c.email}}</td>
+<td>{{c.taller_nombre}}</td>
+<td>
+<span class="badge-status" :class="c.estado_cliente==='suspendido'?'waiting':'ready'">{{c.estado_cliente}}</span>
+</td>
+<td>{{formatDate(c.created_at)}}</td>
+<td class="actions-cell">
+<div class="action-buttons">
+<button class="icon-action show-action" type="button" title="Mostrar cliente" aria-label="Mostrar cliente" @click="mostrarCliente(c.id)">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/>
+<circle cx="12" cy="12" r="2.7"/>
+</svg>
+</button>
+<button v-if="rolPuedeAlta" class="icon-action edit-action" type="button" title="Editar cliente" aria-label="Editar cliente" :disabled="c.estado_cliente!=='activo'" :title="c.estado_cliente!=='activo'?'Reactiva el cliente antes de editar':'Editar cliente'" @click="editarCliente(c.id)">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="m14 5 5 5M4 20l4.2-.9L19 8.3a2.1 2.1 0 0 0-3-3L5.2 16.1 4 20Z"/>
+</svg>
+</button>
+<button v-if="rolPuedeAlta" class="icon-action state-action" :class="c.estado_cliente==='suspendido'?'reactivate-action':'suspend-action'" type="button" :title="c.estado_cliente==='suspendido'?'Reactivar cliente':'Suspender cliente'" :aria-label="c.estado_cliente==='suspendido'?'Reactivar cliente':'Suspender cliente'" @click="prepararCambioEstado(c)">
+<svg v-if="c.estado_cliente==='suspendido'" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9">
+<circle cx="12" cy="12" r="9"/>
+<path d="m8 12 2.5 2.5L16.5 9"/>
+</svg>
+<svg v-else viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9">
+<circle cx="12" cy="12" r="9"/>
+<path d="m8.5 15.5 7-7"/>
+</svg>
+</button>
+<button v-if="esAdministrador" class="icon-action delete-action" type="button" title="Eliminar cliente" aria-label="Eliminar cliente" @click="confirmDelete=c">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="M4 7h16M9 7V4h6v3m3 0-.8 13H6.8L6 7m4 4v5m4-5v5"/>
+</svg>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div v-if="totalPages>1" class="pagination">
+<button class="text-link" :disabled="page<=1" @click="cambiarPagina(page-1)">Anterior</button>
+<span>{{page}} / {{totalPages}}</span>
+<button class="text-link" :disabled="page>=totalPages" @click="cambiarPagina(page+1)">Siguiente</button>
+</div>
+</section>
+</template>
+<template v-else-if="activeSection==='registro-talleres'">
+<div class="heading">
+<div>
+<div class="eyebrow">EMPRESA · TALLERES</div>
+<h1>{{editingWorkshopId?'Editar taller':'Registro de talleres'}}</h1>
+<p>Registra o actualiza la información del taller.</p>
+</div>
+<button class="secondary-btn" @click="volverGestionTaller">← Volver a gestión</button>
+</div>
+<section  class="panel mb-3">
+<div class="panel-head">
+<div>
+<h2>{{editingWorkshopId?'Editar taller':'Registrar taller'}}</h2>
+<p>La dirección se verifica contra el catálogo SEPOMEX local.</p>
+</div>
+</div>
+<form class="cliente-form" @submit.prevent="guardarTaller">
+<label>Nombre del taller *<input class="field" v-model="taller.nombre" @blur="normalizarTallerCampo('nombre')">
+<small class="field-error">{{tallerErrors.nombre}}</small>
+</label>
+<label>Razón social *<input class="field" v-model="taller.razon_social" @blur="normalizarTallerCampo('razon_social')">
+<small class="field-error">{{tallerErrors.razon_social}}</small>
+</label>
+<label>RFC (persona física o moral) *<input class="field" maxlength="13" v-model="taller.rfc" @input="taller.rfc=taller.rfc.toUpperCase()">
+<small class="field-error">{{tallerErrors.rfc}}</small>
+</label>
+<label>Correo de contacto *<input class="field" type="email" v-model="taller.email_contacto" @blur="taller.email_contacto=taller.email_contacto.toLowerCase()">
+<small class="field-error">{{tallerErrors.email_contacto}}</small>
+</label>
+<label>Teléfono *<span class="phone-input">
+<select class="country-trigger country-select" v-model="taller.telefono_pais" @change="setWorkshopCountry">
+<option v-for="item in countries" :key="item.iso2" :value="item.iso2">{{item.bandera}} +{{item.prefijo}}</option>
+</select>
+<input class="field phone-number" inputmode="numeric" maxlength="15" v-model="taller.telefono">
+</span>
+<small class="field-error">{{tallerErrors.telefono}}</small>
+</label>
+<direccion-fields v-model="taller" :direccion-facade="direccionFacade" :errors="tallerErrors" title="Dirección del taller" :required="true"></direccion-fields>
+<direccion-fields v-model="taller" :direccion-facade="direccionFacade" :errors="tallerErrors" field-prefix="direccion_temporal_" error-prefix="direccion_temporal_" title="Dirección temporal (opcional)"></direccion-fields>
+<label class="wide">Fotografía JPG/JPEG/PNG/WEBP, máx. 15 MB<input class="field" type="file" accept=".jpg,.jpeg,.png,.webp" @change="taller.foto=$event.target.files?.[0]||null">
+<small class="field-error">{{tallerErrors.foto}}</small>
+</label>
+<div class="wide form-actions">
+<button type="button" class="secondary-btn" @click="volverGestionTaller">← Volver a gestión</button>
+<button class="primary-btn" type="submit" :disabled="guardando">{{editingWorkshopId?'Guardar cambios':'Registrar taller'}}</button>
+</div>
+</form>
+</section>
+</template>
+<template v-else-if="activeSection==='gestion-talleres'">
+<div class="heading">
+<div>
+<div class="eyebrow">EMPRESA · TALLERES</div>
+<h1>Gestión de talleres</h1>
+<p>Administra los talleres disponibles.</p>
+</div>
+<button v-if="esAdministrador" class="primary-btn" @click="nuevoTaller">＋ Nuevo taller</button>
+</div>
+<section class="panel">
+<div class="panel-head">
+<div>
+<h2>Talleres registrados</h2>
+<p>{{filteredWorkshops.length}} talleres</p>
+</div>
+</div>
+<div class="list-filters" style="padding:0 18px 14px">
+<input class="field search" v-model="workshopQuery" @input="workshopPage=1" placeholder="Buscar nombre, razón social o ubicación">
+<select class="field" v-model="workshopStatus" @change="workshopPage=1">
+<option value="todos">Todos los estados</option>
+<option value="activo">Activo</option>
+<option value="suspendido">Suspendido</option>
+</select>
+</div>
+<div v-if="loadingTalleres" class="empty-state">Cargando talleres…</div>
+<div v-else-if="!filteredWorkshops.length" class="empty-state">No hay talleres disponibles.</div>
+<div v-else class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Foto</th>
+<th>
+<button class="sort-button" @click="sortWorkshop('nombre')">Nombre {{workshopSortIcon('nombre')}}</button>
+</th>
+<th>
+<button class="sort-button" @click="sortWorkshop('razon_social')">Razón social {{workshopSortIcon('razon_social')}}</button>
+</th>
+<th>
+<button class="sort-button" @click="sortWorkshop('municipio')">Municipio/estado {{workshopSortIcon('municipio')}}</button>
+</th>
+<th>Teléfono</th>
+<th>
+<button class="sort-button" @click="sortWorkshop('activo')">Estado {{workshopSortIcon('activo')}}</button>
+</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="t in workshopPageRows" :key="t.id">
+<td>
+<img v-if="t.foto_ruta" class="thumb" :src="tallerPhotoUrl(t.id)" alt="Foto del taller">
+<span v-else>—</span>
+</td>
+<td>{{t.nombre}}</td>
+<td>{{t.razon_social||'No registrado'}}</td>
+<td>{{t.municipio}}, {{t.estado}}</td>
+<td>+{{t.telefono_prefijo}} {{t.telefono}}</td>
+<td>
+<span class="badge-status" :class="t.activo?'ready':'waiting'">{{t.activo?'Activo':'Suspendido'}}</span>
+</td>
+<td class="actions-cell">
+<div class="action-buttons">
+<button class="icon-action show-action" type="button" title="Mostrar taller" aria-label="Mostrar taller" @click="verTaller(t)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+<circle cx="12" cy="12" r="3"/>
+</svg>
+</button>
+<button v-if="esAdministrador" class="icon-action edit-action" type="button" title="Editar taller" aria-label="Editar taller" @click="editarTaller(t)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="m4 16.5-.8 4.3 4.3-.8L20 7.5 16.5 4 4 16.5Z"/>
+<path d="m14.8 5.7 3.5 3.5"/>
+</svg>
+</button>
+<button v-if="esAdministrador" class="icon-action delete-action" type="button" :title="t.activo?'Suspender taller':'Reactivar taller'" :aria-label="t.activo?'Suspender taller':'Reactivar taller'" @click="cambiarEstadoTaller(t)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path v-if="t.activo" d="M12 3v9m6.4-6.4a9 9 0 1 1-12.8 0"/>
+<path v-else d="M20 7v5h-5M20 12a8 8 0 1 1-2.3-5.7L20 9"/>
+</svg>
+</button>
+</div>
+</td>
+</tr>
+<tr v-if="!workshopPageRows.length">
+<td colspan="7" class="empty-state">No hay talleres para estos filtros.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="panel-head">
+<button class="text-link" :disabled="workshopPage<=1" @click="workshopPage--">Anterior</button>
+<span>Página {{workshopPage}} de {{workshopPages}}</span>
+<select class="field" v-model.number="workshopPageSize" @change="workshopPage=1">
+<option :value="10">10</option>
+<option :value="25">25</option>
+<option :value="50">50</option>
+</select>
+<button class="text-link" :disabled="workshopPage>=workshopPages" @click="workshopPage++">Siguiente</button>
+</div>
+</section>
+<div v-if="tallerDetalle" class="confirm-backdrop" @click.self="tallerDetalle=null">
+<section class="confirm-dialog" role="dialog" aria-modal="true">
+<h2>{{tallerDetalle.nombre}}</h2>
+<p>{{tallerDetalle.razon_social}} · RFC {{tallerDetalle.rfc}}</p>
+<p>{{tallerDetalle.calle}} {{tallerDetalle.numero_interior}} · {{tallerDetalle.colonia}}, {{tallerDetalle.municipio}}, {{tallerDetalle.estado}} {{tallerDetalle.codigo_postal}}</p>
+<p>{{tallerDetalle.email_contacto}} · +{{tallerDetalle.telefono_prefijo}} {{tallerDetalle.telefono}}</p>
+<button class="secondary-btn" @click="tallerDetalle=null">Cerrar</button>
+</section>
+</div>
+<div v-if="tallerEstadoTarget" class="confirm-backdrop" @click.self="tallerEstadoTarget=null">
+<section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="workshop-state-title">
+<h2 id="workshop-state-title">{{tallerEstadoTarget.activo?'Suspender taller':'Reactivar taller'}}</h2>
+<p>{{tallerEstadoTarget.activo?'El taller dejará de estar disponible hasta reactivarlo.':'El taller volverá a estar disponible.'}}</p>
+<label v-if="tallerEstadoTarget.activo">Motivo (opcional)<textarea class="field" v-model="tallerSuspensionReason" maxlength="500">
+</textarea>
+</label>
+<div class="form-actions">
+<button class="text-link" @click="tallerEstadoTarget=null">Cancelar</button>
+<button class="primary-btn" @click="confirmarEstadoTaller">Confirmar</button>
+</div>
+</section>
+</div>
+</template>
+<template v-else-if="activeSection==='gestion-empleados'">
+<div class="heading">
+<div>
+<div class="eyebrow">ADMINISTRACIÓN · PERSONAL</div>
+<h1>Gestión de empleados</h1>
+<p>Consulta y administra el personal de tu empresa.</p>
+</div>
+<button class="primary-btn" type="button" @click="nuevoEmpleado">＋ Nuevo empleado</button>
+</div>
+<section class="panel">
+<div class="panel-head">
+<div>
+<h2>Empleados registrados</h2>
+<p>{{employeeTotal}} empleados</p>
+</div>
+</div>
+<div class="list-filters" style="padding:0 18px 14px">
+<input class="field search" v-model="employeeQuery" placeholder="Buscar nombre, correo o teléfono" @input="debouncedEmployeeSearch">
+<select class="field" v-model="employeeFilterWorkshop" @change="employeePage=1;loadEmployees()">
+<option value="">Todos los talleres</option>
+<option v-for="t in empleadoTalleres" :value="t.id">{{t.nombre}}</option>
+</select>
+<select class="field" v-model="employeeFilterStatus" @change="employeePage=1;loadEmployees()">
+<option value="">Todos los estados</option>
+<option value="activo">Activo</option>
+<option value="baja">Baja</option>
+</select>
+<select class="field" v-model="employeeFilterRole" @change="employeePage=1;loadEmployees()">
+<option value="">Todos los roles</option>
+<option value="administrador">Administrador</option>
+<option value="recepcionista">Recepcionista</option>
+<option value="mecanico">Mecánico</option>
+</select>
+<input class="field" v-model="employeeFilterPosition" placeholder="Puesto" @input="debouncedEmployeeSearch">
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Foto</th>
+<th>
+<button class="sort-button" @click="sortEmployee('nombre')">Nombre {{employeeSortIcon('nombre')}}</button>
+</th>
+<th>
+<button class="sort-button" @click="sortEmployee('puesto')">Puesto {{employeeSortIcon('puesto')}}</button>
+</th>
+<th>
+<button class="sort-button" @click="sortEmployee('taller')">Taller {{employeeSortIcon('taller')}}</button>
+</th>
+<th>Rol</th>
+<th>Teléfono</th>
+<th>Correo</th>
+<th>
+<button class="sort-button" @click="sortEmployee('estado')">Estado {{employeeSortIcon('estado')}}</button>
+</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="e in empleados" :key="e.id">
+<td>
+<img v-if="e.foto_ruta" :src="employeePhotoUrl(e.id)" alt="Fotografía" width="34" height="34" style="border-radius:50%;object-fit:cover">
+<span v-else class="avatar">{{inicialesCliente(e.nombre||e.nombres)}}</span>
+</td>
+<td>{{e.nombre||e.nombres}}</td>
+<td>{{displayValue(e.puesto)}}</td>
+<td>{{e.taller_nombre}}</td>
+<td>{{e.rol}}</td>
+<td>{{displayValue(e.telefono_personal)}}</td>
+<td>{{e.email}}</td>
+<td>{{e.activo?'Activo':'Baja'}}</td>
+<td>
+<button class="icon-action" title="Mostrar empleado" aria-label="Mostrar empleado" @click="mostrarEmpleado(e.id)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+<circle cx="12" cy="12" r="3"/>
+</svg>
+</button>
+<button class="icon-action" title="Editar empleado" aria-label="Editar empleado" :disabled="!e.activo" @click="irEditarEmpleado(e.id)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="m4 16.5-.8 4.3 4.3-.8L20 7.5 16.5 4 4 16.5Z"/>
+<path d="m14.8 5.7 3.5 3.5"/>
+</svg>
+</button>
+<button class="icon-action" :title="e.activo?'Dar de baja':'Reactivar'" :aria-label="e.activo?'Dar de baja':'Reactivar'" @click="employeeConfirm=e">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path v-if="e.activo" d="M12 3v9m6.4-6.4a9 9 0 1 1-12.8 0"/>
+<path v-else d="M20 7v5h-5M20 12a8 8 0 1 1-2.3-5.7L20 9"/>
+</svg>
+</button>
+</td>
+</tr>
+<tr v-if="!empleados.length">
+<td colspan="9" class="empty-state">{{loadingEmployees?'Cargando…':'No hay empleados para estos filtros.'}}</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="panel-head">
+<button class="text-link" :disabled="employeePage<=1" @click="employeePage--;loadEmployees()">Anterior</button>
+<span>Página {{employeePage}} de {{employeePages}}</span>
+<select class="field" v-model.number="employeePageSize" @change="employeePage=1;loadEmployees()">
+<option :value="10">10</option>
+<option :value="25">25</option>
+<option :value="50">50</option>
+</select>
+<button class="text-link" :disabled="employeePage>=employeePages" @click="employeePage++;loadEmployees()">Siguiente</button>
+</div>
+</section>
+<div v-if="employeeDetail" class="confirm-backdrop" @click.self="employeeDetail=null">
+<section class="confirm-dialog employee-detail" role="dialog" aria-modal="true" aria-labelledby="employee-detail-title">
+<button class="close-icon" aria-label="Cerrar ficha" title="Cerrar" @click="employeeDetail=null">×</button>
+<div class="employee-detail-head">
+<img v-if="employeeDetail.foto_ruta" :src="employeePhotoUrl(employeeDetail.id)" alt="Fotografía del empleado">
+<span v-else class="avatar employee-avatar">{{inicialesCliente(employeeDetail.nombre||employeeDetail.nombres)}}</span>
+<div>
+<h2 id="employee-detail-title">{{employeeDetail.nombre||displayValue(employeeDetail.nombres)}}</h2>
+<p>{{displayValue(employeeDetail.puesto)}} · {{employeeDetail.taller_nombre}}</p>
+<span class="badge-status">{{employeeDetail.activo?'Activo':'Baja'}}</span>
+</div>
+</div>
+<div class="employee-detail-grid">
+<article>
+<h3>Datos personales</h3>
+<p>Apellido paterno: {{displayValue(employeeDetail.apellido_paterno)}}</p>
+<p>Apellido materno: {{displayValue(employeeDetail.apellido_materno)}}</p>
+<p>CURP: {{displayValue(employeeDetail.curp)}}</p>
+<p>RFC: {{displayValue(employeeDetail.rfc)}}</p>
+<p>Nacimiento: {{displayValue(employeeDetail.fecha_nacimiento)}} · {{employeeAgeFrom(employeeDetail.fecha_nacimiento)}}</p>
+</article>
+<article>
+<h3>Contacto</h3>
+<p>Personal: {{displayValue(employeeDetail.telefono_personal)}} · {{displayValue(employeeDetail.email)}}</p>
+<p>Trabajo: {{displayValue(employeeDetail.telefono_trabajo)}} · {{displayValue(employeeDetail.email_trabajo)}}</p>
+</article>
+<article>
+<h3>Dirección</h3>
+<p>{{displayValue(employeeDetail.calle)}} {{displayValue(employeeDetail.numero_interior)}}</p>
+<p>{{displayValue(employeeDetail.colonia)}}, {{displayValue(employeeDetail.municipio)}}, {{displayValue(employeeDetail.estado)}} {{displayValue(employeeDetail.codigo_postal)}}</p>
+</article>
+<article>
+<h3>Contacto de emergencia</h3>
+<p>{{displayValue(employeeDetail.contacto_emergencia_nombre)}} · {{displayValue(employeeDetail.contacto_emergencia_parentesco)}}</p>
+<p>{{displayValue(employeeDetail.contacto_emergencia_telefono)}}</p>
+</article>
+<article>
+<h3>Acceso y empleo</h3>
+<p>Rol: {{employeeDetail.rol}}</p>
+<p>Ingreso: {{displayValue(employeeDetail.fecha_ingreso)}}</p>
+<p>Fecha de baja: {{displayValue(employeeDetail.fecha_baja)}}</p>
+<p>Motivo: {{displayValue(employeeDetail.motivo_baja)}}</p>
+</article>
+</div>
+<div class="form-actions">
+<button class="secondary-btn" @click="employeeDetail=null">Cerrar</button>
+<button class="primary-btn" :disabled="!employeeDetail.activo" @click="irEditarEmpleado(employeeDetail.id);employeeDetail=null">Editar</button>
+</div>
+</section>
+</div>
+<div v-if="employeeConfirm" class="confirm-backdrop" @click.self="employeeConfirm=null">
+<section class="confirm-dialog" role="dialog" aria-modal="true">
+<h2>{{employeeConfirm.activo?'Dar de baja':'Reactivar'}} empleado</h2>
+<p>{{employeeConfirm.activo?'Se desactivará su cuenta inmediatamente.':'Se reactivará el acceso a la cuenta.'}}</p>
+<textarea v-if="employeeConfirm.activo" class="field" v-model="employeeReason" maxlength="500" placeholder="Motivo opcional">
+</textarea>
+<div class="form-actions">
+<button class="text-link" @click="employeeConfirm=null">Cancelar</button>
+<button class="primary-btn" @click="confirmarEstadoEmpleado">Confirmar</button>
+</div>
+</section>
+</div>
+</template>
+<template v-else-if="activeSection==='registro-empleados'">
+<div class="heading">
+<div>
+<div class="eyebrow">ADMINISTRACIÓN · PERSONAL</div>
+<h1>{{editingEmployeeId?'Editar empleado':'Registro de empleados'}}</h1>
+<p>Captura los datos laborales y de acceso.</p>
+</div>
+<button class="secondary-btn" @click="cerrarEmpleado">← Volver a gestión</button>
+</div>
+<section class="panel">
+<div class="panel-head">
+<div>
+<h2>{{editingEmployeeId?'Editar empleado':'Nuevo empleado'}}</h2>
+<p>La cuenta de acceso usa el correo personal.</p>
+</div>
+</div>
+<form class="cliente-form" @submit.prevent="guardarEmpleado">
+<label>Nombres {{editingEmployeeId?'':'*'}}<input class="field" v-model="employeeForm.nombres" :required="!editingEmployeeId">
+</label>
+<label>Apellido paterno {{editingEmployeeId?'':'*'}}<input class="field" v-model="employeeForm.apellido_paterno" :required="!editingEmployeeId">
+</label>
+<label>Apellido materno<input class="field" v-model="employeeForm.apellido_materno">
+</label>
+<label>CURP<input class="field" v-model="employeeForm.curp" maxlength="18" @blur="verificarDuplicadoEmpleado('curp')">
+</label>
+<label>RFC<input class="field" v-model="employeeForm.rfc" maxlength="13" @blur="verificarDuplicadoEmpleado('rfc')">
+</label>
+<label>Fecha de nacimiento<input class="field" type="date" v-model="employeeForm.fecha_nacimiento" :required="!editingEmployeeId">
+</label>
+<label>Teléfono personal {{editingEmployeeId?'':'*'}}<span class="phone-input">
+<select class="country-select field" v-model="employeeForm.telefono_personal_pais" @change="setEmployeeCountry('telefono_personal')">
+<option v-for="item in countries" :key="item.iso2" :value="item.iso2">{{item.bandera}} +{{item.prefijo}}</option>
+</select>
+<input class="field" v-model="employeeForm.telefono_personal" inputmode="numeric" maxlength="15" @blur="verificarDuplicadoEmpleado('telefono_personal')" :required="!editingEmployeeId">
+</span>
+</label>
+<label>Correo personal {{editingEmployeeId?'':'*'}}<input class="field" type="email" v-model="employeeForm.email" :required="!editingEmployeeId" @blur="verificarDuplicadoEmpleado('email')">
+</label>
+<label>Teléfono de trabajo<span class="phone-input">
+<select class="country-select field" v-model="employeeForm.telefono_trabajo_pais" @change="setEmployeeCountry('telefono_trabajo')">
+<option v-for="item in countries" :key="item.iso2+'work'" :value="item.iso2">{{item.bandera}} +{{item.prefijo}}</option>
+</select>
+<input class="field" v-model="employeeForm.telefono_trabajo" inputmode="numeric" maxlength="15">
+</span>
+</label>
+<label>Correo de trabajo<input class="field" type="email" v-model="employeeForm.email_trabajo">
+</label>
+<label>Puesto<input class="field" v-model="employeeForm.puesto">
+</label>
+<label>Taller asignado *<select class="field" v-model.number="employeeForm.taller_id" required>
+<option value="">Selecciona taller</option>
+<option v-for="t in empleadoTalleres" :value="t.id">{{t.nombre}}</option>
+</select>
+</label>
+<label>Rol *<select class="field" v-model="employeeForm.rol" required>
+<option value="">Selecciona rol</option>
+<option value="administrador">Administrador</option>
+<option value="recepcionista">Recepcionista</option>
+<option value="mecanico">Mecánico</option>
+</select>
+</label>
+<label>Fecha de ingreso<input class="field" type="date" v-model="employeeForm.fecha_ingreso">
+</label>
+<label>Edad<input class="field" readonly :value="employeeAge">
+</label>
+<direccion-fields class="wide" v-model="employeeForm" :direccion-facade="direccionFacade" title="Dirección" :required="false"></direccion-fields>
+<h3 class="form-section wide">Contacto de emergencia</h3>
+<label>Nombre de contacto<input class="field" v-model="employeeForm.contacto_emergencia_nombre">
+</label>
+<label>Parentesco<input class="field" v-model="employeeForm.contacto_emergencia_parentesco">
+</label>
+<label>Teléfono de emergencia<span class="phone-input">
+<select class="country-select field" v-model="employeeForm.contacto_emergencia_pais" @change="setEmployeeCountry('contacto_emergencia_telefono','contacto_emergencia_pais')">
+<option v-for="item in countries" :key="item.iso2+'emergency'" :value="item.iso2">{{item.bandera}} +{{item.prefijo}}</option>
+</select>
+<input class="field" v-model="employeeForm.contacto_emergencia_telefono" inputmode="numeric" maxlength="15">
+</span>
+</label>
+<label>Fotografía (JPG, PNG o WEBP, máx. 15 MB)<input class="field" type="file" accept="image/jpeg,image/png,image/webp" @change="seleccionarFotoEmpleado">
+</label>
+<div v-if="employeePreview" class="photo-preview wide">
+<img :src="employeePreview" alt="Vista previa de fotografía">
+<span>Vista previa</span>
+</div>
+<template v-if="!editingEmployeeId">
+<label>Contraseña *<input class="field" type="password" v-model="employeeForm.password" minlength="12" required>
+<small>Fortaleza: {{passwordStrength}}</small>
+</label>
+<label>Confirmar contraseña *<input class="field" type="password" v-model="employeeForm.password_confirm" minlength="12" required>
+</label>
+</template>
+<template v-else>
+<label>Nueva contraseña (opcional)<input class="field" type="password" v-model="employeeForm.password" minlength="12">
+</label>
+<label>Confirmar contraseña<input class="field" type="password" v-model="employeeForm.password_confirm">
+</label>
+</template>
+<div class="wide field-error" v-for="(message,key) in employeeErrors" :key="key">{{message}}</div>
+<div class="wide form-actions">
+<button type="button" class="text-link" @click="cerrarEmpleado">Cancelar</button>
+<button type="submit" class="primary-btn">{{guardando?'Guardando…':'Guardar empleado'}}</button>
+</div>
+</form>
+</section>
+</template>
+<template v-else-if="activeSection==='gestion-catalogo-vehiculos'">
+<div class="heading">
+<div>
+<div class="eyebrow">ADMINISTRACIÓN · CATÁLOGOS</div>
+<h1>Catálogo de vehículos</h1>
+<p>Administra marcas y sus modelos disponibles.</p>
+</div>
+<button class="primary-btn" @click="openCatalogModal('marca')">＋ Nueva marca</button>
+</div>
+<section class="panel">
+<div class="panel-head">
+<div>
+<h2>Marcas</h2>
+<p>{{catalogTotal}} registros</p>
+</div>
+</div>
+<div class="list-filters" style="padding:0 18px 14px">
+<input class="field search" v-model="catalogQuery" placeholder="Buscar marca por prefijo" @input="catalogQueryChanged">
+</div>
+<div v-if="catalogLoading&&!catalogBrands.length" class="empty-state" role="status">Cargando catálogo…</div>
+<div v-else-if="!catalogBrands.length" class="empty-state">No hay marcas para mostrar.</div>
+<div v-else class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>
+<button class="sort-button" @click="catalogOrder('nombre')">Marca {{catalogSort==='nombre'?(catalogDirection==='asc'?'▲':'▼'):'↕'}}</button>
+</th>
+<th>
+<button class="sort-button" @click="catalogOrder('estatus')">Estado {{catalogSort==='estatus'?(catalogDirection==='asc'?'▲':'▼'):'↕'}}</button>
+</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="brand in catalogBrands" :key="brand.id" :class="{'catalog-pending':brand.estatus==='en espera'}">
+<td>
+<button class="text-link" @click="selectCatalogBrand(brand)">{{brand.nombre}}</button>
+</td>
+<td>
+<span class="badge-status" :class="brand.estatus==='activo'?'ready':brand.estatus==='en espera'?'waiting':'priority'">{{catalogStatusLabel(brand)}}</span>
+</td>
+<td class="actions-cell">
+<div class="action-buttons">
+<button class="icon-action show-action" type="button" title="Administrar modelos" aria-label="Administrar modelos" @click="selectCatalogBrand(brand)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M4 5h16M4 12h16M4 19h16"/>
+</svg>
+</button>
+<button class="icon-action edit-action" type="button" title="Editar marca" aria-label="Editar marca" @click="openCatalogModal('marca',brand)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="m4 16.5-.8 4.3 4.3-.8L20 7.5 16.5 4 4 16.5Z"/>
+<path d="m14.8 5.7 3.5 3.5"/>
+</svg>
+</button>
+<button v-if="brand.estatus==='en espera'" class="catalog-approve-btn" type="button" title="Aprobar marca" aria-label="Aprobar marca" @click="approveCatalogEntry('marca',brand)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="m5 12 4 4L19 6"/>
+</svg>
+<span>Aprobar</span>
+</button>
+<button v-else class="icon-action delete-action" type="button" :title="brand.estatus==='activo'?'Desactivar marca':'Reactivar marca'" :aria-label="brand.estatus==='activo'?'Desactivar marca':'Reactivar marca'" @click="brand.estatus==='activo'?requestCatalogStatus('marca',brand):approveCatalogEntry('marca',brand)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path v-if="brand.estatus==='activo'" d="M6 6l12 12M18 6 6 18"/>
+<path v-else d="M20 7v5h-5M20 12a8 8 0 1 1-2.3-5.7L20 9"/>
+</svg>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="panel-head">
+<button class="text-link" :disabled="catalogPage<=1" @click="catalogPageChange(catalogPage-1)">Anterior</button>
+<span>Página {{catalogPage}} de {{catalogPages}}</span>
+<select class="field" v-model.number="catalogPageSize" @change="catalogPage=1;loadCatalogBrands()">
+<option :value="10">10</option>
+<option :value="25">25</option>
+<option :value="50">50</option>
+</select>
+<button class="text-link" :disabled="catalogPage>=catalogPages" @click="catalogPageChange(catalogPage+1)">Siguiente</button>
+</div>
+</section>
+<section v-if="catalogSelectedBrand" class="panel" style="margin-top:18px">
+<div class="panel-head">
+<div>
+<h2>Modelos · {{catalogSelectedBrand.nombre}}</h2>
+<p>{{catalogModelTotal}} registros</p>
+</div>
+<button class="primary-btn" @click="openCatalogModal('modelo')">＋ Nuevo modelo</button>
+</div>
+<div class="list-filters" style="padding:0 18px 14px">
+<input class="field search" v-model="catalogModelQuery" placeholder="Buscar modelo por prefijo" @input="catalogModelPage=1;loadCatalogModels()">
+</div>
+<div v-if="!catalogModels.length" class="empty-state">No hay modelos para esta marca.</div>
+<div v-else class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>
+<button class="sort-button" @click="catalogModelOrder('nombre')">Modelo {{catalogModelSort==='nombre'?(catalogModelDirection==='asc'?'▲':'▼'):'↕'}}</button>
+</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="model in catalogModels" :key="model.id" :class="{'catalog-pending':model.estatus==='en espera'}">
+<td>{{model.nombre}}</td>
+<td>
+<span class="badge-status" :class="model.estatus==='activo'?'ready':model.estatus==='en espera'?'waiting':'priority'">{{catalogStatusLabel(model)}}</span>
+</td>
+<td class="actions-cell">
+<div class="action-buttons">
+<button class="icon-action edit-action" type="button" title="Editar modelo" aria-label="Editar modelo" @click="openCatalogModal('modelo',model)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="m4 16.5-.8 4.3 4.3-.8L20 7.5 16.5 4 4 16.5Z"/>
+<path d="m14.8 5.7 3.5 3.5"/>
+</svg>
+</button>
+<button v-if="model.estatus==='en espera'" class="catalog-approve-btn" type="button" title="Aprobar modelo" aria-label="Aprobar modelo" @click="approveCatalogEntry('modelo',model)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="m5 12 4 4L19 6"/>
+</svg>
+<span>Aprobar</span>
+</button>
+<button v-else class="icon-action delete-action" type="button" :title="model.estatus==='activo'?'Desactivar modelo':'Reactivar modelo'" :aria-label="model.estatus==='activo'?'Desactivar modelo':'Reactivar modelo'" @click="model.estatus==='activo'?requestCatalogStatus('modelo',model):approveCatalogEntry('modelo',model)">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path v-if="model.estatus==='activo'" d="M6 6l12 12M18 6 6 18"/>
+<path v-else d="M20 7v5h-5M20 12a8 8 0 1 1-2.3-5.7L20 9"/>
+</svg>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="panel-head">
+<button class="text-link" :disabled="catalogModelPage<=1" @click="catalogModelPage--;loadCatalogModels()">Anterior</button>
+<span>Página {{catalogModelPage}} de {{catalogModelPages}}</span>
+<select class="field" v-model.number="catalogModelPageSize" @change="catalogModelPage=1;loadCatalogModels()">
+<option :value="10">10</option>
+<option :value="25">25</option>
+<option :value="50">50</option>
+</select>
+<button class="text-link" :disabled="catalogModelPage>=catalogModelPages" @click="catalogModelPage++;loadCatalogModels()">Siguiente</button>
+</div>
+</section>
+<div v-if="catalogModal" class="confirm-backdrop" @click.self="catalogModal=null">
+<section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="catalog-form-title">
+<h2 id="catalog-form-title">{{catalogModal.id?'Editar':'Crear'}} {{catalogModal.kind==='marca'?'marca':'modelo'}}</h2>
+<label v-if="catalogModal.kind==='modelo'">Marca<select class="field" v-model="catalogModal.marca_id">
+<option v-for="brand in catalogBrands" :key="brand.id" :value="brand.id">{{brand.nombre}}</option>
+</select>
+<small class="field-error">{{catalogErrors.marca_id}}</small>
+</label>
+<label>Nombre<input class="field" maxlength="80" v-model="catalogModal.nombre" @keydown.enter.prevent="saveCatalogEntry">
+<small class="field-error">{{catalogErrors.nombre}}</small>
+</label>
+<div class="form-actions">
+<button class="text-link" @click="catalogModal=null">Cancelar</button>
+<button class="primary-btn" :disabled="catalogSaving" @click="saveCatalogEntry">Guardar</button>
+</div>
+</section>
+</div>
+<div v-if="catalogStatusTarget" class="confirm-backdrop" @click.self="catalogStatusTarget=null">
+<section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="catalog-disable-title">
+<h2 id="catalog-disable-title">Desactivar {{catalogStatusTarget.kind}}</h2>
+<p>El registro se desactivará sin borrar sus datos.</p>
+<div class="form-actions">
+<button class="text-link" @click="catalogStatusTarget=null">Cancelar</button>
+<button class="primary-btn" @click="confirmCatalogStatus">Desactivar</button>
+</div>
+</section>
+</div>
+</template>
+<template v-else-if="activeSection==='gestion-estatus'">
+<div class="heading">
+<div>
+<div class="eyebrow">ADMINISTRACIÓN · CATÁLOGOS</div>
+<h1>Catálogo de estatus</h1>
+<p>{{estatusTotal}} estatus · página {{estatusPage}} de {{estatusPages}}</p>
+</div>
+<button class="primary-btn" @click="openEstatus()">＋ Nuevo estatus</button>
+</div>
+<section class="panel">
+<div class="panel-head">
+<input class="field search" v-model="estatusQuery" placeholder="Buscar estatus" @input="estatusPage=1;loadEstatus()">
+<select class="field" v-model.number="estatusPageSize" @change="estatusPage=1;loadEstatus()">
+<option :value="10">10</option>
+<option :value="25">25</option>
+<option :value="50">50</option>
+</select>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Valor</th>
+<th>Descripción</th>
+<th>Tipo</th>
+<th>Estado</th>
+<th>Actualizado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="row in estatusRows" :key="row.id">
+<td>{{row.id}}</td>
+<td>{{row.valor}}</td>
+<td>{{row.descripcion}}</td>
+<td>{{row.es_sistema?'Sistema':'Personalizado'}}</td>
+<td>{{row.activo?'Activo':'Inactivo'}}</td>
+<td>{{formatDate(row.updated_at)}}</td>
+<td>
+<button class="icon-action edit-action" title="Editar estatus" aria-label="Editar estatus" @click="openEstatus(row)">✎</button>
+<button class="icon-action state-action" :disabled="row.es_sistema" :title="row.activo?'Desactivar':'Reactivar'" :aria-label="row.activo?'Desactivar':'Reactivar'" @click="toggleEstatus(row)">{{row.activo?'⏸':'↻'}}</button>
+</td>
+</tr>
+<tr v-if="!estatusRows.length">
+<td colspan="7" class="empty-state">No hay estatus que mostrar.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pagination">
+<button class="text-link" :disabled="estatusPage<=1" @click="estatusPage--;loadEstatus()">Anterior</button>
+<span>{{estatusPage}} / {{estatusPages}}</span>
+<button class="text-link" :disabled="estatusPage>=estatusPages" @click="estatusPage++;loadEstatus()">Siguiente</button>
+</div>
+</section>
+<div v-if="estatusModal" class="confirm-backdrop" @click.self="estatusModal=false">
+<section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="estatus-modal-title">
+<h2 id="estatus-modal-title">{{estatusEditingId?'Editar':'Nuevo'}} estatus</h2>
+<label>Valor<input class="field" v-model="estatusForm.valor" maxlength="30">
+</label>
+<label>Descripción<textarea class="field" v-model="estatusForm.descripcion" maxlength="255">
+</textarea>
+</label>
+<div class="form-actions">
+<button class="text-link" @click="estatusModal=false">Cancelar</button>
+<button class="primary-btn" :disabled="estatusSaving" @click="saveEstatus">{{estatusSaving?'Guardando…':'Guardar'}}</button>
+</div>
+</section>
+</div>
+</template>
+<template v-else-if="activeSection==='gestion-vehiculos'">
+<div class="heading">
+<div>
+<div class="eyebrow">TALLER · VEHÍCULOS</div>
+<h1>Gestión de vehículos</h1>
+<p>{{vehicleTotal===1?'1 vehículo':vehicleTotal+' vehículos'}} · página {{vehiclePage}} de {{vehiclePages}}</p>
+</div>
+<button class="primary-btn" @click="openVehicleModal">＋ Nuevo vehículo</button>
+</div>
+<section class="panel">
+<div class="panel-head">
+<input class="field search" v-model="vehicleQuery" placeholder="Buscar placa, marca, modelo o cliente" @input="vehiclePage=1;loadVehicles()">
+</div>
+<div v-if="!vehicleRows.length" class="empty-state">Aún no hay vehículos registrados.</div>
+<div v-else class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Placa</th>
+<th>Marca / modelo</th>
+<th>Año</th>
+<th>Cliente</th>
+<th>Estado</th>
+<th>Ingreso</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="row in vehicleRows" :key="row.id">
+<td>
+<strong>{{row.placa}}</strong>
+</td>
+<td>{{row.marca_texto}} {{row.modelo_texto||''}}</td>
+<td>{{row.anio}}</td>
+<td>{{row.cliente_nombre}}</td>
+<td>{{row.estatus}}</td>
+<td>{{formatDate(row.fecha_ingreso)}}</td>
+<td>
+<button class="icon-action show-action" title="Mostrar vehículo" aria-label="Mostrar vehículo" @click="mostrarVehiculo(row.id)">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+</button>
+<button v-if="row.estatus==='activo'" class="icon-action delete-action" title="Desactivar vehículo" aria-label="Desactivar vehículo" @click="solicitarDesactivacion(row)">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="M4 7h16M9 7V4h6v3m3 0-.8 13H6.8L6 7"/>
+</svg>
+</button>
+<button v-else-if="row.estatus==='inactivo'" class="icon-action edit-action" title="Activar vehículo" aria-label="Activar vehículo" @click="mostrarVehiculo(row.id,true)">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pagination">
+<button class="text-link" :disabled="vehiclePage<=1" @click="vehiclePage--;loadVehicles()">Anterior</button>
+<span>{{vehiclePage}} / {{vehiclePages}}</span>
+<button class="text-link" :disabled="vehiclePage>=vehiclePages" @click="vehiclePage++;loadVehicles()">Siguiente</button>
+</div>
+</section>
+<div v-if="vehicleModal" class="confirm-backdrop" @click.self="cerrarModalVehiculo">
+<section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="vehicle-modal-title">
+<h2 id="vehicle-modal-title">{{vehicleActivationId?'Completar y activar vehículo':'Registrar vehículo'}}</h2>
+<p v-if="vehicleErrors._global" class="form-error" role="alert">{{vehicleErrors._global}}</p>
+<form @submit.prevent="vehicleActivationId?activarVehiculo():saveVehicle()">
+<label>Cliente activo<select class="field" v-model="vehicleForm.cliente_id" required>
+<option value="">Selecciona un cliente</option>
+<option v-for="client in vehicleClients" :key="client.id" :value="client.id">{{client.nombre_completo}}</option>
+</select>
+</label>
+<label>Placa<input ref="vehiclePlate" class="field" v-model="vehicleForm.placa" @input="vehiclePlateInput" maxlength="10" required>
+<small class="plate-preview">Vista previa: {{vehiculoFacade.normalizarPlaca(vehicleForm.placa)||'ABC123'}}</small>
+<small v-if="vehiclePlateCheck" class="field-error">{{vehiclePlateCheck}}</small>
+</label>
+<vehiculo-autocomplete :catalog-facade="catalogoFacade" v-model:marca="vehicleForm.marca" v-model:marca-id="vehicleForm.marca_id" v-model:modelo="vehicleForm.modelo" v-model:modelo-id="vehicleForm.modelo_id">
+</vehiculo-autocomplete>
+<label>Año<input class="field" type="number" v-model.number="vehicleForm.anio" min="1900" :max="currentYear+1">
+</label>
+<label>Versión<input class="field" v-model="vehicleForm.version" maxlength="40">
+</label>
+<label>Número de serie (VIN)<input class="field" v-model="vehicleForm.numero_serie" maxlength="17">
+</label>
+<label>Kilometraje<input class="field" type="number" v-model="vehicleForm.kilometraje" min="0" max="2000000">
+</label>
+<label>Fecha de ingreso<input class="field" type="date" v-model="vehicleForm.fecha_ingreso" required>
+</label>
+<div class="form-actions">
+<button type="button" class="text-link" @click="cerrarModalVehiculo">Cerrar</button>
+<button class="primary-btn" :disabled="vehicleSaving">{{vehicleSaving?'Guardando…':vehicleActivationId?'Guardar y activar':'Registrar vehículo'}}</button>
+</div>
+</form>
+</section>
+</div>
+<div v-if="vehicleSaved" class="confirm-backdrop" @click.self="closeVehicleSaved">
+<section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="vehicle-success-title">
+<h2 id="vehicle-success-title">Vehículo registrado</h2>
+<p>El registro se guardó correctamente.</p>
+<ul v-if="vehicleWarnings.length" class="vehicle-warnings">
+<li v-for="w in vehicleWarnings" :key="w.campo">{{w.mensaje}}</li>
+</ul>
+<div class="form-actions">
+<button class="secondary-btn" @click="registerAnotherVehicle">Registrar otro vehículo</button>
+<button class="primary-btn" @click="closeVehicleSaved">Cerrar</button>
+</div>
+</section>
+</div>
+<div v-if="vehicleDetailOpen" class="confirm-backdrop" @click.self="cerrarFichaVehiculo">
+<section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="vehicle-detail-title" tabindex="-1" ref="vehicleDetailDialog">
+<h2 id="vehicle-detail-title">Ficha del vehículo</h2>
+<p v-if="vehicleDetailLoading">Cargando ficha…</p>
+<template v-else-if="vehicleDetail">
+<dl class="modal">
+<dt>Placa</dt><dd>{{vehicleDetail.placa||'No registrado'}}</dd><dt>Marca</dt><dd>{{vehicleDetail.marca_texto||'No registrado'}}</dd><dt>Modelo</dt><dd>{{vehicleDetail.modelo_texto||'No registrado'}}</dd><dt>Año</dt><dd>{{vehicleDetail.anio??'No registrado'}}</dd><dt>Versión</dt><dd>{{vehicleDetail.version||'No registrado'}}</dd><dt>VIN</dt><dd>{{vehicleDetail.numero_serie||'No registrado'}}</dd><dt>Kilometraje</dt><dd>{{vehicleDetail.kilometraje??'No registrado'}}</dd><dt>Fecha de ingreso</dt><dd>{{formatDate(vehicleDetail.fecha_ingreso)}}</dd><dt>Estatus</dt><dd>{{vehicleDetail.estatus||'No registrado'}}</dd>
+</dl>
+<div class="form-actions">
+<button v-if="vehicleDetail.estatus==='inactivo'" class="secondary-btn" @click="editarParaActivar">Editar y activar</button>
+<button v-if="vehicleDetail.estatus==='activo'" class="danger-btn" @click="solicitarDesactivacion(vehicleDetail)">Desactivar</button>
+<button class="text-link" @click="cerrarFichaVehiculo">Cerrar</button>
+</div>
+</template>
+</section>
+</div>
+<div v-if="vehicleDeactivateTarget" class="confirm-backdrop" @click.self="cancelarDesactivacion">
+<section class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="vehicle-deactivate-title" aria-describedby="vehicle-deactivate-message" tabindex="-1" ref="vehicleDeactivateDialog">
+<h2 id="vehicle-deactivate-title">Desactivar vehículo</h2>
+<p id="vehicle-deactivate-message">Esta acción conserva el historial del vehículo y requiere confirmación.</p>
+<label>Motivo<textarea class="field" v-model="vehicleDeactivateReason" maxlength="500" required></textarea></label>
+<small v-if="vehicleDeactivateError" class="field-error">{{vehicleDeactivateError}}</small>
+<div class="form-actions">
+<button class="text-link" @click="cancelarDesactivacion">Cancelar</button>
+<button class="danger-btn" :disabled="vehicleDeactivating" @click="confirmarDesactivacion">{{vehicleDeactivating?'Desactivando…':'Confirmar desactivación'}}</button>
+</div>
+</section>
+</div>
+</template>
+<template v-else-if="activeSection==='resumen'">
+<div class="heading">
+<div>
+<div class="eyebrow">TALLER</div>
+<h1>Resumen</h1>
+<p>Información real disponible de tu taller.</p>
+</div>
+</div>
+<section class="metrics">
+<article class="metric">
+<div class="metric-top">Clientes</div>
+<strong>{{totalClientes}}</strong>
+<div class="metric-foot">En este taller.</div>
+</article>
+<article class="metric">
+<div class="metric-top">Órdenes activas</div>
+<strong>—</strong>
+<div class="metric-foot">PENDIENTE: módulo de órdenes.</div>
+</article>
+</section>
+</template>
+<section v-else class="panel coming">
+<h1>{{sectionLabel}}</h1>
+<p v-if="activeSection==='vehiculos'">PENDIENTE: la base de datos aún no tiene tabla de vehículos ni campos de marca/modelo que puedan enlazarse.</p>
+<p v-else>Próximamente</p>
+</section>
+</section>
+</main>
+<Transition name="ficha">
+<div v-if="fichaAbierta" class="ficha-backdrop" @click.self="closeFicha">
+<section ref="fichaDialog" class="ficha-dialog" role="dialog" aria-modal="true" aria-labelledby="ficha-title" tabindex="-1" @keydown.esc.stop.prevent="cerrarConEsc" @keydown.tab="atraparFoco">
+<header class="ficha-header">
+<div class="ficha-identity">
+<button v-if="detailClient?.foto_ruta && !detailLoading && !detailError" class="ficha-avatar photo-avatar" type="button" title="Ampliar fotografía" aria-label="Ampliar fotografía" @click="fotoAmpliada=true">
+<img :src="photoUrl(detailClient.id)" crossorigin="use-credentials" alt="Fotografía del cliente">
+</button>
+<div v-else class="ficha-avatar initials-avatar" aria-hidden="true">{{inicialesCliente(detailClient?.nombre_completo)}}</div>
+<div class="ficha-title-wrap">
+<h2 id="ficha-title">{{detailLoading?'Cargando ficha…':detailError?'Ficha del cliente':displayValue(detailClient?.nombre_completo)}}</h2>
+<p v-if="!detailLoading && !detailError">{{displayValue(detailClient?.edad)}} años</p>
+<span v-if="!detailLoading && !detailError" class="workshop-badge">Taller {{displayValue(detailClient?.taller_id)}} · Registro {{fichaDate(detailClient?.created_at)}}</span>
+</div>
+</div>
+<button ref="fichaClose" class="close-icon" type="button" aria-label="Cerrar ficha del cliente" title="Cerrar" @click="closeFicha">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+<path d="m6 6 12 12M18 6 6 18"/>
+</svg>
+</button>
+</header>
+<div v-if="detailLoading" class="ficha-state" role="status" aria-live="polite">
+<span class="spinner-border spinner-border-sm" aria-hidden="true">
+</span> Cargando los datos del cliente…</div>
+<div v-else-if="detailError" class="ficha-state ficha-error" role="alert">{{detailError}}</div>
+<template v-else>
+<div class="ficha-cards">
+<article class="ficha-card">
+<h3>
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7">
+<circle cx="12" cy="8" r="4"/>
+<path d="M4 21v-2a8 8 0 0 1 16 0v2"/>
+</svg>Datos personales</h3>
+<dl>
+<dt>Fecha de nacimiento</dt>
+<dd>{{fichaDate(detailClient.fecha_nacimiento)}}</dd>
+<dt>Edad</dt>
+<dd>{{displayAge(detailClient.edad)}}</dd>
+</dl>
+</article>
+<article class="ficha-card">
+<h3>
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7">
+<path d="M5 3h3l2 5-2 1.5a15 15 0 0 0 6.5 6.5L16 14l5 2v3a2 2 0 0 1-2 2C10 20.5 3.5 14 3 5a2 2 0 0 1 2-2Z"/>
+</svg>Contacto</h3>
+<dl>
+<dt>Teléfono personal</dt>
+<dd>
+<a v-if="telHref(detailClient.telefono_personal,detailClient.telefono_personal_prefijo)" :href="telHref(detailClient.telefono_personal,detailClient.telefono_personal_prefijo)">{{detailClient.telefono_personal_formateado||formatPhone(detailClient.telefono_personal,detailClient.telefono_personal_prefijo)}}</a>
+<span v-else class="not-registered">No registrado</span>
+</dd>
+<dt>Teléfono de trabajo</dt>
+<dd>
+<a v-if="telHref(detailClient.telefono_trabajo,detailClient.telefono_trabajo_prefijo)" :href="telHref(detailClient.telefono_trabajo,detailClient.telefono_trabajo_prefijo)">{{detailClient.telefono_trabajo_formateado||formatPhone(detailClient.telefono_trabajo,detailClient.telefono_trabajo_prefijo)}}</a>
+<span v-else class="not-registered">No registrado</span>
+</dd>
+<dt>Correo personal</dt>
+<dd>
+<a v-if="emailHref(detailClient.email)" :href="emailHref(detailClient.email)">{{detailClient.email}}</a>
+<span v-else class="not-registered">No registrado</span>
+</dd>
+<dt>Correo de trabajo</dt>
+<dd>
+<a v-if="emailHref(detailClient.email_trabajo)" :href="emailHref(detailClient.email_trabajo)">{{detailClient.email_trabajo}}</a>
+<span v-else class="not-registered">No registrado</span>
+</dd>
+</dl>
+</article>
+<article class="ficha-card address-card">
+<h3>
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7">
+<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/>
+<circle cx="12" cy="10" r="2.5"/>
+</svg>Dirección</h3>
+<dl>
+<dt>Calle</dt>
+<dd>{{displayValue(detailClient.calle)}}</dd>
+<dt>Colonia</dt>
+<dd>{{displayValue(detailClient.colonia)}}</dd>
+<dt>Municipio</dt>
+<dd>{{displayValue(detailClient.municipio)}}</dd>
+<dt>Estado</dt>
+<dd>{{displayValue(detailClient.estado)}}</dd>
+<dt>Código postal</dt>
+<dd>{{displayValue(detailClient.codigo_postal)}}</dd>
+</dl>
+</article>
+<article class="ficha-card">
+<h3>Contacto alternativo</h3>
+<dl>
+<dt>Nombre</dt>
+<dd>{{displayValue(detailClient.contacto?.nombre)}}</dd>
+<dt>Teléfono personal</dt>
+<dd>
+<a v-if="telHref(detailClient.contacto?.telefono_personal,detailClient.contacto?.telefono_personal_prefijo)" :href="telHref(detailClient.contacto.telefono_personal,detailClient.contacto.telefono_personal_prefijo)">{{formatPhone(detailClient.contacto.telefono_personal,detailClient.contacto.telefono_personal_prefijo)}}</a>
+<span v-else class="not-registered">No registrado</span>
+</dd>
+<dt>Correo electrónico</dt>
+<dd>
+<a v-if="emailHref(detailClient.contacto?.email)" :href="emailHref(detailClient.contacto.email)">{{detailClient.contacto.email}}</a>
+<span v-else class="not-registered">No registrado</span>
+</dd>
+<dt>Teléfono de trabajo</dt>
+<dd>
+<a v-if="telHref(detailClient.contacto?.telefono_trabajo,detailClient.contacto?.telefono_trabajo_prefijo)" :href="telHref(detailClient.contacto.telefono_trabajo,detailClient.contacto.telefono_trabajo_prefijo)">{{formatPhone(detailClient.contacto.telefono_trabajo,detailClient.contacto.telefono_trabajo_prefijo)}}</a>
+<span v-else class="not-registered">No registrado</span>
+</dd>
+<dt>Correo de trabajo</dt>
+<dd>
+<a v-if="emailHref(detailClient.contacto?.email_trabajo)" :href="emailHref(detailClient.contacto.email_trabajo)">{{detailClient.contacto.email_trabajo}}</a>
+<span v-else class="not-registered">No registrado</span>
+</dd>
+</dl>
+</article>
+</div>
+<footer class="ficha-footer">
+<button class="secondary-btn" type="button" @click="closeFicha">Cerrar</button>
+<button v-if="rolPuedeAlta" class="primary-btn" type="button" @click="editarDesdeFicha">Editar</button>
+</footer>
+</template>
+<div v-if="fotoAmpliada" class="photo-lightbox" @click.self="fotoAmpliada=false">
+<button class="close-icon lightbox-close" aria-label="Cerrar fotografía ampliada" title="Cerrar fotografía" @click="fotoAmpliada=false">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+<path d="m6 6 12 12M18 6 6 18"/>
+</svg>
+</button>
+<img :src="photoUrl(detailClient.id)" crossorigin="use-credentials" alt="Fotografía ampliada del cliente">
+</div>
+</section>
+</div>
+</Transition>
+<div v-if="suspensionTarget" class="confirm-backdrop" @click.self="suspensionTarget=null">
+<section class="confirm-dialog" role="dialog" aria-modal="true">
+<h2>{{suspensionTarget.estado_cliente==='suspendido'?'Reactivar cliente':'Suspender cliente'}}</h2>
+<p>{{suspensionTarget.estado_cliente==='suspendido'?'El cliente volverá a estar activo en el taller.':'El cliente quedará bloqueado para edición hasta reactivarlo.'}}</p>
+<label v-if="suspensionTarget.estado_cliente!=='suspendido'">Motivo (opcional)<textarea class="field" v-model="suspensionReason" maxlength="500">
+</textarea>
+</label>
+<div class="form-actions">
+<button class="text-link" type="button" @click="cerrarConfirmacionEstado">Cancelar</button>
+<button class="primary-btn" :class="suspensionTarget.estado_cliente==='suspendido'?'success-btn':'warning-btn'" :disabled="guardando" type="button" @click="confirmarSuspension">{{suspensionTarget.estado_cliente==='suspendido'?'Reactivar':'Suspender'}}</button>
+</div>
+</section>
+</div>
+<div v-if="confirmDelete" class="confirm-backdrop" @click.self="confirmDelete=null">
+<section class="confirm-dialog" role="dialog" aria-modal="true">
+<h2>Eliminar cliente</h2>
+<p>¿Eliminar lógicamente a {{confirmDelete.nombre_completo}}? La fila y foto se conservarán.</p>
+<div class="form-actions">
+<button class="text-link" @click="confirmDelete=null">Cancelar</button>
+<button class="primary-btn danger-btn" :disabled="guardando" @click="eliminarCliente">Confirmar eliminación</button>
+</div>
+</section>
+</div>
+</div>
 </div>
 <style>
-.cliente-form{padding:0 20px 20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.cliente-form label{font-size:11px;font-weight:600;color:#354b66}.cliente-form .field{display:block;margin-top:6px}.cliente-form .wide{grid-column:1/-1}.form-section{font:700 12px Manrope,sans-serif;color:#2855a8;border-bottom:1px solid #e8edf4;padding:7px 0;margin:8px 0 0}.field-error{display:block;color:#c44545;font-size:10px;font-weight:500;margin-top:4px;min-height:12px}.field[aria-invalid="true"]{border-color:#d85a5a}.photo-preview{display:flex;align-items:center;gap:12px;font-size:11px;color:#61738b}.photo-preview img{width:62px;height:62px;object-fit:cover;border-radius:8px;border:1px solid #e0e6ef}.form-actions{display:flex;justify-content:flex-end;align-items:center;gap:15px}.primary-btn:disabled{opacity:.65;cursor:wait}.phone-input{display:flex;align-items:center;margin-top:6px}.phone-input>span{height:43px;padding:0 10px;display:flex;align-items:center;background:#f4f7fb;border:1px solid #dfe5ee;border-right:0;border-radius:7px 0 0 7px;color:#53677f}.phone-input .field{margin:0;border-radius:0 7px 7px 0}.search{width:min(320px,50vw)}.empty-state{text-align:center;padding:34px;color:#74859a}.thumb{width:38px;height:38px;object-fit:cover;border-radius:50%}.actions{display:flex;gap:8px}.danger{color:#b33}.pagination{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:14px 20px;color:#65758a;font-size:11px}.pagination button:disabled{opacity:.4}.muted{color:#8190a3;font-size:11px}.coming{padding:32px}.modal-backdrop{position:fixed;inset:0;background:#10243b80;display:grid;place-items:center;z-index:20;padding:20px}.modal{max-height:90vh;overflow:auto;background:white;border-radius:12px;padding:24px;width:min(620px,100%)}.modal h2{font:700 19px Manrope;color:#183452}.modal dl{display:grid;grid-template-columns:1fr 2fr;gap:8px;font-size:12px}.modal dt{color:#8290a2}.modal dd{margin:0;color:#273f5d}.detail-photo{width:100px;height:100px;object-fit:cover;border-radius:10px}.danger-btn{background:#b74444}@media(max-width:600px){.cliente-form{grid-template-columns:1fr}.cliente-form .wide{grid-column:auto}}
+.cliente-form{padding:0 20px 20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.cliente-form label{font-size:11px;font-weight:600;color:#354b66}.cliente-form .field{display:block;margin-top:6px}.cliente-form .wide{grid-column:1/-1}.form-section{font:700 12px Manrope,sans-serif;color:#2855a8;border-bottom:1px solid #e8edf4;padding:7px 0;margin:8px 0 0}.field-error{display:block;color:#c44545;font-size:10px;font-weight:500;margin-top:4px;min-height:12px}.field[aria-invalid="true"]{border-color:#d85a5a}.photo-preview{display:flex;align-items:center;gap:12px;font-size:11px;color:#61738b}.photo-preview img{width:62px;height:62px;object-fit:cover;border-radius:8px;border:1px solid #e0e6ef}.form-actions{display:flex;justify-content:flex-end;align-items:center;gap:15px}.primary-btn:disabled{opacity:.65;cursor:wait}.phone-input{display:flex;align-items:center;margin-top:6px}.country-picker{height:43px;padding:0;position:relative;display:flex;align-items:center;background:#f4f7fb;border:1px solid #dfe5ee;border-right:0;border-radius:7px 0 0 7px;color:#53677f}.country-trigger{height:100%;border:0;background:transparent;color:inherit;padding:0 9px;cursor:pointer}.country-trigger:focus-visible,.country-option:focus-visible{outline:2px solid #3e73c8;outline-offset:-2px}.phone-input .phone-number{margin:0;border-radius:0 7px 7px 0;min-width:0}.country-menu{position:absolute;top:calc(100% + 5px);left:0;z-index:12;width:250px;max-height:280px;overflow:auto;padding:8px;background:#fff;border:1px solid #dfe5ee;border-radius:9px;box-shadow:0 10px 30px #10243b24;display:block}.country-search{position:sticky;top:0;background:#fff}.country-option{display:block;width:100%;padding:8px;border:0;border-radius:5px;background:white;text-align:left;color:#273f5d;cursor:pointer}.country-option:hover{background:#edf4ff}.search{width:min(320px,50vw)}.empty-state{text-align:center;padding:34px;color:#74859a}.thumb{width:38px;height:38px;object-fit:cover;border-radius:50%}.actions{display:flex;gap:8px}.danger{color:#b33}.pagination{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:14px 20px;color:#65758a;font-size:11px}.pagination button:disabled{opacity:.4}.muted{color:#8190a3;font-size:11px}.coming{padding:32px}.confirm-backdrop{position:fixed;inset:0;background:#10243b80;display:grid;place-items:center;z-index:20;padding:20px}.confirm-dialog{max-height:90vh;overflow:auto;background:white;border-radius:12px;padding:24px;width:min(620px,100%)}.modal h2{font:700 19px Manrope;color:#183452}.modal dl{display:grid;grid-template-columns:1fr 2fr;gap:8px;font-size:12px}.modal dt{color:#8290a2}.modal dd{margin:0;color:#273f5d}.detail-photo{width:100px;height:100px;object-fit:cover;border-radius:10px}.danger-btn{background:#b74444}@media(max-width:600px){.cliente-form{grid-template-columns:1fr}.cliente-form .wide{grid-column:auto}}
+
+.table-wrap td,.table-wrap th{vertical-align:middle}.actions-cell{width:148px;text-align:center}.action-buttons{display:flex;align-items:center;justify-content:center;gap:5px;min-height:42px}.icon-action{width:38px;height:38px;min-width:38px;min-height:38px;border:1px solid transparent;border-radius:9px;background:transparent;display:inline-grid;place-items:center;transition:background-color .16s,border-color .16s,transform .16s;color:#49627f}.icon-action svg{width:19px;height:19px}.icon-action:hover{transform:translateY(-1px);background:#f0f5fb}.icon-action:focus-visible,.close-icon:focus-visible,.photo-avatar:focus-visible{outline:3px solid #78a4ff;outline-offset:2px}.show-action{color:#2c5fd3}.show-action:hover{background:#edf3ff;border-color:#d5e2ff}.edit-action{color:#506985}.edit-action:hover{color:#2458c6;border-color:#d5e2ff}.delete-action{color:#c34848}.state-action{width:38px;height:38px;min-width:38px;min-height:38px}.state-action svg{width:20px;height:20px}.suspend-action{color:#b7791f}.suspend-action:hover{background:#fff7e6;border-color:#f2d59b}.reactivate-action{color:#21865a}.reactivate-action:hover{background:#eaf8ef;border-color:#bce5ca}.warning-btn{background:#b7791f}.warning-btn:hover{background:#986115}.success-btn{background:#21865a}.success-btn:hover{background:#176b46}.delete-action:hover{background:#fff0f0;border-color:#f4caca}.ficha-backdrop{position:fixed;inset:0;z-index:1050;display:grid;place-items:center;padding:22px;background:rgba(8,23,43,.58);backdrop-filter:blur(3px)}.ficha-dialog{position:relative;width:min(780px,100%);max-height:min(90vh,900px);overflow:auto;border:1px solid #e7edf5;border-radius:18px;background:#f8faff;box-shadow:0 28px 80px rgba(10,30,58,.3);outline:none}.ficha-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:23px 27px;background:#fff;border-bottom:1px solid #e8edf4}.ficha-identity{display:flex;align-items:center;gap:18px;min-width:0}.ficha-avatar{width:86px;height:86px;flex:none;border-radius:50%;overflow:hidden}.initials-avatar{display:grid;place-items:center;background:linear-gradient(145deg,#dbe8ff,#a8c5fa);color:#264e98;font:700 25px Manrope,sans-serif}.photo-avatar{padding:0;border:2px solid #dce7f6;background:#eaf0fa;cursor:zoom-in}.photo-avatar img{width:100%;height:100%;object-fit:cover}.ficha-title-wrap{min-width:0}.ficha-title-wrap h2{margin:0;color:#183452;font:700 22px/1.25 Manrope,sans-serif;overflow-wrap:anywhere}.ficha-title-wrap p{margin:5px 0 8px;color:#687b94;font-size:13px}.workshop-badge{display:inline-block;padding:6px 10px;border:1px solid #e0e9f8;border-radius:20px;background:#f2f6ff;color:#436390;font-size:11px}.close-icon{width:38px;height:38px;flex:none;border:1px solid #e5ebf3;border-radius:10px;background:#fff;color:#61748d;display:grid;place-items:center}.close-icon:hover{background:#f1f5fa;color:#1e3d66}.close-icon svg{width:19px;height:19px}.ficha-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 22px}.ficha-card{padding:17px 18px;background:#fff;border:1px solid #e7edf5;border-radius:13px;box-shadow:0 4px 14px rgba(28,57,92,.04)}.ficha-card h3{display:flex;align-items:center;gap:9px;margin:0 0 14px;color:#25466e;font:700 13px Manrope,sans-serif}.ficha-card h3 svg{width:19px;height:19px;color:#4774c7}.ficha-card dl{display:grid;grid-template-columns:minmax(115px,.8fr) minmax(0,1.2fr);gap:10px 12px;margin:0;font-size:12px}.ficha-card dt{color:#7d8da2}.ficha-card dd{margin:0;color:#344d6b;overflow-wrap:anywhere}.ficha-card a{color:#315fc1;text-decoration:none}.ficha-card a:hover{text-decoration:underline}.not-registered{color:#a1aaba}.address-card{grid-column:1/-1}.ficha-footer{display:flex;justify-content:flex-end;gap:10px;padding:0 22px 20px}.secondary-btn{min-height:39px;padding:0 16px;border:1px solid #dce4ef;border-radius:8px;background:#fff;color:#45607f;font-size:12px;font-weight:600}.secondary-btn:hover{background:#f1f5fa}.ficha-state{min-height:210px;display:flex;align-items:center;justify-content:center;gap:10px;padding:30px;color:#677b94;text-align:center}.ficha-error{color:#a23d45}.photo-lightbox{position:fixed;inset:0;z-index:4;display:grid;place-items:center;padding:55px;background:rgba(9,19,34,.9)}.photo-lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}.lightbox-close{position:absolute;right:20px;top:20px}.ficha-enter-active,.ficha-leave-active{transition:opacity .2s ease}.ficha-enter-active .ficha-dialog,.ficha-leave-active .ficha-dialog{transition:transform .22s ease,opacity .22s ease}.ficha-enter-from,.ficha-leave-to{opacity:0}.ficha-enter-from .ficha-dialog,.ficha-leave-to .ficha-dialog{opacity:0;transform:translateY(12px) scale(.985)}@media(max-width:640px){.ficha-backdrop{padding:8px}.ficha-dialog{max-height:calc(100dvh - 16px);border-radius:15px}.ficha-header{padding:17px 16px}.ficha-avatar{width:66px;height:66px}.ficha-title-wrap h2{font-size:18px}.workshop-badge{font-size:10px}.ficha-cards{grid-template-columns:1fr;padding:13px;gap:10px}.address-card{grid-column:auto}.ficha-card{padding:15px}.ficha-card dl{grid-template-columns:minmax(105px,.8fr) minmax(0,1.2fr)}.ficha-footer{padding:0 13px 15px}}@media(prefers-reduced-motion:reduce){.ficha-enter-active,.ficha-leave-active,.ficha-enter-active .ficha-dialog,.ficha-leave-active .ficha-dialog{transition:none}.icon-action{transition:none}}
 </style>
+<style>.list-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.list-filters .field{width:auto;min-width:105px}.list-filters .search{width:min(280px,35vw)}.sort-button{padding:0;border:0;background:none;color:inherit;font:inherit;text-transform:inherit;letter-spacing:inherit}.icon-action:disabled{opacity:.4;cursor:not-allowed}.country-select{width:100px;font-size:11px;background:#f4f7fb;border:0;border-right:1px solid #dfe5ee;border-radius:7px 0 0 7px;padding:0 5px}.badge-status{white-space:nowrap}.employee-detail{width:min(760px,96vw);max-height:90vh;overflow:auto;position:relative}.employee-detail-head{display:flex;align-items:center;gap:16px;padding:10px 0 18px;border-bottom:1px solid #e8edf4}.employee-detail-head img,.employee-avatar{width:78px;height:78px;border-radius:50%;object-fit:cover;flex:none}.employee-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.employee-detail-grid article{padding:13px;background:#f7f9fc;border:1px solid #e8edf4;border-radius:10px}.employee-detail-grid h3{font:700 12px Manrope;color:#2855a8}.employee-detail-grid p{margin:5px 0;color:#61738b;font-size:12px}.employee-detail .close-icon{position:absolute;right:14px;top:14px}@media(max-width:600px){.employee-detail-grid{grid-template-columns:1fr}}@media(max-width:700px){.list-filters{width:100%}.list-filters .search{width:100%}}</style>
 <script type="module">
-import {ClienteFacade} from './frontend/clientes/clienteFacade.js';import {AuthFacade} from './frontend/authFacade.js';const{createApp}=window.Vue;
-const estados=['Aguascalientes','Baja California','Baja California Sur','Campeche','Chiapas','Chihuahua','Ciudad de México','Coahuila','Colima','Durango','Estado de México','Guanajuato','Guerrero','Hidalgo','Jalisco','Michoacán','Morelos','Nayarit','Nuevo León','Oaxaca','Puebla','Querétaro','Quintana Roo','San Luis Potosí','Sinaloa','Sonora','Tabasco','Tamaulipas','Tlaxcala','Veracruz','Yucatán','Zacatecas'];const empty=()=>({nombre_completo:'',contacto_alterno:'',edad:'',fecha_nacimiento:'',telefono_personal:'',telefono_trabajo:'',email:'',email_trabajo:'',foto:null,calle:'',colonia:'',municipio:'',estado:'',codigo_postal:''});
-createApp({data(){return{authenticated:false,currentUser:null,email:'',password:'',remember:false,showPassword:false,recovering:false,sent:false,error:'',toast:null,authFacade:null,clienteFacade:null,guardando:false,activeSection:'resumen',navigation:[{id:'resumen',label:'Resumen'},{id:'ordenes',label:'Órdenes de trabajo'},{id:'clientes',label:'Clientes'},{id:'vehiculos',label:'Vehículos'},{id:'usuarios',label:'Usuarios y equipo'},{id:'reportes',label:'Reportes'}],estados,cliente:empty(),errores:{},tocados:[],fotoPreview:null,currentPhotoUrl:null,editingClientId:null,clients:[],page:1,totalPages:1,totalClientes:0,search:'',loadingClients:false,searchTimer:null,detailClient:null,confirmDelete:null,detailFields:{}}},computed:{rolPuedeAlta(){return['administrador','recepcionista'].includes(String(this.currentUser?.rol||'').toLowerCase())},esAdministrador(){return String(this.currentUser?.rol||'').toLowerCase()==='administrador'},initiales(){return(this.currentUser?.nombre||'').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()},sectionLabel(){return this.navigation.find(x=>x.id===this.activeSection)?.label||'Sección'}},created(){this.authFacade=new AuthFacade();this.clienteFacade=new ClienteFacade(undefined,(message,type)=>this.toast={message,type});this.syncHash();window.addEventListener('hashchange',this.syncHash);this.authFacade.sesion().then(r=>{this.currentUser=r.usuario;this.authenticated=true;this.loadClients()}).catch(()=>{})},beforeUnmount(){window.removeEventListener('hashchange',this.syncHash);clearTimeout(this.searchTimer);if(this.fotoPreview)URL.revokeObjectURL(this.fotoPreview)},watch:{activeSection(v){if(v==='clientes'&&this.authenticated)this.loadClients()}},methods:{syncHash(){const id=location.hash.slice(1)||'resumen';this.activeSection=this.navigation.some(x=>x.id===id)?id:'resumen';if(!location.hash)history.replaceState(null,'',location.pathname+location.search+'#resumen')},async login(){this.error='';try{const r=await this.authFacade.login(this.email,this.password);this.currentUser=r.usuario;this.authenticated=true;this.password='';this.loadClients()}catch(e){this.error='No se pudo iniciar sesión. Revisa tus datos o la conexión al servidor.'}},async logout(){try{await this.authFacade.logout()}finally{this.authenticated=false;this.currentUser=null;this.clients=[]}},sendRecovery(){this.error=this.email?'':'Ingresa tu correo electrónico.';if(this.email)this.sent=true},isInvalid(k){return!!this.errores[k]},tocarCampo(k){if(!this.tocados.includes(k))this.tocados.push(k);this.revalidarCampo(k)},revalidarCampo(k){if(!this.tocados.includes(k))return;const e=this.clienteFacade.errores(this.cliente);this.errores={...this.errores,[k]:e[k]||''}},limpiarTelefono(k,e){const v=e.target.value.replace(/[^0-9\s-]/g,'').replace(/[\s-]/g,'').slice(0,10);this.cliente[k]=v;e.target.value=v;this.revalidarCampo(k)},async comprobarDuplicado(k){if(k==='nombre_completo'&&(!this.cliente.nombre_completo||!this.cliente.fecha_nacimiento))return;if(this.clienteFacade.errores(this.cliente)[k])return;try{const r=await this.clienteFacade.verificarDuplicado(this.cliente,this.editingClientId);if(r.duplicado){this.errores={...this.errores,[k]:'Ya existe un cliente con estos datos.'};this.toast={message:'Se encontró un posible duplicado; confirma los datos.',type:'error'}}}catch(e){if(e.status===403)this.toast={message:'Sin permiso (403).',type:'error'}}},calcularEdad(){const d=this.cliente.fecha_nacimiento;if(!d){this.cliente.edad='';return}const[y,m,day]=d.split('-').map(Number),n=new Date();let a=n.getFullYear()-y;if(n.getMonth()+1<m||(n.getMonth()+1===m&&n.getDate()<day))a--;this.cliente.edad=a;this.revalidarCampo('fecha_nacimiento')},seleccionarFoto(e){const f=e.target.files?.[0]||null;if(this.fotoPreview)URL.revokeObjectURL(this.fotoPreview);this.fotoPreview=f?URL.createObjectURL(f):null;this.cliente.foto=f;this.tocarCampo('foto')},nuevoCliente(){this.cancelarEdicion();this.$nextTick(()=>document.getElementById('nombre_completo')?.focus())},cancelarEdicion(){if(this.fotoPreview)URL.revokeObjectURL(this.fotoPreview);this.fotoPreview=this.currentPhotoUrl=null;this.editingClientId=null;this.cliente=empty();this.errores={};this.tocados=[];if(this.$refs.fotoInput)this.$refs.fotoInput.value=''},async loadClients(){if(!this.authenticated)return;this.loadingClients=true;try{const r=await this.clienteFacade.listar({q:this.search,page:this.page,per_page:10});this.clients=r.clientes||[];this.page=r.page||1;this.totalPages=r.pages||0;this.totalClientes=r.total||0}catch(e){this.clients=[];this.toast={message:this.clienteFacade.mensaje(e,'consultar clientes'),type:'error'}}finally{this.loadingClients=false}},buscarClientes(){clearTimeout(this.searchTimer);this.searchTimer=setTimeout(()=>{this.page=1;this.loadClients()},300)},cambiarPagina(p){this.page=p;this.loadClients()},async consultarCliente(id){try{const r=await this.clienteFacade.consultar(id),c=r.cliente||r;this.detailClient=c;this.detailFields={'Nombre completo':c.nombre_completo,'Contacto alternativo':c.contacto_alterno,'Fecha nacimiento':c.fecha_nacimiento,'Edad':c.edad,'Teléfono personal':'+52 '+c.telefono_personal,'Teléfono trabajo':'+52 '+c.telefono_trabajo,'Correo':c.email,'Correo trabajo':c.email_trabajo,'Calle':c.calle,'Colonia':c.colonia,'Municipio':c.municipio,'Estado':c.estado,'Código postal':c.codigo_postal,'Registrado':c.created_at,'ID':c.id}}catch(e){this.toast={message:this.clienteFacade.mensaje(e,'consultar'),type:'error'}}},async editarCliente(id){try{const r=await this.clienteFacade.consultar(id),c=r.cliente||r;this.cancelarEdicion();this.editingClientId=id;this.cliente={...empty(),...c,foto:null,fecha_nacimiento:String(c.fecha_nacimiento||'').slice(0,10)};this.calcularEdad();this.currentPhotoUrl=c.foto_ruta?this.photoUrl(id):null;this.$nextTick(()=>document.getElementById('nombre_completo')?.focus())}catch(e){this.toast={message:this.clienteFacade.mensaje(e,'editar'),type:'error'}}},async guardarCliente(){const fields=['nombre_completo','contacto_alterno','fecha_nacimiento','edad','telefono_personal','telefono_trabajo','email','email_trabajo','foto','calle','colonia','municipio','estado','codigo_postal'];this.tocados=fields;this.errores=this.clienteFacade.errores(this.cliente);if(Object.values(this.errores).some(Boolean)){this.toast={message:'Revisa los campos marcados (422).',type:'error'};this.$nextTick(()=>this.$refs.clienteForm?.querySelector('[aria-invalid="true"]')?.focus());return}this.guardando=true;try{if(this.editingClientId)await this.clienteFacade.actualizar(this.editingClientId,{...this.cliente});else await this.clienteFacade.registrar({...this.cliente});this.cancelarEdicion();this.page=1;await this.loadClients()}catch(e){this.errores={...this.errores,...(e.fieldErrors||e.errors||{})};if(e.status===403)this.toast={message:'Sin permiso (403).',type:'error'};this.$nextTick(()=>this.$refs.clienteForm?.querySelector('[aria-invalid="true"]')?.focus())}finally{this.guardando=false}},async eliminarCliente(){if(!this.confirmDelete)return;this.guardando=true;try{await this.clienteFacade.eliminar(this.confirmDelete.id);this.confirmDelete=null;await this.loadClients()}catch(e){if(e.status===403)this.toast={message:'Sin permiso (403).',type:'error'}}finally{this.guardando=false}},photoUrl(id){return this.clienteFacade.repository.fotoUrl(id)},formatDate(v){return v?new Date(v).toLocaleDateString('es-MX'):'—'}}}).mount('#app');
+import {ClienteFacade} from './frontend/clientes/clienteFacade.js';import {useSesionStore} from './frontend/authStore.js';import {TallerFacade} from './frontend/talleres/tallerFacade.js';import {DireccionFacade} from './frontend/direccion/direccionFacade.js';import {DireccionFields} from './frontend/direccion/DireccionFields.js';import {EmpleadoFacade} from './frontend/empleados/empleadoFacade.js';import {CatalogoFacade} from './frontend/catalogo/catalogoFacade.js';import {VehiculoAutocomplete} from './frontend/vehiculoAutocomplete.js';import {EstatusFacade} from './frontend/estatus/estatusFacade.js';import {VehiculoFacade} from './frontend/vehiculos/vehiculoFacade.js';const{createApp}=window.Vue;const{createPinia,mapState,mapActions}=window.Pinia;
+const estados=['Aguascalientes','Baja California','Baja California Sur','Campeche','Chiapas','Chihuahua','Ciudad de México','Coahuila','Colima','Durango','Estado de México','Guanajuato','Guerrero','Hidalgo','Jalisco','Michoacán','Morelos','Nayarit','Nuevo León','Oaxaca','Puebla','Querétaro','Quintana Roo','San Luis Potosí','Sinaloa','Sonora','Tabasco','Tamaulipas','Tlaxcala','Veracruz','Yucatán','Zacatecas'];const contactoVacio=()=>({nombre:'',telefono_personal:'',telefono_personal_prefijo:'52',telefono_personal_pais:'MX',email:'',telefono_trabajo:'',telefono_trabajo_prefijo:'52',telefono_trabajo_pais:'MX',email_trabajo:''});const empty=()=>({nombres:'',apellido_paterno:'',apellido_materno:'',nombre_completo:'',curp:'',rfc:'',edad:'',fecha_nacimiento:'',celular:'',celular_prefijo:'52',celular_pais:'MX',telefono_personal:'',telefono_personal_prefijo:'52',telefono_personal_pais:'MX',telefono_fijo:'',telefono_fijo_prefijo:'52',telefono_fijo_pais:'MX',telefono_trabajo:'',telefono_trabajo_prefijo:'52',telefono_trabajo_pais:'MX',email:'',email_trabajo:'',contacto:contactoVacio(),colonia_manual:false,foto:null,calle:'',numero_interior:'',colonia:'',municipio:'',estado:'',codigo_postal:'',taller_id:''});
+const app=createApp({data(){return{nombreSesion:'',email:'',password:'',remember:false,showPassword:false,recovering:false,sent:false,error:'',toast:null,clienteFacade:null,tallerFacade:null,empleadoFacade:null,catalogoFacade:null,estatusFacade:null,vehiculoFacade:null,estatusRows:[],estatusTotal:0,estatusPages:1,estatusPage:1,estatusPageSize:10,estatusQuery:'',estatusSort:'valor',estatusDirection:'asc',estatusModal:null,estatusForm:{valor:'',descripcion:''},estatusEditingId:null,estatusSaving:false,estatusTarget:null,vehicleRows:[],vehicleTotal:0,vehiclePages:1,vehiclePage:1,vehiclePageSize:10,vehicleQuery:'',vehicleForm:null,vehicleClients:[],vehicleModal:false,vehicleSaving:false,vehicleWarnings:[],vehicleSaved:false,vehicleSavedClientId:'',vehiclePlateCheck:'',vehicleErrors:{},vehicleActivationId:null,vehicleDetail:null,vehicleDetailOpen:false,vehicleDetailLoading:false,vehicleDeactivateTarget:null,vehicleDeactivateReason:'',vehicleDeactivateError:'',vehicleDeactivating:false,vehicleDeactivateTrigger:null,
+vehiclePlateTimer:null,
+statusOptions:[],catalogBrands:[],catalogModels:[],catalogLoading:false,catalogQuery:'',catalogPage:1,catalogPageSize:10,catalogTotal:0,catalogPages:1,catalogSort:'nombre',catalogDirection:'asc',catalogSelectedBrand:null,catalogModelQuery:'',catalogModelPage:1,catalogModelPageSize:10,catalogModelTotal:0,catalogModelPages:1,catalogModelSort:'nombre',catalogModelDirection:'asc',catalogModal:null,catalogErrors:{},catalogSaving:false,catalogStatusTarget:null,catalogSearchTimer:null,empleados:[],empleadoTalleres:[],empleadoForm:null,editingEmployeeId:null,employeeQuery:'',employeePage:1,employeePageSize:10,employeeTotal:0,employeePages:0,employeeSort:'nombre',employeeDirection:'asc',employeeFilterStatus:'',employeeFilterWorkshop:'',employeeFilterRole:'',employeeFilterPosition:'',employeeConfirm:null,employeeDetail:null,employeeReason:'',employeeErrors:{},loadingEmployees:false,employeeSearchTimer:null,direccionFacade:null,talleres:[],workshops:[],talleresDetail:null,tallerDetalle:null,tallerFormVisible:false,editingWorkshopId:null,taller:{},tallerErrors:{},loadingTalleres:false,workshopQuery:'',workshopStatus:'todos',workshopSort:'nombre',workshopDirection:'asc',workshopPage:1,workshopPageSize:10,tallerEstadoTarget:null,tallerSuspensionReason:'',tallerMunicipios:[],tallerColonias:[],filterWorkshop:"",filterStatus:"todos",pageSize:10,sort:"fecha",direction:"desc",suspensionTarget:null,suspensionReason:"",guardando:false,activeSection:'resumen',openNavGroup:'',editingLegacy:false,
+navigation:[{id:'resumen',label:'Resumen'},
+{id:'ordenes',label:'Órdenes de trabajo'},
+{id:'reportes',label:'Reportes'},
+{id:'gestion-vehiculos',label:'Gestión de vehículos'}],
+navigationGroups:[{id:'clientes',label:'Clientes',items:[{id:'clientes',label:'Registro de clientes'},
+{id:'gestion-clientes',label:'Gestión de clientes'}]},
+{id:'empleados',label:'Usuarios y equipo',items:[{id:'registro-empleados',label:'Registro de empleados'},
+{id:'gestion-empleados',label:'Gestión de empleados'}]},
+{id:'talleres',label:'Talleres',items:[{id:'registro-talleres',label:'Registro de talleres'},
+{id:'gestion-talleres',label:'Gestión de talleres'}]},
+{id:'administracion',label:'Administración',items:[{id:'gestion-catalogo-vehiculos',label:'Catálogo de vehículos'},
+{id:'gestion-estatus',label:'Catálogo de estatus'}]}],
+estados,cliente:empty(),errores:{},tocados:[],fotoPreview:null,currentPhotoUrl:null,editingClientId:null,clients:[],page:1,totalPages:1,totalClientes:0,search:'',loadingClients:false,searchTimer:null,detailClient:null,fichaAbierta:false,detailLoading:false,detailError:'',fichaTrigger:null,bodyOverflowPrev:'',fotoAmpliada:false,confirmDelete:null,detailFields:{},countries:[],countryMenu:'',countrySearch:'',catalogReady:false,municipioOptions:[],coloniaOptions:[],coloniaQuery:'',coloniaOpen:false,allColoniaRows:[],locationMessage:'',cpController:null,locationController:null,coloniaController:null,cpTimer:null,coloniaTimer:null}},computed:{...mapState(useSesionStore,['authenticated','rol','taller_id','cargada']),currentYear(){return new Date().getFullYear()},rolPuedeAlta(){return['administrador','recepcionista'].includes(String(this.rol||'').toLowerCase())},esAdministrador(){return String(this.rol||'').toLowerCase()==='administrador'},initiales(){return(this.nombreSesion||'').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()},nombreCompleto(){return[this.cliente.nombres,this.cliente.apellido_paterno,this.cliente.apellido_materno].filter(Boolean).join(' ')},coloniaResults(){const q=this.coloniaQuery.trim().toLocaleLowerCase('es-MX');return this.coloniaOptions.filter(x=>!q||(`${x.colonia} ${x.cp}`).toLocaleLowerCase('es-MX').includes(q)).slice(0,100)},standaloneNavigation(){return this.navigation.filter(x=>this.rol!=='mecanico'||x.id==='resumen')},filteredWorkshops(){const q=this.workshopQuery.trim().toLocaleLowerCase('es-MX');return [...this.talleres].filter(t=>(!q||[t.nombre,t.razon_social,t.municipio,t.estado,t.telefono].some(v=>String(v||'').toLocaleLowerCase('es-MX').includes(q)))&&(this.workshopStatus==='todos'||(this.workshopStatus==='activo'?!!t.activo:!t.activo))).sort((a,b)=>{const x=String(a[this.workshopSort]??'').toLocaleLowerCase('es-MX'),y=String(b[this.workshopSort]??'').toLocaleLowerCase('es-MX');return(x.localeCompare(y,'es-MX')*(this.workshopDirection==='asc'?1:-1))})},workshopPageRows(){const start=(this.workshopPage-1)*this.workshopPageSize;return this.filteredWorkshops.slice(start,start+this.workshopPageSize)},workshopPages(){return Math.max(1,Math.ceil(this.filteredWorkshops.length/this.workshopPageSize))},visibleNavigationGroups(){return this.navigationGroups.filter(g=>{if(this.rol==='mecanico')return false;if(g.id==='administracion')return this.esAdministrador;if(g.id==='flota')return this.rolPuedeAlta;if(g.id==='empleados')return this.esAdministrador;if(g.id==='talleres')return this.rol==='administrador'||this.rol==='recepcionista';return true}).map(g=>g.id==='talleres'&&this.rol==='recepcionista'?{...g,items:g.items.filter(i=>i.id==='gestion-talleres')}:g)},activeNavigationGroup(){return this.navigationGroups.find(g=>g.items.some(i=>i.id===this.activeSection))||null},sectionLabel(){return this.navigation.find(x=>x.id===this.activeSection)?.label||this.navigationGroups.flatMap(g=>g.items).find(x=>x.id===this.activeSection)?.label||'Sección'},employeeAge(){const d=this.employeeForm?.fecha_nacimiento;if(!d)return 'No registrado';const [y,m,day]=d.split('-').map(Number),now=new Date();let age=now.getFullYear()-y;if(now.getMonth()+1<m||(now.getMonth()+1===m&&now.getDate()<day))age--;return age+' años'},passwordStrength(){const p=this.employeeForm?.password||'';if(!p)return 'Sin ingresar';if(p.length<12)return 'Débil';let n=0;if(/[a-z]/.test(p))n++;if(/[A-Z]/.test(p))n++;if(/\d/.test(p))n++;if(/[^A-Za-z0-9]/.test(p))n++;return n>=3?'Fuerte':'Media'},filteredCountries(){const q=this.countrySearch.trim().toLowerCase();return this.countries.filter(x=>!q||x.nombre.toLowerCase().includes(q)||x.iso2.toLowerCase().includes(q)||x.prefijo.includes(q)).slice(0,60)}},created(){this.direccionFacade=new DireccionFacade();this.empleadoFacade=new EmpleadoFacade();this.catalogoFacade=new CatalogoFacade();this.estatusFacade=new EstatusFacade(undefined,(message,type)=>this.toast={message,type});this.vehiculoFacade=new VehiculoFacade();this.clienteFacade=new ClienteFacade(undefined,(message,type)=>this.toast={message,type});this.tallerFacade=new TallerFacade();this.loadCountries();this.loadLocationCatalog();this.syncHash();window.addEventListener('hashchange',this.syncHash);window.addEventListener('keydown',this.onVehicleKeydown);this.rehidratarSesion().then(usuario=>{this.nombreSesion=String(usuario?.nombre||'');this.syncHash();this.loadLocationCatalog();this.loadWorkshops();this.loadTalleres();this.loadClients();if(this.esAdministrador){this.loadEmployees();if(this.activeSection==='gestion-catalogo-vehiculos')this.loadCatalogBrands()}}).catch(()=>{this.syncHash()})},beforeUnmount(){window.removeEventListener('hashchange',this.syncHash);window.removeEventListener('keydown',this.onVehicleKeydown);clearTimeout(this.searchTimer);clearTimeout(this.cpTimer);clearTimeout(this.coloniaTimer);this.cpController?.abort();this.locationController?.abort();this.coloniaController?.abort();if(this.fotoPreview)URL.revokeObjectURL(this.fotoPreview)},watch:{activeSection(v){if((v==='clientes'||v==='gestion-clientes')&&this.authenticated){this.loadWorkshops();if(v==='gestion-clientes')this.loadClients()}if((v==='gestion-talleres'||v==='registro-talleres')&&this.authenticated)this.loadTalleres();if(v==='gestion-empleados'&&this.authenticated&&this.esAdministrador)this.loadEmployees();if(v==='gestion-catalogo-vehiculos'&&this.authenticated&&this.esAdministrador)this.loadCatalogBrands()}},methods:{...mapActions(useSesionStore,['rehidratarSesion','iniciarSesion','cerrarSesion']),loadEstatus(){if(!this.esAdministrador)return;this.estatusFacade.listar({page:this.estatusPage,page_size:this.estatusPageSize,q:this.estatusQuery,sort:this.estatusSort,direction:this.estatusDirection}).then(r=>{this.estatusRows=r.items||[];this.estatusTotal=r.total||0;this.estatusPages=r.total_pages||1}).catch(e=>this.toast={message:'No se pudo cargar estatus.',type:'error'})},openEstatus(row=null){this.estatusEditingId=row?.id||null;this.estatusForm=row?{valor:row.valor,descripcion:row.descripcion}:{valor:'',descripcion:''};this.estatusModal=true},async saveEstatus(){this.estatusSaving=true;try{await this.estatusFacade.guardar(this.estatusEditingId,this.estatusForm);this.estatusModal=false;this.toast={message:'Estatus guardado.',type:'success'};this.loadEstatus()}catch(e){this.toast={message:e.status===409?'Valor duplicado o estatus protegido.':'Revisa los campos del estatus.',type:'error'}}finally{this.estatusSaving=false}},async toggleEstatus(row){try{await this.estatusFacade.estado(row.id,!row.activo);this.toast={message:row.activo?'Estatus desactivado.':'Estatus reactivado.',type:'success'};this.loadEstatus()}catch(e){this.toast={message:e.message||'No se pudo cambiar el estatus.',type:'error'} }},async loadVehicles(){if(!this.rolPuedeAlta)return;try{const r=await this.vehiculoFacade.listar({page:this.vehiclePage,page_size:this.vehiclePageSize,q:this.vehicleQuery,sort:'created_at',direction:'desc'});this.vehicleRows=r.items||[];this.vehicleTotal=r.total||0;this.vehiclePages=r.total_pages||1}catch(e){this.toast={message:'No se pudieron cargar vehículos.',type:'error'}}},openVehicleModal(){this.vehicleActivationId=null;this.vehicleErrors={};this.vehicleForm={cliente_id:'',placa:'',marca:'',marca_id:'',modelo:'',modelo_id:'',anio:new Date().getFullYear(),version:'',numero_serie:'',kilometraje:'',fecha_ingreso:new Date().toISOString().slice(0,10)};this.vehicleWarnings=[];this.vehiclePlateCheck='';this.vehicleModal=true;this.clienteFacade.listar({q:'',page:1,page_size:50,estado:'activo'}).then(r=>{this.vehicleClients=(r.clientes||[]).filter(x=>x.estado_cliente==='activo')}).catch(()=>this.vehicleClients=[])},vehiclePlateInput(){clearTimeout(this.vehiclePlateTimer);this.vehicleForm.placa=this.vehiculoFacade.normalizarPlaca(this.vehicleForm.placa);this.vehiclePlateCheck='';if(this.vehicleForm.placa.length>=5)this.vehiclePlateTimer=setTimeout(async()=>{try{const r=await this.vehiculoFacade.verificarPlaca(this.vehicleForm.placa);this.vehiclePlateCheck=r.registrada?'Placa ya registrada.':'Placa disponible.'}catch(e){this.vehiclePlateCheck='No se pudo verificar la placa.'}},300)},cerrarModalVehiculo(){this.vehicleModal=false;this.vehicleActivationId=null;this.vehicleErrors={}},async saveVehicle(){if(this.vehicleSaving)return;this.vehicleSaving=true;this.vehicleErrors={};try{const result=await this.vehiculoFacade.registrar({...this.vehicleForm,cliente_id:Number(this.vehicleForm.cliente_id),marca_id:this.vehicleForm.marca_id||null,modelo_id:this.vehicleForm.modelo_id||null});this.vehicleWarnings=result.warnings||[];this.vehicleSavedClientId=this.vehicleForm.cliente_id;this.vehicleModal=false;this.vehicleSaved=true;this.toast={message:'Vehículo registrado.',type:'success'};this.loadVehicles()}catch(e){this.vehicleErrors=e.errors||{_global:e.message||'No se pudo registrar el vehículo.'};this.toast={message:e.status===409?'Placa duplicada o cliente inactivo.':e.status===422?'Revisa los campos del vehículo.':'No se pudo registrar el vehículo.',type:'error'}}finally{this.vehicleSaving=false}},async mostrarVehiculo(id,activar=false){this.vehicleDetailOpen=true;this.vehicleDetailLoading=true;this.vehicleDetail=null;try{const result=await this.vehiculoFacade.repository.get(id);this.vehicleDetail=result.vehiculo;if(activar)this.editarParaActivar()}catch(e){this.vehicleDetailOpen=false;this.toast={message:e.status===404?'Vehículo no encontrado.':'No se pudo cargar la ficha del vehículo.',type:'error'}}finally{this.vehicleDetailLoading=false}},cerrarFichaVehiculo(){this.vehicleDetailOpen=false;this.vehicleDetail=null},editarParaActivar(){const row=this.vehicleDetail;if(!row||row.estatus!=='inactivo')return;this.vehicleActivationId=row.id;this.vehicleErrors={};this.vehicleForm={cliente_id:row.cliente_id,placa:row.placa||'',marca:row.marca_texto||'',marca_id:row.marca_id||'',modelo:row.modelo_texto||'',modelo_id:row.modelo_id||'',anio:row.anio||'',version:row.version||'',numero_serie:row.numero_serie||'',kilometraje:row.kilometraje??'',fecha_ingreso:row.fecha_ingreso||''};this.vehicleDetailOpen=false;this.vehicleModal=true;this.$nextTick(()=>this.$refs.vehiclePlate?.focus())},async activarVehiculo(){if(!this.vehicleActivationId||this.vehicleSaving)return;this.vehicleSaving=true;this.vehicleErrors={};try{const result=await this.vehiculoFacade.activar(this.vehicleActivationId,{...this.vehicleForm,cliente_id:Number(this.vehicleForm.cliente_id),marca_id:this.vehicleForm.marca_id||null,modelo_id:this.vehicleForm.modelo_id||null});this.vehicleDetail=result.vehiculo;this.vehicleModal=false;this.vehicleActivationId=null;this.vehicleDetailOpen=true;this.toast={message:'Vehículo activado correctamente.',type:'success'};await this.loadVehicles()}catch(e){this.vehicleErrors=e.errors||{_global:e.message||'No se pudo activar el vehículo.'};this.toast={message:e.status===409?(e.message||'No se puede activar el vehículo.'):e.status===422?'Completa la ficha del vehículo.':'No se pudo activar el vehículo.',type:'error'}}finally{this.vehicleSaving=false}},solicitarDesactivacion(row){if(!row||row.estatus!=='activo')return;this.vehicleDeactivateTrigger=document.activeElement;this.vehicleDeactivateTarget=row;this.vehicleDeactivateReason='';this.vehicleDeactivateError='';this.$nextTick(()=>this.$refs.vehicleDeactivateDialog?.focus())},cancelarDesactivacion(){this.vehicleDeactivateTarget=null;this.vehicleDeactivateReason='';this.vehicleDeactivateError='';this.$nextTick(()=>this.vehicleDeactivateTrigger?.focus())},async confirmarDesactivacion(){const row=this.vehicleDeactivateTarget;if(!row||this.vehicleDeactivating)return;this.vehicleDeactivating=true;this.vehicleDeactivateError='';try{const result=await this.vehiculoFacade.desactivar(row.id,this.vehicleDeactivateReason);this.vehicleDetail=result.vehiculo||this.vehicleDetail;this.cancelarDesactivacion();this.toast={message:'Vehículo desactivado correctamente.',type:'success'};await this.loadVehicles()}catch(e){this.vehicleDeactivateError=(e.errors&&e.errors.motivo)||e.message||'No se pudo desactivar el vehículo.';if(e.status!==422)this.toast={message:e.status===409?(e.message||'No se puede desactivar el vehículo.'):'No se pudo desactivar el vehículo.',type:'error'}}finally{this.vehicleDeactivating=false}},onVehicleKeydown(event){if(event.key!=='Escape')return;if(this.vehicleDeactivateTarget){this.cancelarDesactivacion();return}if(this.vehicleDetailOpen)this.cerrarFichaVehiculo()},registerAnotherVehicle(){const clientId=this.vehicleSavedClientId;this.vehicleSaved=false;this.vehicleActivationId=null;this.vehicleErrors={};this.vehicleForm={cliente_id:clientId,placa:'',marca:'',marca_id:'',modelo:'',modelo_id:'',anio:new Date().getFullYear(),version:'',numero_serie:'',kilometraje:'',fecha_ingreso:new Date().toISOString().slice(0,10)};this.vehicleWarnings=[];this.vehicleModal=true;this.$nextTick(()=>this.$refs.vehiclePlate?.focus())},closeVehicleSaved(){this.vehicleSaved=false;this.vehicleWarnings=[];this.vehicleSavedClientId=''},loadStatusOptions(){if(!this.authenticated)return;this.estatusFacade.opciones().then(r=>this.statusOptions=r.estatus||[]).catch(()=>this.statusOptions=[])},loadCatalogBrands(){if(!this.esAdministrador)return;this.catalogLoading=true;this.catalogoFacade.listarMarcas({q:this.catalogQuery,page:this.catalogPage,page_size:this.catalogPageSize,sort:this.catalogSort,direction:this.catalogDirection}).then(r=>{this.catalogBrands=r.items||[];this.catalogTotal=r.total||0;this.catalogPages=r.pages||1;if(this.catalogSelectedBrand&&!this.catalogBrands.some(x=>String(x.id)===String(this.catalogSelectedBrand.id)))this.catalogSelectedBrand=null}).catch(e=>{this.toast={message:e.status===403?'Sin permiso (403).':'No se pudo cargar el catálogo.',type:'error'}}).finally(()=>{this.catalogLoading=false})},catalogQueryChanged(){clearTimeout(this.catalogSearchTimer);this.catalogSearchTimer=setTimeout(()=>{this.catalogPage=1;this.loadCatalogBrands()},250)},catalogOrder(key){this.catalogDirection=this.catalogSort===key?(this.catalogDirection==='asc'?'desc':'asc'):'asc';this.catalogSort=key;this.catalogPage=1;this.loadCatalogBrands()},catalogPageChange(page){this.catalogPage=page;this.loadCatalogBrands()},async selectCatalogBrand(brand){this.catalogSelectedBrand=brand;this.catalogModelQuery='';this.catalogModelPage=1;await this.loadCatalogModels()},async loadCatalogModels(){if(!this.catalogSelectedBrand)return;this.catalogLoading=true;try{const r=await this.catalogoFacade.listarModelos({marca_id:this.catalogSelectedBrand.id,q:this.catalogModelQuery,page:this.catalogModelPage,page_size:this.catalogModelPageSize,sort:this.catalogModelSort,direction:this.catalogModelDirection});this.catalogModels=r.items||[];this.catalogModelTotal=r.total||0;this.catalogModelPages=r.pages||1}catch(e){this.toast={message:e.status===403?'Sin permiso (403).':'No se pudieron cargar los modelos.',type:'error'}}finally{this.catalogLoading=false}},catalogModelOrder(key){this.catalogModelDirection=this.catalogModelSort===key?(this.catalogModelDirection==='asc'?'desc':'asc'):'asc';this.catalogModelSort=key;this.catalogModelPage=1;this.loadCatalogModels()},openCatalogModal(kind,item=null){this.catalogErrors={};this.catalogModal={kind,id:item?.id||null,marca_id:item?.marca_id||this.catalogSelectedBrand?.id||'',nombre:item?.nombre||''}},async saveCatalogEntry(){if(!this.catalogModal)return;const kind=this.catalogModal.kind;this.catalogErrors=this.catalogoFacade.validarNombre(this.catalogModal.nombre,kind==='marca'?60:80);if(kind==='modelo'&&!this.catalogModal.marca_id)this.catalogErrors.marca_id='Selecciona una marca.';if(Object.keys(this.catalogErrors).length)return;this.catalogSaving=true;try{const result=kind==='marca'?await this.catalogoFacade.guardarMarca(this.catalogModal.id,this.catalogModal.nombre):await this.catalogoFacade.guardarModelo(this.catalogModal.id,this.catalogModal.marca_id,this.catalogModal.nombre);this.catalogModal=null;this.toast={message:kind==='marca'?'Marca guardada.':'Modelo guardado.',type:'success'};await this.loadCatalogBrands();if(this.catalogSelectedBrand)await this.loadCatalogModels();if(kind==='modelo'&&result.item?.marca_id){const brand=this.catalogBrands.find(x=>String(x.id)===String(result.item.marca_id));if(brand)this.catalogSelectedBrand=brand}}catch(e){this.catalogErrors=e.errors||{};this.toast={message:e.status===409?'Ya existe un registro con ese nombre.':e.status===422?'Revisa el nombre.':'No se pudo guardar el catálogo.',type:'error'}}finally{this.catalogSaving=false}},async approveCatalogEntry(kind,item){try{await this.catalogoFacade.estado(kind==='marca'?'marcas':'modelos',item.id,true);this.toast={message:`${kind==='marca'?'Marca':'Modelo'} aprobado.`,type:'success'};await this.loadCatalogBrands();if(this.catalogSelectedBrand)await this.loadCatalogModels()}catch(e){this.toast={message:'No se pudo aprobar el registro.',type:'error'}}},requestCatalogStatus(kind,item){this.catalogStatusTarget={kind,item}},async confirmCatalogStatus(){const target=this.catalogStatusTarget;if(!target)return;try{await this.catalogoFacade.estado(target.kind==='marca'?'marcas':'modelos',target.item.id,false);this.toast={message:'Registro desactivado.',type:'success'};this.catalogStatusTarget=null;await this.loadCatalogBrands();if(this.catalogSelectedBrand)await this.loadCatalogModels()}catch(e){const count=e.errors?.vehiculos;this.toast={message:e.status===409?`No se puede desactivar: ${count||'hay'} vehículo(s) vinculado(s).`:'No se pudo desactivar el registro.',type:'error'}}},catalogStatusLabel(item){return item.estatus==='en espera'?'En espera':item.estatus==='activo'?'Activo':'Inactivo'},toggleNavGroup(id){this.openNavGroup=this.activeNavigationGroup?.id===id?id:(this.openNavGroup===id?'':id)},sortWorkshop(key){this.workshopDirection=this.workshopSort===key?(this.workshopDirection==='asc'?'desc':'asc'):'asc';this.workshopSort=key;this.workshopPage=1},workshopSortIcon(key){return this.workshopSort===key?(this.workshopDirection==='asc'?'▲':'▼'):'↕'},sortEmployee(key){this.employeeDirection=this.employeeSort===key?(this.employeeDirection==='asc'?'desc':'asc'):'asc';this.employeeSort=key;this.employeePage=1;this.loadEmployees()},employeeAgeFrom(d){if(!d)return 'Edad: No registrada';const b=new Date(d),n=new Date();let a=n.getFullYear()-b.getFullYear();if(n.getMonth()<b.getMonth()||(n.getMonth()===b.getMonth()&&n.getDate()<b.getDate()))a--;return a+' años'},employeeSortIcon(key){return this.employeeSort===key?(this.employeeDirection==='asc'?'▲':'▼'):'↕'},employeePhotoUrl(id){return this.empleadoFacade.repository.fotoUrl(id)},async loadEmployees(){if(!this.esAdministrador)return;this.loadingEmployees=true;try{const [list,shops]=await Promise.all([this.empleadoFacade.listar({q:this.employeeQuery,page:this.employeePage,page_size:this.employeePageSize,sort:this.employeeSort,direction:this.employeeDirection,estado:this.employeeFilterStatus,taller_id:this.employeeFilterWorkshop,rol:this.employeeFilterRole,puesto:this.employeeFilterPosition}),this.empleadoFacade.talleres()]);this.empleados=list.empleados||[];this.employeeTotal=list.total||0;this.employeePages=list.pages||0;this.empleadoTalleres=shops.talleres||[]}catch(e){this.toast={message:e.status===403?'Sin permiso (403).':'No se pudo cargar el personal.',type:'error'}}finally{this.loadingEmployees=false}},debouncedEmployeeSearch(){clearTimeout(this.employeeSearchTimer);this.employeeSearchTimer=setTimeout(()=>{this.employeePage=1;this.loadEmployees()},250)},nuevoEmpleado(updateHash=true){this.editingEmployeeId=null;this.employeeErrors={};this.employeeForm={nombres:'',apellido_paterno:'',apellido_materno:'',curp:'',rfc:'',fecha_nacimiento:'',telefono_personal:'',telefono_personal_prefijo:'52',telefono_personal_pais:'MX',email:'',telefono_trabajo:'',telefono_trabajo_prefijo:'52',telefono_trabajo_pais:'MX',email_trabajo:'',calle:'',numero_interior:'',codigo_postal:'',estado:'',municipio:'',colonia:'',colonia_manual:false,contacto_emergencia_nombre:'',contacto_emergencia_parentesco:'',contacto_emergencia_telefono:'',contacto_emergencia_prefijo:'52',contacto_emergencia_pais:'MX',puesto:'',taller_id:'',rol:'',fecha_ingreso:'',password:'',password_confirm:''};this.employeePhoto=null;this.employeePreview=null;if(updateHash&&location.hash!=='#registro-empleados')location.hash='#registro-empleados'},cerrarEmpleado(){this.employeeForm=null;this.editingEmployeeId=null;location.hash='#gestion-empleados'},async irEditarEmpleado(id){this.editingEmployeeId=String(id);location.hash='#registro-empleados/editar/'+id;await this.editarEmpleado(id)},async editarEmpleado(id){try{const r=await this.empleadoFacade.consultar(id);this.employeeForm={...r.empleado,telefono_personal_pais:r.empleado.telefono_personal_pais||'MX',telefono_personal_prefijo:r.empleado.telefono_personal_prefijo||'52',telefono_trabajo_pais:r.empleado.telefono_trabajo_pais||'MX',telefono_trabajo_prefijo:r.empleado.telefono_trabajo_prefijo||'52',contacto_emergencia_pais:r.empleado.contacto_emergencia_pais||'MX',contacto_emergencia_prefijo:r.empleado.contacto_emergencia_prefijo||'52',password:'',password_confirm:''};this.employeePhoto=null;this.employeePreview=r.empleado.foto_ruta?this.empleadoFacade.repository.fotoUrl(id):null;this.editingEmployeeId=id;this.employeeErrors={}}catch(e){this.employeeForm=null;this.editingEmployeeId=null;this.toast={message:e.status===404?'Empleado no encontrado.':'No se pudo consultar el empleado.',type:'error'}}},async mostrarEmpleado(id){try{const r=await this.empleadoFacade.consultar(id);this.employeeDetail=r.empleado}catch(e){this.toast={message:'No se pudo cargar la ficha.',type:'error'}}},async seleccionarFotoEmpleado(event){const file=event.target.files?.[0];this.employeePhoto=file||null;if(this.employeePreview&&!this.employeePreview.startsWith('http'))URL.revokeObjectURL(this.employeePreview);this.employeePreview=file&&file.size<=15*1024*1024&&['image/jpeg','image/png','image/webp'].includes(file.type)?URL.createObjectURL(file):null;if(file&&!this.employeePreview)this.employeeErrors={...this.employeeErrors,foto:'Elige JPG, PNG o WEBP de máximo 15 MB.'}},setEmployeeCountry(key,countryKey=key+'_pais'){const item=this.countries.find(x=>x.iso2===this.employeeForm?.[countryKey]);if(item&&this.employeeForm){this.employeeForm[key+'_prefijo']=item.prefijo;this.employeeForm[key]=''}},async verificarDuplicadoEmpleado(field){if(['curp','rfc'].includes(field))this.employeeForm[field]=String(this.employeeForm[field]||'').trim().toUpperCase();else if(field==='email')this.employeeForm[field]=String(this.employeeForm[field]||'').trim().toLowerCase();else if(field==='telefono_personal')this.employeeForm[field]=String(this.employeeForm[field]||'').replace(/\D/g,'');const value=String(this.employeeForm?.[field]||'').trim();if(!value)return;try{const result=await this.empleadoFacade.verificar(field,value,this.editingEmployeeId);const next={...this.employeeErrors};if(result.duplicado)next[field]='Ya existe otro empleado con este dato.';else delete next[field];this.employeeErrors=next}catch(e){this.toast={message:'No se pudo verificar el dato duplicado.',type:'error'}}},async guardarEmpleado(){this.employeeErrors={};this.guardando=true;try{await this.empleadoFacade.guardar(this.editingEmployeeId,this.employeeForm,this.employeePhoto);this.toast={message:this.editingEmployeeId?'Empleado actualizado.':'Empleado registrado.',type:'success'};const wasEditing=!!this.editingEmployeeId;this.employeeForm=null;this.editingEmployeeId=null;if(wasEditing)location.hash='#gestion-empleados';else{this.nuevoEmpleado(false);location.hash='#registro-empleados'}await this.loadEmployees()}catch(e){this.employeeErrors=e.errors||{};this.toast={message:e.status===409?'Ya existe un empleado con esos datos.':e.status===422?'Revisa los datos del formulario.':'No se pudo guardar el empleado.',type:'error'}}finally{this.guardando=false}},async confirmarEstadoEmpleado(){const x=this.employeeConfirm;if(!x)return;try{await this.empleadoFacade.estado(x.id,!x.activo,this.employeeReason);this.toast={message:x.activo?'Empleado dado de baja.':'Empleado reactivado.',type:'success'};this.employeeConfirm=null;this.employeeReason='';await this.loadEmployees()}catch(e){this.toast={message:e.status===422?(e.errors?.activo||e.message):'No se pudo cambiar el estado del empleado.',type:'error'}}},syncHash(){if(!this.cargada)return;let hash=location.hash.slice(1)||'resumen';if(hash==='usuarios'){location.replace('#gestion-empleados');return}if(hash==='talleres'){location.replace('#gestion-talleres');return}const clientEdit=hash.match(/^clientes\/editar\/(\d+)$/),clientId=clientEdit?.[1],employeeEdit=hash.match(/^registro-empleados\/editar\/(\d+)$/),workshopEdit=hash.match(/^registro-talleres\/editar\/(\d+)$/);const employeeRoute=hash==='registro-empleados'||hash==='gestion-empleados'||!!employeeEdit;const catalogRoute=hash==='gestion-catalogo-vehiculos';const adminRoute=['gestion-estatus'].includes(hash);const vehicleRoute=hash==='gestion-vehiculos';const workshopRoute=hash==='registro-talleres'||hash==='gestion-talleres'||!!workshopEdit;if((employeeRoute||catalogRoute||adminRoute)&&this.authenticated&&!this.esAdministrador){this.activeSection='resumen';this.toast={message:'Sin permiso: solo administración puede gestionar esta sección.',type:'error'};location.replace('#resumen');return}if(this.rol==='mecanico'&&hash!=='resumen'){this.activeSection='resumen';this.toast={message:'Sin permiso para abrir esa sección.',type:'error'};location.replace('#resumen');return}if(workshopRoute&&this.authenticated&&this.rol==='recepcionista'&&(hash==='registro-talleres'||!!workshopEdit)){this.activeSection='gestion-talleres';this.toast={message:'Sin permiso: la gestión de talleres es de solo lectura.',type:'error'};location.replace('#gestion-talleres');return}const valid=[...this.navigation.map(x=>x.id),...this.navigationGroups.flatMap(g=>g.items.map(i=>i.id))];this.activeSection=clientId?'clientes':workshopEdit?'registro-talleres':employeeEdit?'registro-empleados':valid.includes(hash)?hash:'resumen';const group=this.activeNavigationGroup;if(group)this.openNavGroup=group.id;if(this.activeSection==='registro-empleados'){const id=employeeEdit?.[1];if(id&&String(this.editingEmployeeId)!==String(id))this.editarEmpleado(id);else if(!id&&!this.employeeForm)this.nuevoEmpleado(false)}else if(this.activeSection==='gestion-empleados')this.loadEmployees();if(this.activeSection==='registro-talleres'){const id=workshopEdit?.[1];if(id&&String(this.editingWorkshopId)!==String(id))this.editarTallerPorId(id);else if(!id&&!this.tallerFormVisible)this.nuevoTaller(false)}if(this.activeSection==='gestion-talleres')this.loadTalleres();if(this.activeSection==='gestion-estatus')this.loadEstatus();if(this.activeSection==='gestion-clientes')this.loadStatusOptions();if(this.activeSection==='gestion-vehiculos')this.loadVehicles();if(!location.hash)history.replaceState(null,'',location.pathname+location.search+'#resumen');if(clientId&&this.authenticated&&String(this.editingClientId)!==String(clientId))this.editarCliente(clientId);else if(!clientId&&hash==='clientes'&&this.editingClientId)this.cancelarEdicion()},async login(){this.error='';try{const usuario=await this.iniciarSesion(this.email,this.password);this.nombreSesion=String(usuario?.nombre||'');this.syncHash();this.password='';this.loadLocationCatalog();this.loadWorkshops();this.loadTalleres();this.loadClients()}catch(e){this.error='No se pudo iniciar sesión. Revisa tus datos o la conexión al servidor.'}},async logout(){try{await this.cerrarSesion()}finally{this.nombreSesion='';this.clients=[]}},sendRecovery(){this.error=this.email?'':'Ingresa tu correo electrónico.';if(this.email)this.sent=true},isInvalid(k){return!!this.errores[k]},tocarCampo(k){if(!this.tocados.includes(k))this.tocados.push(k);this.revalidarCampo(k)},revalidarCampo(k){if(!this.tocados.includes(k))return;const e=this.clienteFacade.errores(this.cliente);this.errores={...this.errores,[k]:e[k]||''}},async loadCountries(){try{this.countries=await this.clienteFacade.paises();}catch(e){this.countries=[]}},async loadLocationCatalog(){try{const r=await this.clienteFacade.ubicacionEstados();if(r.estados?.length){this.estados=r.estados;this.catalogReady=true;this.locationMessage='Catálogo SEPOMEX local disponible.'}}catch(e){this.catalogReady=false;this.locationMessage='Catálogo SEPOMEX no disponible; puedes capturar municipio y colonia manualmente.'}},countryFlag(key){return this.countries.find(x=>x.iso2===this.cliente[key+'_pais'])?.bandera||'🌐'},toggleCountry(key){this.countryMenu=this.countryMenu===key?'':key;this.countrySearch=''},selectCountry(key,item){this.cliente[key+'_pais']=item.iso2;this.cliente[key+'_prefijo']=item.prefijo;this.cliente[key]='';this.countryMenu='';this.validarTelefonoCampo(key)},restrictPhoneKeys(e){if(e.ctrlKey||e.metaKey||e.key.length!==1)return;if(!/\d/.test(e.key))e.preventDefault()},pastePhone(key,e){this.cliente[key]=e.clipboardData.getData('text').replace(/\D/g,'').slice(0,15);this.validarTelefonoCampo(key)},sanitizePhone(key,e){this.cliente[key]=e.target.value.replace(/\D/g,'').slice(0,15);e.target.value=this.cliente[key];this.validarTelefonoCampo(key)},async validarTelefonoCampo(key){const c=this.cliente,number=c[key],country=c[key+'_pais'],prefix=c[key+'_prefijo'];if(!number)return;try{const r=await this.clienteFacade.validarTelefono(country,prefix,number);if(!r.valido)this.errores={...this.errores,[key]:country==='MX'?'Ingresa un teléfono mexicano válido de 10 dígitos.':'Ingresa un teléfono válido para el país seleccionado.'};else if(this.errores[key])this.errores={...this.errores,[key]:''}}catch(e){const err=this.clienteFacade.errores(c)[key];if(err)this.errores={...this.errores,[key]:err}}},async buscarPorCp(){clearTimeout(this.cpTimer);this.cpController?.abort();this.cliente.colonia='';this.cliente.colonia_manual=false;this.coloniaQuery='';this.coloniaOptions=[];this.cliente.estado='';this.cliente.municipio='';this.municipioOptions=[];this.allColoniaRows=[];if(this.cliente.codigo_postal.length!==5||!this.catalogReady)return;this.cpTimer=setTimeout(async()=>{this.cpController=new AbortController();try{const data=await this.clienteFacade.ubicacionCp(this.cliente.codigo_postal,this.cpController.signal);this.municipioOptions=data.municipios||[];this.allColoniaRows=(data.colonias||[]).map(x=>({...x,cp:this.cliente.codigo_postal})).sort((a,b)=>a.colonia.localeCompare(b.colonia,'es-MX')||a.cp.localeCompare(b.cp));this.coloniaOptions=this.allColoniaRows;if(data.estados?.length===1)this.cliente.estado=data.estados[0];if(this.municipioOptions.length===1)this.cliente.municipio=this.municipioOptions[0];else this.cliente.municipio='';this.locationMessage=this.municipioOptions.length>1?'El código postal abarca varios municipios; selecciona uno.':'Selecciona la colonia correspondiente.'}catch(e){this.locationMessage=e.status===404?'Código postal no encontrado en SEPOMEX.':'No se pudo consultar el código postal.'}},250)},async estadoElegido(){this.locationController?.abort();this.locationController=new AbortController();this.cliente.municipio='';this.cliente.colonia='';this.cliente.colonia_manual=false;this.cliente.codigo_postal='';this.coloniaQuery='';this.coloniaOptions=[];this.allColoniaRows=[];try{const r=await this.clienteFacade.ubicacionMunicipios(this.cliente.estado,this.locationController.signal);this.municipioOptions=r.municipios||[]}catch(e){this.municipioOptions=[]}},async municipioElegido(){this.locationController?.abort();this.locationController=new AbortController();this.cliente.colonia='';this.cliente.colonia_manual=false;this.coloniaQuery='';this.coloniaOptions=[];const cpRows=this.allColoniaRows.filter(x=>x.cp===this.cliente.codigo_postal&&x.municipio===this.cliente.municipio);if(cpRows.length){this.coloniaOptions=cpRows;return}this.cliente.codigo_postal='';this.allColoniaRows=[];if(!this.cliente.estado||!this.cliente.municipio)return;try{const r=await this.clienteFacade.ubicacionColonias(this.cliente.estado,this.cliente.municipio,'',this.locationController.signal);this.allColoniaRows=(r.colonias||[]).sort((a,b)=>a.colonia.localeCompare(b.colonia,'es-MX')||a.cp.localeCompare(b.cp));this.coloniaOptions=this.allColoniaRows}catch(e){this.locationMessage='No se pudo cargar el catálogo de colonias.'}},buscarColonias(){this.coloniaOpen=true},seleccionarColonia(item){this.cliente.colonia=item.colonia;this.cliente.codigo_postal=item.cp;this.cliente.estado=item.estado||this.cliente.estado;this.cliente.municipio=item.municipio||this.cliente.municipio;this.cliente.colonia_manual=false;this.coloniaQuery=`${item.colonia} — ${item.cp}`;this.coloniaOpen=false;this.tocarCampo('colonia')},capturarColoniaManual(){this.cliente.colonia='';this.cliente.colonia_manual=true;this.coloniaQuery='';this.coloniaOpen=false},async comprobarDuplicado(k){if((k==='nombres'||k==='apellido_paterno')&&(!this.cliente.nombres||!this.cliente.apellido_paterno||!this.cliente.fecha_nacimiento))return;if(this.clienteFacade.errores(this.cliente)[k])return;try{const r=await this.clienteFacade.verificarDuplicado(this.cliente,this.editingClientId);if(r.duplicado){this.errores={...this.errores,[k]:'Ya existe un cliente con estos datos.'};this.toast={message:'Se encontró un posible duplicado; confirma los datos.',type:'error'}}}catch(e){if(e.status===403)this.toast={message:'Sin permiso (403).',type:'error'}}},calcularEdad(){const d=this.cliente.fecha_nacimiento;if(!d){this.cliente.edad='';return}const[y,m,day]=d.split('-').map(Number),n=new Date();let a=n.getFullYear()-y;if(n.getMonth()+1<m||(n.getMonth()+1===m&&n.getDate()<day))a--;this.cliente.edad=a;this.revalidarCampo('fecha_nacimiento')},seleccionarFoto(e){const f=e.target.files?.[0]||null;if(this.fotoPreview)URL.revokeObjectURL(this.fotoPreview);this.fotoPreview=f?URL.createObjectURL(f):null;this.cliente.foto=f;this.tocarCampo('foto')},nuevoCliente(){this.cancelarEdicion();if(!this.esAdministrador)this.cliente.taller_id=this.taller_id||'';this.$nextTick(()=>{if(location.hash!=='#clientes')location.hash='#clientes';document.getElementById('nombres')?.focus()})},volverGestion(){this.cancelarEdicion();location.hash='#gestion-clientes'},cancelarEdicion(){if(this.editingClientId)document.body.style.overflow=this.bodyOverflowPrev;if(this.fotoPreview)URL.revokeObjectURL(this.fotoPreview);this.fotoPreview=this.currentPhotoUrl=null;this.editingClientId=null;this.editingLegacy=false;this.cliente=empty();if(!this.esAdministrador)this.cliente.taller_id=this.taller_id||'';this.coloniaQuery='';this.coloniaOpen=false;this.coloniaOptions=[];this.errores={};this.tocados=[];if(this.$refs.fotoInput)this.$refs.fotoInput.value=''},normalizarClienteCampo(k){if(['nombres','apellido_paterno','apellido_materno','calle','colonia','municipio','estado','contacto_alterno'].includes(k)){const v=this.cliente[k]||'';this.cliente[k]=v.trim().replace(/\s+/g,' ').toLocaleLowerCase('es-MX').split(' ').map(w=>['de','del','la','las','los','y'].includes(w)?w:w? w[0].toLocaleUpperCase('es-MX')+w.slice(1):'').join(' ')}if(['email','email_trabajo'].includes(k))this.cliente[k]=(this.cliente[k]||'').trim().toLowerCase()},setPhoneCountry(k){const row=this.countries.find(x=>x.iso2===this.cliente[k+'_pais']);if(row)this.cliente[k+'_prefijo']=row.prefijo;this.cliente[k]=''},normalizarPalabrasVista(v){return String(v||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('es-MX').split(' ').map(w=>['de','del','la','los','y'].includes(w)?w:w?w[0].toLocaleUpperCase('es-MX')+w.slice(1):'').join(' ')},setContactPhoneCountry(k){const row=this.countries.find(x=>x.iso2===this.cliente.contacto[k+'_pais']);if(row)this.cliente.contacto[k+'_prefijo']=row.prefijo;this.cliente.contacto[k]=''},sanitizeContactPhone(k,e){this.cliente.contacto[k]=e.target.value.replace(/\D/g,'').slice(0,15);e.target.value=this.cliente.contacto[k];this.validarContactoTelefono(k)},async validarContactoTelefono(k){const c=this.cliente.contacto;if(!c[k]){const next={...this.errores};delete next['contacto.'+k];this.errores=next;return}try{const r=await this.clienteFacade.validarTelefono(c[k+'_pais'],c[k+'_prefijo'],c[k]);if(!r.valido)this.errores={...this.errores,['contacto.'+k]:r.error};else{const next={...this.errores};delete next['contacto.'+k];this.errores=next}}catch(e){this.errores={...this.errores,['contacto.'+k]:'No se pudo validar el teléfono.'}}},async loadWorkshops(){if(!this.authenticated)return;try{const r=await this.clienteFacade.talleres();this.workshops=r.talleres||[]}catch(e){this.workshops=[]}},async loadTalleres(){if(!this.authenticated)return;this.loadingTalleres=true;try{const r=await this.tallerFacade.listar();this.talleres=r.talleres||[]}catch(e){this.talleres=[];this.toast={message:'No se pudieron consultar talleres.',type:'error'}}finally{this.loadingTalleres=false}},sortIndicator(k){return this.sort===k?(this.direction==='asc'?'▲':'▼'):'↕'},ordenarPor(k){if(this.sort===k)this.direction=this.direction==='asc'?'desc':'asc';else{this.sort=k;this.direction='asc'}this.cambiarPagina(1)},prepararCambioEstado(cliente){this.suspensionTarget=cliente;this.suspensionReason=''},cerrarConfirmacionEstado(){this.suspensionTarget=null;this.suspensionReason=''},async cambiarEstadoCliente(c,state,reason=''){try{if(state==='suspendido')await this.clienteFacade.suspender(c.id,reason);else await this.clienteFacade.reactivar(c.id);this.toast={message:state==='suspendido'?'Cliente suspendido correctamente.':'Cliente reactivado correctamente.',type:'success'};await this.loadClients();return true}catch(e){this.toast={message:this.clienteFacade.mensaje(e,'cambiar el estado'),type:'error'};return false}},async confirmarSuspension(){if(!this.suspensionTarget)return;const target=this.suspensionTarget,status=target.estado_cliente==='suspendido'?'activo':'suspendido';if(await this.cambiarEstadoCliente(target,status,this.suspensionReason))this.cerrarConfirmacionEstado()},async nuevoTaller(updateHash=true){this.editingWorkshopId=null;this.taller={nombre:'',razon_social:'',rfc:'',email_contacto:'',telefono:'',telefono_prefijo:'52',telefono_pais:'MX',calle:'',numero_interior:'',colonia:'',municipio:'',estado:'',codigo_postal:'',direccion_temporal_calle:'',direccion_temporal_numero_interior:'',direccion_temporal_colonia:'',direccion_temporal_municipio:'',direccion_temporal_estado:'',direccion_temporal_codigo_postal:'',foto:null};this.tallerErrors={};this.tallerFormVisible=true;if(updateHash&&location.hash!=='#registro-talleres')location.hash='#registro-talleres'},normalizarTallerCampo(k){const v=this.taller[k]||'';this.taller[k]=v.trim().replace(/\s+/g,' ').toLocaleLowerCase('es-MX').split(' ').map(w=>['de','del','la','las','los','y'].includes(w)?w:w?w[0].toLocaleUpperCase('es-MX')+w.slice(1):'').join(' ')},setWorkshopCountry(){const x=this.countries.find(y=>y.iso2===this.taller.telefono_pais);if(x)this.taller.telefono_prefijo=x.prefijo;this.taller.telefono=''},async validarDireccionCatalogo(state,municipality,colony,cp,manual=false){return this.direccionFacade.validar({estado:state,municipio:municipality,colonia:colony,codigo_postal:cp},
+{manual})},async guardarTaller(){this.tallerErrors=this.tallerFacade.validar(this.taller);if(!Object.keys(this.tallerErrors).length&&!(await this.validarDireccionCatalogo(this.taller.estado,this.taller.municipio,this.taller.colonia,this.taller.codigo_postal,this.taller.colonia_manual)))this.tallerErrors.codigo_postal='La dirección no coincide con el catálogo SEPOMEX.';if(!Object.keys(this.tallerErrors).length&&['calle','colonia','municipio','estado','codigo_postal'].some(k=>this.taller['direccion_temporal_'+k])&&!(await this.validarDireccionCatalogo(this.taller.direccion_temporal_estado,this.taller.direccion_temporal_municipio,this.taller.direccion_temporal_colonia,this.taller.direccion_temporal_codigo_postal,this.taller.direccion_temporal_colonia_manual)))this.tallerErrors.direccion_temporal_codigo_postal='La dirección no coincide con el catálogo SEPOMEX.';if(Object.keys(this.tallerErrors).length)return;this.guardando=true;try{const wasEditing=!!this.editingWorkshopId;await this.tallerFacade.guardar(this.editingWorkshopId,this.taller);this.tallerFormVisible=false;this.editingWorkshopId=null;this.toast={message:wasEditing?'Taller actualizado.':'Taller registrado.',type:'success'};if(wasEditing)location.hash='#gestion-talleres';else{await this.nuevoTaller(false);location.hash='#registro-talleres'}await this.loadTalleres()}catch(e){this.tallerErrors={...this.tallerErrors,...(e.errors||e.fieldErrors||{})};this.toast={message:e.status===409?'Ya existe un taller con esos datos.':'No se pudo guardar el taller.',type:'error'}}finally{this.guardando=false}},async editarTaller(t){this.editingWorkshopId=t.id;location.hash='#registro-talleres/editar/'+t.id;await this.editarTallerPorId(t.id)},async editarTallerPorId(id){try{const r=await this.tallerFacade.consultar(id);this.editingWorkshopId=id;this.taller={...r.taller,foto:null};this.tallerErrors={};this.tallerFormVisible=true}catch(e){this.toast={message:e.status===404?'Taller no encontrado.':'No se pudo cargar el taller.',type:'error'}}},volverGestionTaller(){this.tallerFormVisible=false;this.editingWorkshopId=null;location.hash='#gestion-talleres'},verTaller(t){this.tallerDetalle=t},cambiarEstadoTaller(t){this.tallerEstadoTarget=t;this.tallerSuspensionReason=''},async confirmarEstadoTaller(){const t=this.tallerEstadoTarget;if(!t)return;try{await this.tallerFacade.estado(t.id,!t.activo,this.tallerSuspensionReason);this.toast={message:t.activo?'Taller suspendido.':'Taller reactivado.',type:'success'};this.tallerEstadoTarget=null;this.tallerSuspensionReason='';await this.loadTalleres()}catch(e){this.toast={message:e.status===409?'Taller duplicado.':'No se pudo cambiar el estado.',type:'error'}}},tallerPhotoUrl(id){return this.tallerFacade.repository.fotoUrl(id)},async coloniaTallerElegida(){const opts=this.tallerColonias.filter(x=>x.colonia===this.taller.colonia),cps=[...new Set(opts.map(x=>x.cp))];if(cps.length===1)this.taller.codigo_postal=cps[0];else if(!cps.length&&this.taller.estado&&this.taller.municipio){try{const r=await this.clienteFacade.buscarCp(this.taller.estado,this.taller.municipio,this.taller.colonia);if(r.codigos_postales.length===1)this.taller.codigo_postal=r.codigos_postales[0]}catch(e){}}},async buscarTallerCp(){if(!this.catalogReady||this.taller.codigo_postal.length!==5)return;try{const d=await this.clienteFacade.ubicacionCp(this.taller.codigo_postal);this.tallerMunicipios=d.municipios||[];this.tallerColonias=d.colonias||[];if(d.estados?.length===1)this.taller.estado=d.estados[0];if(d.municipios?.length===1)this.taller.municipio=d.municipios[0]}catch(e){this.toast={message:e.status===404?'CP no encontrado.':'Error al consultar SEPOMEX.',type:'error'}}},async estadoTallerElegido(){this.taller.municipio=this.taller.colonia='';try{const r=await this.clienteFacade.ubicacionMunicipios(this.taller.estado);this.tallerMunicipios=r.municipios||[]}catch(e){}},async municipioTallerElegido(){try{const r=await this.clienteFacade.ubicacionColonias(this.taller.estado,this.taller.municipio,'');this.tallerColonias=r.colonias||[]}catch(e){}},async buscarTallerColonias(){if(!this.taller.estado||!this.taller.municipio)return;try{const r=await this.clienteFacade.ubicacionColonias(this.taller.estado,this.taller.municipio,this.taller.colonia);this.tallerColonias=r.colonias||[]}catch(e){}},async loadClients(){if(!this.authenticated)return;this.loadingClients=true;try{const r=await this.clienteFacade.listar({q:this.search,page:this.page,page_size:this.pageSize,sort:this.sort,direction:this.direction,estado:this.filterStatus,taller_id:this.filterWorkshop});this.clients=r.clientes||[];this.page=r.page||1;this.totalPages=r.pages||0;this.totalClientes=r.total||0}catch(e){this.clients=[];this.toast={message:this.clienteFacade.mensaje(e,'consultar clientes'),type:'error'}}finally{this.loadingClients=false}},buscarClientes(){clearTimeout(this.searchTimer);this.searchTimer=setTimeout(()=>{this.page=1;this.loadClients()},300)},cambiarPagina(p){this.page=p;this.loadClients()},async mostrarCliente(id){this.fichaTrigger=document.activeElement;this.fichaAbierta=true;this.detailLoading=true;this.detailError='';this.detailClient=null;this.fotoAmpliada=false;this.bodyOverflowPrev=document.body.style.overflow;document.body.style.overflow='hidden';this.$nextTick(()=>this.$refs.fichaClose?.focus());try{const r=await this.clienteFacade.consultar(id);this.detailClient=r.cliente||r}catch(e){this.detailError=e.status===404?'No se encontró este cliente en el taller actual.':e.status===403?'No tienes permiso para mostrar este cliente.':'No se pudo cargar la ficha. Comprueba la conexión e inténtalo de nuevo.'}finally{this.detailLoading=false}},closeFicha(){if(!this.fichaAbierta)return;this.fichaAbierta=false;this.fotoAmpliada=false;document.body.style.overflow=this.bodyOverflowPrev;const trigger=this.fichaTrigger;this.$nextTick(()=>{if(trigger?.isConnected)trigger.focus();this.fichaTrigger=null})},cerrarConEsc(){if(this.fotoAmpliada){this.fotoAmpliada=false;return}this.closeFicha()},atraparFoco(event){if(event.key!=='Tab')return;const nodes=[...this.$refs.fichaDialog.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.offsetParent!==null);if(!nodes.length){event.preventDefault();this.$refs.fichaDialog.focus();return}const first=nodes[0],last=nodes[nodes.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}},editarDesdeFicha(){const id=this.detailClient?.id;this.closeFicha();if(id)this.editarCliente(id)},displayValue(value){return value!==null&&value!==undefined&&String(value).trim()!==''?String(value).trim():'No registrado'},inicialesCliente(name){const words=String(name||'').trim().split(/\s+/).filter(Boolean);return words.length?words.slice(0,2).map(x=>x[0]).join('').toUpperCase():'CL'},telDigits(value){return String(value||'').replace(/\D/g,'')},telHref(value,prefix='52'){const digits=this.telDigits(value);return digits?`tel:+${String(prefix).replace(/\D/g,'')}${digits}`:''},formatPhone(value,prefix='52'){const d=this.telDigits(value),p=String(prefix||'52');return d?`+${p} ${d}`:'No registrado'},emailHref(value){const email=String(value||'').trim();return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)?`mailto:${email}`:''},atraparFocoGenerico(event){if(event.key!=='Tab')return;const root=this.$refs.clientEditDialog;if(!root)return;const nodes=[...root.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.offsetParent!==null);if(!nodes.length){event.preventDefault();root.focus();return}const first=nodes[0],last=nodes[nodes.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}},async editarCliente(id){try{const r=await this.clienteFacade.consultar(id),c=r.cliente||r;if(c.estado_cliente==='suspendido'){this.toast={message:'El cliente está suspendido; reactívalo antes de editar.',type:'error'};return}this.cancelarEdicion();await this.loadWorkshops();this.editingClientId=id;this.bodyOverflowPrev=document.body.style.overflow;document.body.style.overflow='hidden';this.editingLegacy=Boolean(c.datos_por_completar);this.cliente={...empty(),...c,celular:c.telefono_personal||c.celular||'',celular_prefijo:c.telefono_personal_prefijo||c.celular_prefijo||'52',celular_pais:c.telefono_personal_pais||c.celular_pais||'MX',contacto:{...contactoVacio(),...(c.contacto||{})},foto:null,fecha_nacimiento:String(c.fecha_nacimiento||'').slice(0,10)};if(!this.esAdministrador)this.cliente.taller_id=c.taller_id||this.taller_id||'';if(this.esAdministrador&&!this.workshops.some(t=>String(t.id)===String(c.taller_id)))this.workshops=[...this.workshops,{id:c.taller_id,nombre:c.taller_nombre||'Taller actual',activo:false}];this.coloniaQuery=c.colonia_manual?c.colonia:`${c.colonia||''}${c.codigo_postal?' — '+c.codigo_postal:''}`;this.calcularEdad();this.currentPhotoUrl=c.foto_ruta?this.photoUrl(id):null;if(location.hash!==`#clientes/editar/${id}`)location.hash=`#clientes/editar/${id}`;this.$nextTick(()=>document.getElementById('nombres')?.focus())}catch(e){this.toast={message:e.status===404?'No se encontró el cliente en este taller (404).':this.clienteFacade.mensaje(e,'editar'),type:'error'}}},async guardarCliente(){const fields=['nombres','apellido_paterno','apellido_materno','curp','rfc','fecha_nacimiento','celular','telefono_fijo','telefono_trabajo','email','email_trabajo','foto','calle','numero_interior','colonia','municipio','estado','codigo_postal','contacto.nombre','contacto.telefono_personal','contacto.email','contacto.telefono_trabajo','contacto.email_trabajo'];this.tocados=fields;this.errores=this.clienteFacade.errores(this.cliente,{legacy:this.editingLegacy});if(this.catalogReady&&!this.cliente.colonia_manual&&!Object.keys(this.errores).length&&!(await this.validarDireccionCatalogo(this.cliente.estado,this.cliente.municipio,this.cliente.colonia,this.cliente.codigo_postal,this.cliente.colonia_manual)))this.errores={...this.errores,codigo_postal:'La dirección no coincide con el catálogo SEPOMEX.'};if(this.esAdministrador&&!this.cliente.taller_id)this.errores={...this.errores,taller_id:'Selecciona un taller.'};if(Object.values(this.errores).some(Boolean)){this.toast={message:'Revisa los campos marcados (422).',type:'error'};this.$nextTick(()=>this.$refs.clienteForm?.querySelector('[aria-invalid="true"]')?.focus());return}this.guardando=true;try{if(this.editingClientId)await this.clienteFacade.actualizar(this.editingClientId,{...this.cliente},
+{legacy:this.editingLegacy});else await this.clienteFacade.registrar({...this.cliente});this.cancelarEdicion();if(location.hash!=='#gestion-clientes')location.hash='#gestion-clientes';await this.loadClients()}catch(e){this.errores={...this.errores,...(e.fieldErrors||e.errors||{})};if(e.status===403)this.toast={message:'Sin permiso (403).',type:'error'};this.$nextTick(()=>this.$refs.clienteForm?.querySelector('[aria-invalid="true"]')?.focus())}finally{this.guardando=false}},async eliminarCliente(){if(!this.confirmDelete)return;this.guardando=true;try{await this.clienteFacade.eliminar(this.confirmDelete.id);this.confirmDelete=null;await this.loadClients()}catch(e){if(e.status===403)this.toast={message:'Sin permiso (403).',type:'error'}}finally{this.guardando=false}},photoUrl(id){return this.clienteFacade.repository.fotoUrl(id)},fichaDate(v){return v?this.formatDate(v):'No registrado'},displayAge(v){return v!==null&&v!==undefined&&String(v)!==''?`${String(v)} años`:'Edad: No registrado'},formatDate(v){return v?new Date(v).toLocaleDateString('es-MX'):'—'}}});app.component('direccion-fields',DireccionFields);app.component('vehiculo-autocomplete',VehiculoAutocomplete);app.use(createPinia());app.mount('#app');
+</script>
+<script>
+(() => {
+  const legacyVehicleHash = () => {
+    if (/^#flota(?:\/.*)?$/.test(location.hash)) location.replace('#gestion-vehiculos');
+  };
+  legacyVehicleHash();
+  window.addEventListener('hashchange', legacyVehicleHash);
+})();
 </script>
 </body>
 </html>

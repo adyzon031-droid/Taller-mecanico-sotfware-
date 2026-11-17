@@ -18,4 +18,4 @@ class AuthFacade:
             return None
         if not valid:
             return None
-        return {"usuario_id": usuario["id"], "nombre": usuario["nombre"], "rol": usuario["rol"], "taller_id": usuario["taller_id"]}
+        return {"usuario_id": usuario["id"], "nombre": usuario["nombre"], "rol": usuario["rol"], "taller_id": usuario["taller_id"], "empresa_id": usuario["empresa_id"]}

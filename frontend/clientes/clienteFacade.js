@@ -1,138 +1,47 @@
 import { ClienteRepository } from './clienteRepository.js';
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const NOMBRE = /^[\p{L}]+(?:[ '-][\p{L}]+)+$/u;
-const ESTADOS = new Set([
-  'Aguascalientes','Baja California','Baja California Sur','Campeche','Chiapas','Chihuahua',
-  'Ciudad de México','Coahuila','Colima','Durango','Estado de México','Guanajuato','Guerrero',
-  'Hidalgo','Jalisco','Michoacán','Morelos','Nayarit','Nuevo León','Oaxaca','Puebla','Querétaro',
-  'Quintana Roo','San Luis Potosí','Sinaloa','Sonora','Tabasco','Tamaulipas','Tlaxcala',
-  'Veracruz','Yucatán','Zacatecas',
-]);
-const TEXT_FIELDS = ['nombre_completo','contacto_alterno','calle','colonia','municipio','estado'];
-
-export function edadDe(fecha, hoy = new Date()) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha || '')) return null;
-  const [year, month, day] = fecha.split('-').map(Number);
-  const birth = new Date(year, month - 1, day);
-  if (birth.getFullYear() !== year || birth.getMonth() !== month - 1 || birth.getDate() !== day) return null;
-  let age = hoy.getFullYear() - year;
-  if (hoy.getMonth() + 1 < month || (hoy.getMonth() + 1 === month && hoy.getDate() < day)) age--;
-  return age;
+const EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CURP=/^[A-Z][AEIOUX][A-Z]{2}\d{6}[HMX](?:AS|BC|BS|CC|CL|CM|CS|CH|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[A-Z0-9]\d$/;
+const PARTICLES=new Set(['de','del','la','las','los','y']);
+export function normalizarPalabras(value){return String(value||'').trim().replace(/\s+/g,' ').toLowerCase().split(' ').map((w,i)=>PARTICLES.has(w)?w:w?w[0].toLocaleUpperCase('es-MX')+w.slice(1):'').join(' ')}
+export function validarCurp(value,birth=''){
+ const c=String(value||'').trim().toUpperCase();if(!CURP.test(c))return false;
+ const yy=Number(c.slice(4,6)),century=/\d/.test(c[16])?2000:1900,dt=new Date(century+yy,Number(c.slice(6,8))-1,Number(c.slice(8,10)));
+ if(dt.getFullYear()!==century+yy||dt.getMonth()!==Number(c.slice(6,8))-1||dt.getDate()!==Number(c.slice(8,10)))return false;
+ if(birth&&dt.toISOString().slice(0,10)!==String(birth).slice(0,10))return false;
+ const alphabet='0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';let total=0;for(let i=0;i<17;i++){const n=alphabet.indexOf(c[i]);if(n<0)return false;total+=n*(18-i)}return (10-total%10)%10===Number(c[17]);
 }
+export function validarRfc(value){const r=String(value||'').trim().toUpperCase();if(!/^[A-Z&Ñ]{4}\d{6}[A-Z0-9]{3}$/.test(r))return false;const yy=Number(r.slice(4,6)),mm=Number(r.slice(6,8)),dd=Number(r.slice(8,10));return [1900+yy,2000+yy].some(y=>{const d=new Date(y,mm-1,dd);return d.getFullYear()===y&&d.getMonth()===mm-1&&d.getDate()===dd})}
+export function edadDe(fecha,hoy=new Date()){if(!/^\d{4}-\d{2}-\d{2}$/.test(fecha||''))return null;const[y,m,d]=fecha.split('-').map(Number),dt=new Date(y,m-1,d);if(dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d)return null;let age=hoy.getFullYear()-y;if(hoy.getMonth()+1<m||(hoy.getMonth()+1===m&&hoy.getDate()<d))age--;return age}
+export function normalizarCliente(c,{legacy=false}={}){const r={...c};for(const k of ['nombres','apellido_paterno','apellido_materno','calle','colonia','municipio','estado'])r[k]=legacy&&k==='nombres'&&!r.apellido_paterno&&!r.apellido_materno?String(r[k]||'').trim().replace(/\s+/g,' '):normalizarPalabras(r[k]);r.nombre_completo=legacy&&!r.apellido_paterno&&!r.apellido_materno&&r.nombre_completo?String(r.nombre_completo):[r.nombres,r.apellido_paterno,r.apellido_materno].filter(Boolean).join(' ');r.email=String(r.email||'').trim().toLowerCase();r.email_trabajo=String(r.email_trabajo||'').trim().toLowerCase();r.curp=String(r.curp||'').trim().toUpperCase();r.rfc=String(r.rfc||'').trim().toUpperCase();for(const k of ['celular','telefono_fijo','telefono_trabajo']){r[k]=String(r[k]||'').replace(/\D/g,'').slice(0,15);r[k+'_prefijo']=String(r[k+'_prefijo']||'52').replace(/\D/g,'').slice(0,3)||'52';r[k+'_pais']=String(r[k+'_pais']||'MX').toUpperCase()}r.telefono_personal=r.celular;r.telefono_personal_prefijo=r.celular_prefijo;r.telefono_personal_pais=r.celular_pais;const contact={...(r.contacto||{})};contact.nombre=normalizarPalabras(contact.nombre);contact.email=String(contact.email||'').trim().toLowerCase();contact.email_trabajo=String(contact.email_trabajo||'').trim().toLowerCase();for(const k of ['telefono_personal','telefono_trabajo']){contact[k]=String(contact[k]||'').replace(/\D/g,'').slice(0,15);contact[k+'_prefijo']=String(contact[k+'_prefijo']||'52').replace(/\D/g,'').slice(0,3)||'52';contact[k+'_pais']=String(contact[k+'_pais']||'MX').toUpperCase()}r.contacto=contact;const age=edadDe(String(r.fecha_nacimiento||''));if(age!==null)r.edad=age;return r}
 
-export function normalizarCliente(cliente) {
-  const result = { ...cliente };
-  for (const key of TEXT_FIELDS) result[key] = String(result[key] ?? '').trim().replace(/\s+/g, ' ');
-  result.email = String(result.email ?? '').trim().toLowerCase();
-  result.email_trabajo = String(result.email_trabajo ?? '').trim().toLowerCase();
-  for (const key of ['telefono_personal','telefono_trabajo']) result[key] = String(result[key] ?? '').replace(/\D/g, '').slice(0, 10);
-  const age = edadDe(String(result.fecha_nacimiento ?? ''));
-  if (age !== null) result.edad = age;
-  return result;
-}
-
-/** Facade: valida, coordina CRUD y notifica; la vista nunca llama a fetch. */
-export class ClienteFacade {
-  constructor(repository = new ClienteRepository(), notificar = () => {}) {
-    this.repository = repository;
-    this.notificar = notificar;
-  }
-
-  errores(cliente) {
-    const c = normalizarCliente(cliente);
-    const errors = {};
-    const required = ['nombre_completo','fecha_nacimiento','telefono_personal','telefono_trabajo','email','calle','colonia','municipio','estado','codigo_postal'];
-    for (const key of required) if (!c[key]) errors[key] = 'Este campo es obligatorio.';
-    for (const key of ['nombre_completo','contacto_alterno']) {
-      if (c[key] && !NOMBRE.test(c[key])) errors[key] = 'Escribe al menos dos palabras, solo con letras, espacios, apóstrofo o guion.';
-    }
-    for (const key of ['telefono_personal','telefono_trabajo']) {
-      const raw = String(cliente[key] ?? '');
-      if (c[key] && (/[^\d\s()-]/.test(raw) || c[key].length !== 10)) errors[key] = 'Ingresa 10 dígitos.';
-    }
-    for (const key of ['email','email_trabajo']) {
-      if (c[key] && (c[key].length > 190 || !EMAIL.test(c[key]))) errors[key] = 'Escribe un correo válido de máximo 190 caracteres.';
-    }
-    if (c.email_trabajo && c.email_trabajo === c.email) errors.email_trabajo = 'Debe ser distinto al correo personal.';
-    const age = edadDe(String(c.fecha_nacimiento || ''));
-    if (c.fecha_nacimiento && age === null) errors.fecha_nacimiento = 'Ingresa una fecha real.';
-    else if (age !== null && (age < 0 || age > 120)) errors.fecha_nacimiento = 'La fecha debe tener entre 0 y 120 años.';
-    if (age !== null && cliente.edad != null && cliente.edad !== '' && Number(cliente.edad) !== age) errors.edad = 'La edad no coincide con la fecha de nacimiento.';
-    if (c.codigo_postal && !/^\d{5}$/.test(c.codigo_postal)) errors.codigo_postal = 'Usa cinco dígitos.';
-    if (c.estado && !ESTADOS.has(c.estado)) errors.estado = 'Selecciona un estado de México.';
-    const limits = { nombre_completo:180, contacto_alterno:180, calle:180, colonia:120, municipio:120, estado:120 };
-    for (const [key, limit] of Object.entries(limits)) if (c[key].length > limit) errors[key] = `Máximo ${limit} caracteres.`;
-    const photo = cliente.foto;
-    if (photo) {
-      if (!/\.(jpg|jpeg|png|webp)$/i.test(photo.name) || !['image/jpeg','image/png','image/webp'].includes(photo.type)) errors.foto = 'Formato inválido. Usa JPG, JPEG, PNG o WEBP.';
-      else if (photo.size > 15 * 1024 * 1024) errors.foto = 'El máximo permitido es 15 MB.';
-    }
-    return errors;
-  }
-
-  preparar(cliente) {
-    const errors = this.errores(cliente);
-    if (Object.keys(errors).length) throw Object.assign(new Error(Object.values(errors)[0]), { fieldErrors: errors, status: 422 });
-    const { foto, ...payload } = normalizarCliente(cliente);
-    delete payload.id;
-    return { payload, foto: foto || null };
-  }
-
-  async verificarDuplicado(cliente, excluirId = null) {
-    const c = normalizarCliente(cliente);
-    return this.repository.verificarDuplicado({
-      email: c.email, telefono_personal: c.telefono_personal,
-      nombre_completo: c.nombre_completo, fecha_nacimiento: c.fecha_nacimiento,
-      ...(excluirId ? { excluir_id: excluirId } : {}),
-    });
-  }
-
-  async registrar(cliente) {
-    try {
-      const { payload, foto } = this.preparar(cliente);
-      if ((await this.verificarDuplicado(payload)).duplicado) throw Object.assign(new Error('Ya existe un cliente con esos datos.'), { status: 409 });
-      const result = await this.repository.crear(payload, foto);
-      this.notificar('Cliente registrado correctamente.', 'success');
-      return result;
-    } catch (error) {
-      this.notificar(this.mensaje(error, 'registrar'), 'error');
-      throw error;
-    }
-  }
-
-  async actualizar(id, cliente) {
-    try {
-      const { payload, foto } = this.preparar(cliente);
-      if ((await this.verificarDuplicado(payload, id)).duplicado) throw Object.assign(new Error('Ya existe un cliente con esos datos.'), { status: 409 });
-      const result = await this.repository.actualizar(id, payload, foto);
-      this.notificar('Cliente actualizado correctamente.', 'success');
-      return result;
-    } catch (error) {
-      this.notificar(this.mensaje(error, 'actualizar'), 'error');
-      throw error;
-    }
-  }
-
-  async eliminar(id) {
-    try {
-      const result = await this.repository.eliminar(id);
-      this.notificar('Cliente eliminado correctamente.', 'success');
-      return result;
-    } catch (error) {
-      this.notificar(this.mensaje(error, 'eliminar'), 'error');
-      throw error;
-    }
-  }
-
-  listar(filtros = {}) { return this.repository.listar(filtros); }
-  consultar(id) { return this.repository.consultar(id); }
-
-  mensaje(error, action) {
-    if (error.status === 409) return 'Registro duplicado: revisa correo, teléfono y nombre/fecha.';
-    if (error.status === 403) return 'No tienes permiso para realizar esta acción.';
-    if (error.status === 422) return 'Revisa los campos marcados.';
-    if (error.status === 404) return 'El cliente ya no está disponible en este taller.';
-    return `No se pudo ${action}: ${error.message}`;
-  }
+export class ClienteFacade{
+ constructor(repository=new ClienteRepository(),notify=()=>{}){this.repository=repository;this.notify=notify;this.countries=[]}
+ async paises(){const r=await this.repository.paises();this.countries=r.paises||[];return this.countries}
+ validarTelefono(region,prefix,number){return this.repository.validarTelefono(region,prefix,number)}
+ ubicacionCp(cp,signal){return this.repository.ubicacionCp(cp,signal)}
+ ubicacionEstados(signal){return this.repository.ubicacionEstados(signal)}
+ ubicacionMunicipios(state,signal){return this.repository.ubicacionMunicipios(state,signal)}
+ ubicacionColonias(state,municipality,q,signal){return this.repository.ubicacionColonias(state,municipality,q,signal)}
+ buscarCp(state,municipality,colony,signal){return this.repository.buscarCp(state,municipality,colony,signal)}
+ talleres(){return this.repository.talleres()}
+ errores(cliente,{legacy=false}={}){const c=normalizarCliente(cliente,{legacy}),e={},contact=c.contacto;for(const k of ['nombres','apellido_paterno','fecha_nacimiento','curp','celular','email','calle','colonia','municipio','estado','codigo_postal'])if(!c[k]&&!(legacy&&['apellido_paterno','curp'].includes(k)))e[k]='Este campo es obligatorio.';for(const k of ['nombre','telefono_personal','email'])if(!contact[k])e['contacto.'+k]='Este campo es obligatorio.';
+  for(const k of ['nombres','apellido_paterno','apellido_materno'])if(c[k]&&!/^[^\W\d_]+(?:[ '-][^\W\d_]+)*$/u.test(c[k]))e[k]='Ingresa un nombre válido.';if(contact.nombre&&!/^[^\W\d_]+(?:[ '-][^\W\d_]+)*$/u.test(contact.nombre))e['contacto.nombre']='Ingresa un nombre válido.';if(contact.nombre.length>180)e['contacto.nombre']='Máximo 180 caracteres.';
+  const age=edadDe(c.fecha_nacimiento);if(c.fecha_nacimiento&&age===null)e.fecha_nacimiento='Ingresa una fecha real.';else if(age!==null&&(age<0||age>120))e.fecha_nacimiento='La fecha debe estar en el rango permitido.';
+  if(c.curp&&!validarCurp(c.curp,c.fecha_nacimiento))e.curp='La CURP no es válida o no coincide con la fecha de nacimiento.';if(c.rfc&&!validarRfc(c.rfc))e.rfc='El RFC de persona física no es válido.';
+  for(const k of ['celular','telefono_fijo','telefono_trabajo']){const n=c[k],raw=String(cliente[k]||'');if(!n)continue;const country=this.countries.find(x=>x.iso2===c[k+'_pais']&&x.prefijo===c[k+'_prefijo']);const lengths=country?.longitudes||[];if(/[^\d\s()-]/.test(raw)||(c[k+'_prefijo']==='52'?n.length!==10:!lengths.includes(n.length)))e[k]=c[k+'_prefijo']==='52'?'Ingresa 10 dígitos.':'Revisa el número para el país seleccionado.'}
+  for(const k of ['email','email_trabajo'])if(c[k]&&(c[k].length>190||!EMAIL.test(c[k])))e[k]='Escribe un correo válido.';if(c.email_trabajo&&c.email_trabajo===c.email)e.email_trabajo='Debe ser distinto al correo personal.';for(const k of ['email','email_trabajo'])if(contact[k]&&(contact[k].length>190||!EMAIL.test(contact[k])))e['contacto.'+k]='Escribe un correo válido.';if(contact.email_trabajo&&contact.email_trabajo===contact.email)e['contacto.email_trabajo']='Debe ser distinto del correo del contacto.';if(contact.email&&contact.email===c.email)e['contacto.email']='Debe ser distinto del correo del cliente.';if(contact.telefono_personal&&contact.telefono_personal===c.celular&&contact.telefono_personal_prefijo===c.celular_prefijo)e['contacto.telefono_personal']='Debe ser distinto del teléfono personal del cliente.';
+  for(const k of ['telefono_personal','telefono_trabajo']){const n=contact[k],raw=String(cliente.contacto?.[k]||'');if(!n)continue;const country=this.countries.find(x=>x.iso2===contact[k+'_pais']&&x.prefijo===contact[k+'_prefijo']),lengths=country?.longitudes||[];if(/[^\d\s()-]/.test(raw)||(contact[k+'_prefijo']==='52'?n.length!==10:!lengths.includes(n.length)))e['contacto.'+k]=contact[k+'_prefijo']==='52'?'Ingresa 10 dígitos.':'Revisa el número para el país seleccionado.'}
+  if(c.codigo_postal&&!/^\d{5}$/.test(c.codigo_postal))e.codigo_postal='Usa cinco dígitos.';for(const[k,max]of Object.entries({nombres:180,apellido_paterno:100,apellido_materno:100,calle:180,numero_interior:30,colonia:120,municipio:120,estado:120}))if(String(c[k]||'').length>max)e[k]='Máximo '+max+' caracteres.';if(c.nombre_completo.length>180)e.nombres='El nombre completo no puede superar 180 caracteres.';
+  if(cliente.foto){const f=cliente.foto;if(!/\.(jpg|jpeg|png|webp)$/i.test(f.name)||!['image/jpeg','image/png','image/webp'].includes(f.type))e.foto='Formato inválido. Usa JPG, JPEG, PNG o WEBP.';else if(f.size>15*1024*1024)e.foto='El máximo permitido es 15 MB.'}return e}
+ preparar(c,{legacy=false}={}){const errors=this.errores(c,{legacy});if(Object.keys(errors).length)throw Object.assign(new Error('Revisa los campos indicados.'),{fieldErrors:errors,status:422});const{foto,...payload}=normalizarCliente(c,{legacy});delete payload.id;return{payload,foto:foto||null}}
+ async verificarDuplicado(c,exclude=null){const x=normalizarCliente(c);return this.repository.verificarDuplicado({email:x.email,celular:x.celular,celular_prefijo:x.celular_prefijo,curp:x.curp,rfc:x.rfc,nombres:x.nombres,apellido_paterno:x.apellido_paterno,apellido_materno:x.apellido_materno,fecha_nacimiento:x.fecha_nacimiento,taller_id:x.taller_id,...(exclude?{excluir_id:exclude}:{})})}
+ async registrar(c){const{payload,foto}=this.preparar(c);try{if((await this.verificarDuplicado(payload)).duplicado)throw Object.assign(new Error('Registro duplicado'),{status:409});const r=await this.repository.crear(payload,foto);this.notify('Cliente registrado correctamente.','success');return r}catch(e){this.notify(this.mensaje(e,'registrar'),'error');throw e}}
+ async actualizar(id,c,options={}){const{payload,foto}=this.preparar(c,options);try{if((await this.verificarDuplicado(payload,id)).duplicado)throw Object.assign(new Error('Registro duplicado'),{status:409});const r=await this.repository.actualizar(id,payload,foto);this.notify('Cliente actualizado correctamente.','success');return r}catch(e){this.notify(this.mensaje(e,'actualizar'),'error');throw e}}
+ suspender(id,reason){return this.repository.cambiarEstado(id,'suspendido',reason)}
+ reactivar(id){return this.repository.cambiarEstado(id,'activo')}
+ eliminar(id){return this.repository.eliminar(id)}
+ listar(filters={}){return this.repository.listar(filters)}
+ consultar(id){return this.repository.consultar(id)}
+ mensaje(e,action){if(e.status===409)return'Registro duplicado: revisa CURP, RFC, correo, celular y nombre/fecha.';if(e.status===403)return'No tienes permiso para realizar esta acción.';if(e.status===422)return'Revisa los campos marcados.';if(e.status===404)return'El registro ya no está disponible en este taller.';return'No se pudo '+action+': '+e.message}
 }

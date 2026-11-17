@@ -8,7 +8,7 @@ class AuthRepository:
         try:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "SELECT id,nombre,email,password_hash,rol,taller_id,activo FROM usuarios WHERE email=%s LIMIT 1",
+                    "SELECT u.id,u.nombre,u.email,u.password_hash,u.rol,u.taller_id,u.activo,t.empresa_id FROM usuarios u JOIN talleres t ON t.id=u.taller_id WHERE u.email=%s AND t.activo=1 LIMIT 1",
                     (correo.lower().strip(),),
                 )
                 return cursor.fetchone()
@@ -24,6 +24,11 @@ class AuthRepository:
                     (nombre.strip(), correo.lower().strip(), password_hash, rol, taller_id),
                 )
                 user_id = cursor.lastrowid
+                cursor.execute(
+                    "INSERT INTO empleados (empresa_id,taller_id,usuario_id,nombres,email,activo) "
+                    "SELECT t.empresa_id,t.id,%s,%s,%s,1 FROM talleres t WHERE t.id=%s",
+                    (user_id, nombre.strip(), correo.lower().strip(), taller_id),
+                )
             connection.commit()
             return user_id
         except Exception:

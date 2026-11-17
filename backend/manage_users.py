@@ -14,11 +14,11 @@ def main():
     print("Alta local de usuario del taller")
     nombre = input("Nombre: ").strip()
     correo = input("Correo: ").strip().lower()
-    rol = input("Rol (administrador/recepcionista): ").strip().lower()
+    rol = input("Rol (administrador/recepcionista/mecanico): ").strip().lower()
     taller_id = input("ID del taller: ").strip()
     if not nombre or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", correo):
         raise SystemExit("Nombre o correo inválido")
-    if rol not in {"administrador", "recepcionista"}:
+    if rol not in {"administrador", "recepcionista", "mecanico"}:
         raise SystemExit("Rol no permitido")
     if not taller_id.isdigit():
         raise SystemExit("El taller debe ser un ID numérico")
