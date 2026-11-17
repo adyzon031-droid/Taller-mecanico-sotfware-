@@ -24,3 +24,6 @@ yarn-debug.log*
 Thumbs.db
 .idea/
 .vscode/
+
+# Respaldos locales de la base de datos
+respaldos/

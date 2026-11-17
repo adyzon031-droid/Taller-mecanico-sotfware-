@@ -7,7 +7,7 @@ from datetime import date, datetime
 from functools import wraps
 from pathlib import Path
 
-from flask import Flask, g, jsonify, request, send_file, session
+from flask import Flask, g, jsonify, request, send_file, send_from_directory, session
 from dotenv import load_dotenv
 from pymysql.err import IntegrityError
 
@@ -33,7 +33,48 @@ import phonenumbers
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 app = Flask(__name__)
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+FRONTEND_DIR = PROJECT_ROOT / "frontend"
+
+
+@app.get("/health")
+def health():
+    """Comprueba que Flask y la base de datos estén disponibles."""
+    from db import connect
+
+    conexion = None
+    try:
+        conexion = connect()
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT 1")
+
+        return jsonify(status="ok", database="ok"), 200
+
+    except Exception:
+        app.logger.exception("Falló la comprobación de salud")
+        return jsonify(status="unavailable"), 503
+
+    finally:
+        if conexion is not None:
+            conexion.close()
+
+
+@app.get("/")
+def inicio():
+    """Entrega la aplicación web."""
+    return send_from_directory(PROJECT_ROOT, "index.html")
+
+
+@app.get("/frontend/<path:filename>")
+def archivos_frontend(filename):
+    """Entrega únicamente los archivos públicos del frontend."""
+    return send_from_directory(FRONTEND_DIR, filename)
+
+
 app.secret_key = os.environ.get("APP_SECRET_KEY", "")
+if not app.secret_key:
+    raise RuntimeError("La variable APP_SECRET_KEY es obligatoria.")
 # Reserva margen para el multipart; _validar_foto limita el archivo en 15 MiB.
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 app.config["SESSION_COOKIE_HTTPONLY"] = True

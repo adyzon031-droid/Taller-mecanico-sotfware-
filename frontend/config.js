@@ -1,2 +1,9 @@
-// Dirección pública de la API. Edita este valor por entorno; nunca pongas secretos aquí.
-window.API_BASE_URL = 'http://127.0.0.1:5000';
+// En desarrollo utiliza Flask local.
+// En producción utiliza el mismo dominio donde se sirve el frontend.
+const hostsLocales = ["localhost", "127.0.0.1"];
+
+window.API_BASE_URL =
+  hostsLocales.includes(window.location.hostname) ||
+  window.location.protocol === "file:"
+    ? "http://127.0.0.1:5000"
+    : "";
